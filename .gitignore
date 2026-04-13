@@ -39,5 +39,6 @@ coverage/
 .coverage
 htmlcov/
 
-# Markdown
-*.md
+# Prompts
+*PROMPT*
+*prompt*
