@@ -1,8 +1,614 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-<meta http-equiv="refresh" content="0;url=pwa/">
-<title>Redirecting...</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AFP Migration SaaS — Architecture technique</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0b0d">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AFP Migration">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<!-- Splash screens iOS -->
+<meta name="mobile-web-app-capable" content="yes">
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0b0d;--bg2:#111216;--bg3:#1a1b21;--bg4:#22232b;
+  --tx:#e8e6e1;--tx2:#9d9b95;--tx3:#5e5d58;
+  --accent:#6e8efb;--accent2:#a777e3;--accent-glow:rgba(110,142,251,.12);
+  --green:#3ecf8e;--amber:#f5a623;--red:#e85d5d;--teal:#2dd4bf;
+  --coral:#f97066;--pink:#ec4899;
+  --radius:12px;--radius-sm:8px;
+  --font-display:'Instrument Serif',Georgia,serif;
+  --font-body:'DM Sans',system-ui,sans-serif;
+  --font-mono:'DM Mono','Fira Code',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--font-body);line-height:1.7;overflow-x:hidden;-webkit-text-size-adjust:100%;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+*{word-break:break-word;overflow-wrap:break-word}
+::selection{background:var(--accent);color:#fff}
+
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+header{position:relative;padding:80px 40px 60px;max-width:1100px;margin:0 auto;overflow:hidden}
+header::before{content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(110,142,251,.08),transparent 70%);pointer-events:none}
+.tag{display:inline-block;font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);border:1px solid rgba(110,142,251,.25);padding:4px 14px;border-radius:100px;margin-bottom:24px;
+  animation:fadeUp .8s ease both}
+h1{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,5vw,56px);line-height:1.15;color:var(--tx);margin-bottom:16px;
+  animation:fadeUp .8s .1s ease both}
+h1 em{font-style:italic;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{font-size:18px;color:var(--tx2);max-width:640px;line-height:1.7;animation:fadeUp .8s .2s ease both}
+
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--bg3);border-radius:var(--radius);overflow:hidden;margin:48px auto 0;max-width:800px;
+  animation:fadeUp .8s .3s ease both}
+.metric{background:var(--bg2);padding:20px 24px;text-align:center}
+.metric-val{font-family:var(--font-mono);font-size:24px;font-weight:500;color:var(--tx)}
+.metric-label{font-size:12px;color:var(--tx3);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+main{max-width:1100px;margin:0 auto;padding:0 40px 80px}
+
+.section-label{font-family:var(--font-mono);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--tx3);margin-bottom:32px;padding-left:4px}
+
+.pipeline{position:relative;display:flex;flex-direction:column;gap:0}
+.pipeline::before{content:'';position:absolute;left:27px;top:40px;bottom:40px;width:1px;background:linear-gradient(to bottom,var(--accent),var(--accent2),var(--teal));opacity:.2}
+
+.stage{position:relative;display:grid;grid-template-columns:54px 1fr;gap:0;opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+.stage.visible{opacity:1;transform:translateY(0)}
+
+.stage-rail{display:flex;flex-direction:column;align-items:center;padding-top:28px;position:relative;z-index:2}
+.stage-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--bg);position:relative;z-index:2;transition:transform .3s,box-shadow .3s}
+.stage:hover .stage-dot{transform:scale(1.3);box-shadow:0 0 20px var(--accent-glow)}
+.stage-line{flex:1;width:1px;margin-top:4px}
+
+.stage-card{background:var(--bg2);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius);padding:28px 32px;margin-bottom:16px;cursor:pointer;transition:border-color .3s,background .3s,box-shadow .3s;position:relative;overflow:hidden}
+.stage-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none;
+  background:linear-gradient(135deg,rgba(110,142,251,.04),transparent 60%)}
+.stage-card:hover{border-color:rgba(110,142,251,.15);background:var(--bg3)}
+.stage-card:hover::before{opacity:1}
+.stage-card.open{border-color:rgba(110,142,251,.2);box-shadow:0 8px 40px rgba(0,0,0,.3)}
+
+.stage-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-width:0}
+.stage-header>div:first-child{min-width:0;flex:1}
+.stage-num{font-family:var(--font-mono);font-size:12px;color:var(--tx3);margin-bottom:6px;letter-spacing:1px}
+.stage-title{font-family:var(--font-display);font-size:24px;color:var(--tx);line-height:1.3}
+.stage-desc{font-size:14px;color:var(--tx2);margin-top:8px;max-width:560px}
+.stage-toggle{width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:4px;transition:transform .3s,border-color .3s,background .3s}
+.stage-card.open .stage-toggle{transform:rotate(45deg);border-color:var(--accent);background:var(--accent-glow)}
+
+.stage-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1),padding .4s ease}
+.stage-card.open .stage-body{max-height:800px;padding-top:24px}
+.detail-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px;margin-bottom:16px}
+.detail-box{background:var(--bg);border:1px solid rgba(255,255,255,.04);border-radius:var(--radius-sm);padding:16px 20px}
+.detail-box-label{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
+.detail-box-content{font-size:13px;color:var(--tx2);line-height:1.6}
+
+.pill{display:inline-block;font-family:var(--font-mono);font-size:11px;padding:3px 10px;border-radius:100px;margin:2px 3px 2px 0;border:1px solid}
+.pill-java{color:#f89820;border-color:rgba(248,152,32,.2);background:rgba(248,152,32,.06)}
+.pill-python{color:#3ecf8e;border-color:rgba(62,207,142,.2);background:rgba(62,207,142,.06)}
+.pill-react{color:#61dafb;border-color:rgba(97,218,251,.2);background:rgba(97,218,251,.06)}
+.pill-infra{color:var(--tx2);border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
+
+.risk{display:inline-block;font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;padding:3px 10px;border-radius:100px}
+.risk-low{color:var(--green);background:rgba(62,207,142,.1)}
+.risk-med{color:var(--amber);background:rgba(245,166,35,.1)}
+.risk-high{color:var(--red);background:rgba(232,93,93,.1)}
+
+.synth{margin-top:64px}
+.synth-grid{display:grid;grid-template-columns:1fr;gap:1px;background:rgba(255,255,255,.04);border-radius:var(--radius);overflow:hidden;
+  animation:fadeUp .8s ease both}
+.synth-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,2fr) minmax(0,1fr);gap:0;background:var(--bg2)}
+.synth-row.head{background:var(--bg3)}
+.synth-row.head .synth-cell{font-family:var(--font-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);padding:14px 20px}
+.synth-cell{padding:14px 20px;font-size:13px;color:var(--tx2);border-right:1px solid rgba(255,255,255,.03);display:flex;align-items:center}
+.synth-cell:last-child{border-right:none}
+
+.timeline{margin-top:64px}
+.tl-bar{display:flex;gap:2px;height:40px;border-radius:var(--radius-sm);overflow:hidden;margin-top:16px}
+.tl-segment{display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;color:rgba(255,255,255,.7);letter-spacing:.5px;transition:flex .4s ease;cursor:default;position:relative}
+.tl-segment:hover{filter:brightness(1.2)}
+.tl-segment span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 8px}
+.tl-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px}
+.tl-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2)}
+.tl-legend-dot{width:10px;height:10px;border-radius:3px}
+
+footer{text-align:center;padding:48px 40px;border-top:1px solid rgba(255,255,255,.04)}
+footer p{font-size:13px;color:var(--tx3)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* ── Tablet ── */
+@media(max-width:900px){
+  header{padding:60px 28px 48px}
+  main{padding:0 28px 60px}
+  .stage-title{font-size:20px}
+  .detail-row{grid-template-columns:1fr 1fr}
+  .synth-row{grid-template-columns:2.2fr 1fr 2fr 1fr}
+  .tl-segment span{font-size:9px}
+}
+
+/* ── Mobile ── */
+@media(max-width:600px){
+  header{padding:40px 16px 32px}
+  main{padding:0 16px 48px}
+  h1{font-size:28px}
+  .subtitle{font-size:15px}
+  .tag{font-size:10px;padding:3px 10px}
+  .metrics{grid-template-columns:repeat(3,1fr);margin-top:32px}
+  .metric{padding:14px 16px}
+  .metric-val{font-size:20px}
+  .metric-label{font-size:10px}
+
+  .section-label{font-size:10px;margin-bottom:20px}
+
+  .pipeline::before{left:19px}
+  .stage{grid-template-columns:38px 1fr}
+  .stage-dot{width:12px;height:12px}
+  .stage-card{padding:16px;margin-bottom:10px}
+  .stage-num{font-size:11px}
+  .stage-title{font-size:18px}
+  .stage-desc{font-size:13px}
+  .stage-toggle{width:28px;height:28px}
+
+  .detail-row{grid-template-columns:1fr}
+  .detail-box{padding:12px 14px}
+  .detail-box-label{font-size:9px}
+  .detail-box-content{font-size:12px}
+
+  .pill{font-size:10px;padding:2px 8px}
+
+  /* Synth table → stacked cards on mobile */
+  .synth-grid{background:transparent;gap:10px;border-radius:0}
+  .synth-row.head{display:none}
+  .synth-row{
+    grid-template-columns:1fr 1fr;
+    gap:1px;
+    border-radius:var(--radius-sm);
+    overflow:hidden;
+    background:rgba(255,255,255,.04);
+  }
+  .synth-cell{padding:10px 14px;font-size:12px;border-right:1px solid rgba(255,255,255,.03);border-bottom:none}
+  .synth-cell:nth-child(1){grid-column:1/-1;font-weight:600;color:var(--tx);background:var(--bg3);border-right:none}
+  .synth-cell:nth-child(2)::before{content:'Difficulte: ';font-family:var(--font-mono);font-size:9px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px}
+  .synth-cell:nth-child(3){border-right:none}
+  .synth-cell:nth-child(3)::before{content:'Ressources: ';font-family:var(--font-mono);font-size:9px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px;grid-column:1/-1}
+  .synth-cell:nth-child(4)::before{content:'Risque: ';font-family:var(--font-mono);font-size:9px;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px}
+  .synth-cell:nth-child(3){grid-column:1/-1;border-right:none}
+  .synth-cell:nth-child(4){grid-column:1/-1;border-right:none}
+
+  /* Timeline → vertical stack on mobile */
+  .tl-bar{flex-direction:column;height:auto;gap:4px;border-radius:var(--radius-sm)}
+  .tl-segment{height:32px;border-radius:6px}
+  .tl-segment span{font-size:11px}
+  .tl-legend{flex-direction:column;gap:8px}
+  .tl-legend-item{font-size:11px}
+
+  /* Timeline month markers → hide extremes on mobile */
+  .tl-months{display:none}
+
+  footer{padding:32px 16px}
+  footer p{font-size:11px}
+  .connector svg{height:14px}
+}
+
+/* ── Very small screens ── */
+@media(max-width:380px){
+  h1{font-size:24px}
+  .stage-title{font-size:16px}
+  .stage-desc{font-size:12px}
+  .metrics{grid-template-columns:1fr 1fr}
+  .metric-val{font-size:18px}
+  .stage-card{padding:14px}
+}
+</style>
 </head>
-<body></body>
+<body>
+
+<div class="grain"></div>
+
+<header>
+  <div class="tag">Document technique confidentiel</div>
+  <h1>SaaS de Migration <em>AFP</em></h1>
+  <p class="subtitle">Plateforme de migration automatisee liberant les entreprises de deux verrous couteux : IBM AFP (format documentaire) et Axway Transfer CFT (~75K$/an de licence MFT). Pipeline integre de bout en bout, du mainframe au PDF.</p>
+  <div class="metrics">
+    <div class="metric"><div class="metric-val">7</div><div class="metric-label">Couches</div></div>
+    <div class="metric"><div class="metric-val">12-18</div><div class="metric-label">Mois MVP</div></div>
+    <div class="metric"><div class="metric-val">8</div><div class="metric-label">Specs AFP</div></div>
+    <div class="metric"><div class="metric-val">80%</div><div class="metric-label">Cible auto</div></div>
+    <div class="metric"><div class="metric-val">180K$</div><div class="metric-label">Saving/an CFT</div></div>
+  </div>
+</header>
+
+<main>
+
+<div class="section-label">Pipeline de migration</div>
+
+<div class="pipeline">
+
+<!-- STAGE 1 -->
+<div class="stage" data-delay="0">
+  <div class="stage-rail">
+    <div class="stage-dot" style="background:var(--accent)"></div>
+    <div class="stage-line"></div>
+  </div>
+  <div class="stage-card" onclick="toggleCard(this)">
+    <div class="stage-header">
+      <div>
+        <div class="stage-num">01 — Client</div>
+        <div class="stage-title">Agent collecteur</div>
+        <div class="stage-desc">Deploye sur IBM i / z/OS — inventorie et exporte les flux AFP et toutes les ressources referencees via un canal securise.</div>
+      </div>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="detail-row">
+        <div class="detail-box">
+          <div class="detail-box-label">Fonction</div>
+          <div class="detail-box-content">Export des flux AFP, polices (raster, outline, TrueType), overlays, form definitions, page definitions et page segments depuis les bibliotheques mainframe (FONTLIB, OVLYLIB, PSFLIB).</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Technologies</div>
+          <div class="detail-box-content">
+            <span class="pill pill-infra">RPGLE / CL</span>
+            <span class="pill pill-infra">JCL / REXX</span>
+            <span class="pill pill-infra">SFTP chiffre</span>
+          </div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Risque</div>
+          <div class="detail-box-content"><span class="risk risk-med">Modere</span><br>Necessite un acces aux bibliotheques de ressources sur le mainframe du client et une expertise IBM i/z/OS.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE 2 -->
+<div class="stage" data-delay="100">
+  <div class="stage-rail">
+    <div class="stage-dot" style="background:var(--green)"></div>
+    <div class="stage-line"></div>
+  </div>
+  <div class="stage-card" onclick="toggleCard(this)">
+    <div class="stage-header">
+      <div>
+        <div class="stage-num">02 — Transport</div>
+        <div class="stage-title">Transfert securise integre</div>
+        <div class="stage-desc">Remplace Axway Transfer CFT — module leger base sur SFTP/TLS 1.3, livraison garantie, checkpoint/restart, chiffrement AES-256, audit complet. Zero licence MFT supplementaire.</div>
+      </div>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="detail-row">
+        <div class="detail-box">
+          <div class="detail-box-label">Remplace Transfer CFT</div>
+          <div class="detail-box-content">Module de transfert purpose-built integre a la plateforme. Protocoles ouverts uniquement (SFTP, HTTPS). Livraison garantie avec checkpoint/restart, retry automatique, verification d'integrite SHA-256 et recus de transfert signes. Aucune licence MFT tierce requise.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Economie client</div>
+          <div class="detail-box-content">Elimine ~180K$/an de couts Transfer CFT : licence (~75K$), support (~30K$), ingenieur MFT dedie (~75K$). L'economie sur le transport seul finance la migration AFP.<br><br><span class="risk risk-low">ROI immediat</span></div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Technologies</div>
+          <div class="detail-box-content">
+            <span class="pill pill-infra">Go ou Rust</span>
+            <span class="pill pill-infra">SFTP</span>
+            <span class="pill pill-infra">TLS 1.3</span>
+            <span class="pill pill-infra">AES-256</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE 3 -->
+<div class="stage" data-delay="200">
+  <div class="stage-rail">
+    <div class="stage-dot" style="background:var(--accent2)"></div>
+    <div class="stage-line"></div>
+  </div>
+  <div class="stage-card" onclick="toggleCard(this)">
+    <div class="stage-header">
+      <div>
+        <div class="stage-num">03 — Ingestion</div>
+        <div class="stage-title">Parsing et normalisation</div>
+        <div class="stage-desc">Parsing MO:DCA complet, resolution des ressources externes, deduplication des polices et graphiques, classification par complexite.</div>
+      </div>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="detail-row">
+        <div class="detail-box">
+          <div class="detail-box-label">Sous-architectures parsees</div>
+          <div class="detail-box-content" style="font-family:var(--font-mono);font-size:12px;line-height:2">
+            MO:DCA <span style="color:var(--tx3)">structure documentaire</span><br>
+            PTOCA <span style="color:var(--tx3)">texte et positionnement</span><br>
+            GOCA <span style="color:var(--tx3)">graphiques vectoriels</span><br>
+            IOCA <span style="color:var(--tx3)">images raster</span><br>
+            BCOCA <span style="color:var(--tx3)">codes-barres</span><br>
+            FOCA <span style="color:var(--tx3)">metriques de polices</span><br>
+            CMOCA <span style="color:var(--tx3)">gestion couleurs</span><br>
+            MOCA <span style="color:var(--tx3)">metadonnees</span>
+          </div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Classification</div>
+          <div class="detail-box-content">
+            Chaque document est automatiquement classe :<br><br>
+            <span class="risk risk-low">Simple</span> Polices standard, pas de ressources externes<br><br>
+            <span class="risk risk-med">Moyen</span> Polices custom, overlays, ressources externes<br><br>
+            <span class="risk risk-high">Complexe</span> Pages fax/image, PDF embarques, DBCS
+          </div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Technologies</div>
+          <div class="detail-box-content">
+            <span class="pill pill-java">Java 17+</span>
+            <span class="pill pill-java">Parseur custom</span>
+            <span class="pill pill-java">Apache PDFBox</span><br>
+            <span class="pill pill-infra">Alpheus (reference)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE 4 -->
+<div class="stage" data-delay="300">
+  <div class="stage-rail">
+    <div class="stage-dot" style="background:var(--amber)"></div>
+    <div class="stage-line"></div>
+  </div>
+  <div class="stage-card" onclick="toggleCard(this)">
+    <div class="stage-header">
+      <div>
+        <div class="stage-num">04 — Analyse</div>
+        <div class="stage-title">Mapping intelligent</div>
+        <div class="stage-desc">Mapping deterministe des polices IBM standard + mapping assiste par IA/vision par ordinateur pour les polices custom. Generation du rapport d'audit.</div>
+      </div>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="detail-row">
+        <div class="detail-box">
+          <div class="detail-box-label">Polices standard</div>
+          <div class="detail-box-content">Base de donnees couvrant les polices IBM standard (quelques centaines). Mapping deterministe vers TrueType/OpenType equivalents avec metriques de positionnement validees.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Polices custom — IA</div>
+          <div class="detail-box-content">Comparaison des glyphes AFP raster avec des polices TrueType candidates via vision par ordinateur. Scoring de similarite et proposition automatique.<br><br><span class="risk risk-high">Risque eleve</span> Differenciateur competitif majeur.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Technologies</div>
+          <div class="detail-box-content">
+            <span class="pill pill-python">Python</span>
+            <span class="pill pill-python">PyTorch</span>
+            <span class="pill pill-python">OpenCV</span>
+            <span class="pill pill-python">scikit-learn</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE 5 -->
+<div class="stage" data-delay="400">
+  <div class="stage-rail">
+    <div class="stage-dot" style="background:var(--teal)"></div>
+    <div class="stage-line"></div>
+  </div>
+  <div class="stage-card" onclick="toggleCard(this)">
+    <div class="stage-header">
+      <div>
+        <div class="stage-num">05 — Conversion</div>
+        <div class="stage-title">AFP vers PDF</div>
+        <div class="stage-desc">Transformation via une representation intermediaire XML/JSON preservant toute la semantique, puis generation PDF haute fidelite avec polices embarquees.</div>
+      </div>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="detail-row">
+        <div class="detail-box">
+          <div class="detail-box-label">Representation intermediaire</div>
+          <div class="detail-box-content">Chaque flux AFP est decompose en XML/JSON structuree : texte positionne, polices, images, overlays, codes-barres, metadonnees TLE/NOP. Format agnostique permettant de cibler plusieurs sorties.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Generation PDF</div>
+          <div class="detail-box-content">PDF haute fidelite : polices embarquees (TrueType subset), images optimisees, metadonnees preservees. Support PDF/A-1b pour archivage long terme (ISO 18565). Cible : milliers de pages/minute.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Technologies</div>
+          <div class="detail-box-content">
+            <span class="pill pill-java">Java</span>
+            <span class="pill pill-java">Apache PDFBox</span>
+            <span class="pill pill-java">iText (alt.)</span>
+            <span class="pill pill-infra">XML / JSON</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE 6 -->
+<div class="stage" data-delay="500">
+  <div class="stage-rail">
+    <div class="stage-dot" style="background:var(--coral)"></div>
+    <div class="stage-line"></div>
+  </div>
+  <div class="stage-card" onclick="toggleCard(this)">
+    <div class="stage-header">
+      <div>
+        <div class="stage-num">06 — Validation</div>
+        <div class="stage-title">QA automatisee</div>
+        <div class="stage-desc">Triple validation (visuelle, structurelle, metadonnees) avec scoring de confiance et routing automatique/humain.</div>
+      </div>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="detail-row">
+        <div class="detail-box">
+          <div class="detail-box-label">Comparaison visuelle</div>
+          <div class="detail-box-content">Rasterisation de l'AFP original (via emulateur IPDS) et du PDF genere. Comparaison pixel par pixel avec calcul de score SSIM. Seuil configurable par client.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Validation structurelle</div>
+          <div class="detail-box-content">Verification de la presence et du positionnement de tous les elements : texte, images, codes-barres, overlays. Comptage d'objets et verification des coordonnees.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Routing</div>
+          <div class="detail-box-content">
+            <span class="risk risk-low">Score &ge; seuil</span> Validation automatique<br><br>
+            <span class="risk risk-high">Score &lt; seuil</span> Revue humaine assistee<br><br>
+            Cible : 80% de validation automatique.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE 7 -->
+<div class="stage" data-delay="600">
+  <div class="stage-rail">
+    <div class="stage-dot" style="background:var(--pink)"></div>
+    <div class="stage-line"></div>
+  </div>
+  <div class="stage-card" onclick="toggleCard(this)">
+    <div class="stage-header">
+      <div>
+        <div class="stage-num">07 — Interface</div>
+        <div class="stage-title">Dashboard et reporting</div>
+        <div class="stage-desc">Suivi de progression en temps reel, metriques qualite, gestion des exceptions et file de revue humaine.</div>
+      </div>
+      <div class="stage-toggle"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="7" y1="2" x2="7" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="7" x2="12" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="stage-body">
+      <div class="detail-row">
+        <div class="detail-box">
+          <div class="detail-box-label">Suivi migration</div>
+          <div class="detail-box-content">Vue d'ensemble : applications migrees, en cours, en attente. Progression par lot, estimation du temps restant, historique des executions.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Metriques qualite</div>
+          <div class="detail-box-content">Taux de validation automatique, score moyen de fidelite, types d'erreurs les plus frequents, tendances de qualite sur le temps.</div>
+        </div>
+        <div class="detail-box">
+          <div class="detail-box-label">Technologies</div>
+          <div class="detail-box-content">
+            <span class="pill pill-react">React</span>
+            <span class="pill pill-react">TypeScript</span>
+            <span class="pill pill-java">Spring Boot</span>
+            <span class="pill pill-infra">REST API</span>
+            <span class="pill pill-infra">WebSocket</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- SYNTHESIS TABLE -->
+<div class="synth">
+  <div class="section-label">Synthese des risques</div>
+  <div class="synth-grid">
+    <div class="synth-row head">
+      <div class="synth-cell">Brique technique</div>
+      <div class="synth-cell">Difficulte</div>
+      <div class="synth-cell">Ressources existantes</div>
+      <div class="synth-cell">Risque</div>
+    </div>
+    <div class="synth-row"><div class="synth-cell">Module transfert securise</div><div class="synth-cell"><span class="risk risk-med">Moyenne</span></div><div class="synth-cell">Libs Go SFTP matures (pkg/sftp)</div><div class="synth-cell"><span class="risk risk-low">Faible</span></div></div>
+    <div class="synth-row"><div class="synth-cell">Parsing MO:DCA</div><div class="synth-cell"><span class="risk risk-med">Moyenne</span></div><div class="synth-cell">Specs publiques + parseurs OSS (Alpheus, afpbox)</div><div class="synth-cell"><span class="risk risk-med">Modere</span></div></div>
+    <div class="synth-row"><div class="synth-cell">Mapping polices standard</div><div class="synth-cell"><span class="risk risk-med">Moyenne</span></div><div class="synth-cell">Tables IBM connues, documentation FOCA</div><div class="synth-cell"><span class="risk risk-low">Faible</span></div></div>
+    <div class="synth-row"><div class="synth-cell">Mapping polices custom</div><div class="synth-cell"><span class="risk risk-high">Elevee</span></div><div class="synth-cell">Quasi rien — terrain vierge</div><div class="synth-cell"><span class="risk risk-high">Eleve</span></div></div>
+    <div class="synth-row"><div class="synth-cell">Ressources externes</div><div class="synth-cell"><span class="risk risk-med">Moyenne</span></div><div class="synth-cell">Bien documente par AFP Consortium</div><div class="synth-cell"><span class="risk risk-med">Modere</span></div></div>
+    <div class="synth-row"><div class="synth-cell">Conversion vers PDF</div><div class="synth-cell"><span class="risk risk-med">Moyenne</span></div><div class="synth-cell">Apache PDFBox, iText (matures)</div><div class="synth-cell"><span class="risk risk-low">Faible</span></div></div>
+    <div class="synth-row"><div class="synth-cell">Validation fidelite</div><div class="synth-cell"><span class="risk risk-med">Moy.-haute</span></div><div class="synth-cell">OpenCV, ImageMagick</div><div class="synth-cell"><span class="risk risk-med">Modere</span></div></div>
+    <div class="synth-row"><div class="synth-cell">Cas degrades (fax, PDF emb.)</div><div class="synth-cell"><span class="risk risk-high">Elevee</span></div><div class="synth-cell">OCR (Tesseract)</div><div class="synth-cell"><span class="risk risk-high">Eleve</span></div></div>
+    <div class="synth-row"><div class="synth-cell">Agent collecteur mainframe</div><div class="synth-cell"><span class="risk risk-med">Moyenne</span></div><div class="synth-cell">APIs IBM i documentees</div><div class="synth-cell"><span class="risk risk-med">Modere</span></div></div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline">
+  <div class="section-label">Calendrier estimatif — MVP</div>
+  <div class="tl-bar">
+    <div class="tl-segment" style="flex:4;background:rgba(110,142,251,.3)"><span>Parseur AFP</span></div>
+    <div class="tl-segment" style="flex:2;background:rgba(62,207,142,.3)"><span>Transport</span></div>
+    <div class="tl-segment" style="flex:3;background:rgba(167,119,227,.3)"><span>Mapping polices</span></div>
+    <div class="tl-segment" style="flex:3;background:rgba(45,212,191,.3)"><span>Conversion</span></div>
+    <div class="tl-segment" style="flex:2;background:rgba(249,112,102,.3)"><span>QA</span></div>
+    <div class="tl-segment" style="flex:2;background:rgba(236,72,153,.3)"><span>Dashboard</span></div>
+    <div class="tl-segment" style="flex:3;background:rgba(245,166,35,.3)"><span>Integration</span></div>
+  </div>
+  <div class="tl-months" style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:var(--tx3);margin-top:8px;padding:0 2px">
+    <span>M0</span><span>M3</span><span>M6</span><span>M9</span><span>M12</span><span>M15</span><span>M18</span>
+  </div>
+  <div class="tl-legend">
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:rgba(110,142,251,.5)"></div>Parseur AFP — 3-4 mois</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:rgba(62,207,142,.5)"></div>Transport — 1-2 mois</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:rgba(167,119,227,.5)"></div>Mapping polices — 2-3 mois</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:rgba(45,212,191,.5)"></div>Conversion — 2-3 mois</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:rgba(249,112,102,.5)"></div>QA — 1-2 mois</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:rgba(236,72,153,.5)"></div>Dashboard — 1-2 mois</div>
+    <div class="tl-legend-item"><div class="tl-legend-dot" style="background:rgba(245,166,35,.5)"></div>Integration client — 2-3 mois</div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px">AFP MIGRATION SAAS — ARCHITECTURE TECHNIQUE — DOCUMENT CONFIDENTIEL</p>
+  <p style="margin-top:8px">Avril 2026</p>
+</footer>
+
+<script>
+function toggleCard(card){
+  const wasOpen=card.classList.contains('open');
+  document.querySelectorAll('.stage-card.open').forEach(c=>c.classList.remove('open'));
+  if(!wasOpen)card.classList.add('open');
+}
+
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const delay=parseInt(e.target.dataset.delay)||0;
+      setTimeout(()=>e.target.classList.add('visible'),delay);
+      observer.unobserve(e.target);
+    }
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.stage').forEach(s=>observer.observe(s));
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+
+</body>
 </html>
