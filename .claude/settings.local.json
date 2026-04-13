@@ -5,7 +5,9 @@
       "Bash(gh api:*)",
       "Bash(gh repo:*)",
       "Bash(git commit -m ':*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(mv docs/pwa/* docs/)",
+      "Bash(rmdir docs/pwa)"
     ]
   }
 }
