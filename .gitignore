@@ -42,3 +42,6 @@ htmlcov/
 # Prompts
 *PROMPT*
 *prompt*
+
+# Claude Code local settings
+.claude/settings.local.json
