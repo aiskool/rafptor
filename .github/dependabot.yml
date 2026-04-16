@@ -1,0 +1,69 @@
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /src/parser
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    labels: [dependencies, module:parser]
+
+  - package-ecosystem: maven
+    directory: /src/converter
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    labels: [dependencies, module:converter]
+
+  - package-ecosystem: maven
+    directory: /src/api
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    labels: [dependencies, module:api]
+
+  - package-ecosystem: gomod
+    directory: /src/transport
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    labels: [dependencies, module:transport]
+
+  - package-ecosystem: pip
+    directory: /src/mapper
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    labels: [dependencies, module:mapper]
+
+  - package-ecosystem: pip
+    directory: /src/validator
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    labels: [dependencies, module:validator]
+
+  - package-ecosystem: npm
+    directory: /src/dashboard
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    labels: [dependencies, module:dashboard]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    labels: [dependencies, ci]
+
+  - package-ecosystem: docker
+    directory: /src/transport
+    schedule: { interval: weekly, day: monday }
+    labels: [dependencies, docker]
+
+  - package-ecosystem: docker
+    directory: /src/mapper
+    schedule: { interval: weekly, day: monday }
+    labels: [dependencies, docker]
+
+  - package-ecosystem: docker
+    directory: /src/validator
+    schedule: { interval: weekly, day: monday }
+    labels: [dependencies, docker]
+
+  - package-ecosystem: docker
+    directory: /src/dashboard
+    schedule: { interval: weekly, day: monday }
+    labels: [dependencies, docker]

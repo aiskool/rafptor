@@ -77,20 +77,51 @@ Rafptor includes a purpose-built secure transfer module that replaces expensive 
 ```
 rafptor/
 ├── docs/
-│   ├── architecture/        # Technical architecture & feasibility analysis
-│   └── pwa/                 # Interactive architecture viewer (PWA)
-├── src/                     # Source code (coming)
-├── tests/                   # Test suites (coming)
-├── .gitignore
+│   ├── development-plan.md              # 18-month plan, milestones, staffing
+│   ├── architecture/
+│   │   ├── secure-transfer-cft-replacement.md
+│   │   ├── security-architecture.md     # Threat model, crypto, compliance
+│   │   ├── timeline.md                  # Gantt + milestones
+│   │   └── afp_migration_feasibility.pdf
+│   └── pwa/                             # Interactive architecture viewer (PWA, port 4040)
+├── src/                                 # Source modules (scaffolded)
+│   ├── parser/                          # Java 17 — AFP / MO:DCA
+│   ├── transport/                       # Go 1.22 — replaces Axway Transfer CFT
+│   ├── collector/                       # RPGLE / JCL — mainframe agent
+│   ├── mapper/                          # Python 3.12 — font mapping
+│   ├── converter/                       # Java 17 — AFP → PDF/A
+│   ├── validator/                       # Python 3.12 — automated QA
+│   ├── api/                             # Spring Boot 3 — backend
+│   └── dashboard/                       # React 18 + TS — frontend
+├── tests/
+│   └── fixtures/                        # AFP samples (simple / medium / complex / adversarial)
+├── .github/
+│   ├── workflows/ci.yml + security.yml
+│   ├── dependabot.yml
+│   ├── CODEOWNERS
+│   └── pull_request_template.md
+├── CONTRIBUTING.md
+├── SECURITY.md
 ├── LICENSE
 └── README.md
 ```
 
+## Documentation index
+
+| Document | Purpose |
+|----------|---------|
+| [`docs/development-plan.md`](docs/development-plan.md) | Full 18-month plan: phases, modules, milestones, staffing, risks |
+| [`docs/architecture/security-architecture.md`](docs/architecture/security-architecture.md) | Banking-grade security architecture, threat model, compliance matrix |
+| [`docs/architecture/secure-transfer-cft-replacement.md`](docs/architecture/secure-transfer-cft-replacement.md) | Why and how Rafptor replaces Axway Transfer CFT |
+| [`docs/architecture/timeline.md`](docs/architecture/timeline.md) | ASCII Gantt + milestone calendar |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Branching model, commit conventions, PR process |
+| [`SECURITY.md`](SECURITY.md) | Vulnerability disclosure policy |
+
 ## Status
 
-**Phase**: Exploration & validation  
-**MVP timeline**: 12-18 months  
-**Current focus**: Market validation, technical proof of concept
+**Phase**: Planning complete — Phase 1 (Foundations) begins at T0 = 2026-05-01  
+**MVP target**: 2027-08-01 (15 months from T0)  
+**Current focus**: Hiring, lab environment setup, Phase 1 kickoff
 
 ## License
 

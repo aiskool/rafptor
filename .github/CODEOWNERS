@@ -1,0 +1,27 @@
+# Rafptor CODEOWNERS
+#
+# Each line is a file pattern followed by GitHub handles of reviewers.
+# Replace @rafptor/* teams once the GitHub org/teams are provisioned.
+
+# Global fallback
+*                               @rafptor/lead-architect
+
+# Documentation
+/docs/                          @rafptor/lead-architect @rafptor/docs
+/docs/architecture/             @rafptor/lead-architect @rafptor/security
+/docs/architecture/security-architecture.md   @rafptor/security
+
+# Source modules
+/src/parser/                    @rafptor/parser-team @rafptor/java
+/src/converter/                 @rafptor/converter-team @rafptor/java
+/src/transport/                 @rafptor/transport-team @rafptor/go @rafptor/security
+/src/collector/                 @rafptor/mainframe-team
+/src/mapper/                    @rafptor/ml-team @rafptor/python
+/src/validator/                 @rafptor/qa-team @rafptor/python
+/src/api/                       @rafptor/api-team @rafptor/java @rafptor/security
+/src/dashboard/                 @rafptor/frontend-team
+
+# CI / security-sensitive
+/.github/                       @rafptor/devops @rafptor/security
+/.github/workflows/             @rafptor/devops @rafptor/security
+/SECURITY.md                    @rafptor/security
