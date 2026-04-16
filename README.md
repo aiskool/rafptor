@@ -108,14 +108,40 @@ rafptor/
 
 ## Documentation index
 
+### Plan & execution
+
 | Document | Purpose |
 |----------|---------|
 | [`docs/development-plan.md`](docs/development-plan.md) | Full 18-month plan: phases, modules, milestones, staffing, risks |
-| [`docs/architecture/security-architecture.md`](docs/architecture/security-architecture.md) | Banking-grade security architecture, threat model, compliance matrix |
+| [`docs/development-plan.structured.md`](docs/development-plan.structured.md) | Phased execution plan (Phase 0 discovery + Phase 1 detailed tasks) — feeds `/claude-mem:do` |
+| [`docs/architecture/timeline.md`](docs/architecture/timeline.md) | ASCII Gantt + milestone calendar (T0 = 2026-05-01 → MVP = 2027-08-01) |
+| [`docs/timeline-report.md`](docs/timeline-report.md) | Narrative "Journey into Rafptor" — project history through commits |
+
+### Architecture & security
+
+| Document | Purpose |
+|----------|---------|
+| [`docs/architecture/security-architecture.md`](docs/architecture/security-architecture.md) | Banking-grade security architecture, STRIDE threat model, compliance matrix |
 | [`docs/architecture/secure-transfer-cft-replacement.md`](docs/architecture/secure-transfer-cft-replacement.md) | Why and how Rafptor replaces Axway Transfer CFT |
-| [`docs/architecture/timeline.md`](docs/architecture/timeline.md) | ASCII Gantt + milestone calendar |
-| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Branching model, commit conventions, PR process |
-| [`SECURITY.md`](SECURITY.md) | Vulnerability disclosure policy |
+| [`docs/adr/`](docs/adr/README.md) | Architecture Decision Records (ADR-001 … ADR-008) |
+
+### Governance & process
+
+| Document | Purpose |
+|----------|---------|
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Branching model, Conventional Commits, PR process, ports |
+| [`SECURITY.md`](SECURITY.md) | Vulnerability disclosure policy, severities, SLAs |
+| [`docs/github-project-views.md`](docs/github-project-views.md) | Step-by-step guide to set up the [Project v2 board](https://github.com/users/aiskool/projects/1) |
+| [`docs/mcp-status.md`](docs/mcp-status.md) | MCP servers used by the project and their operational state |
+
+### Reports (for this planning phase)
+
+| Document | Purpose |
+|----------|---------|
+| [`docs/project-snapshot.md`](docs/project-snapshot.md) | Structural snapshot of the repository at planning completion |
+| [`docs/security-audit.md`](docs/security-audit.md) | File-level audit: CI, Dockerfiles, dependency manifests |
+| [`docs/security-review.md`](docs/security-review.md) | Review of the diff since the team-settings baseline |
+| [`docs/code-review.md`](docs/code-review.md) | Code review of configs and build files |
 
 ## Status
 

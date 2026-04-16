@@ -380,11 +380,22 @@ This plan itself is reviewed:
 
 | Prompt deliverable | Location |
 |--------------------|----------|
-| Plan d'action détaillé | **this file** |
-| Board GitHub | To be provisioned once `github` MCP restored; issue templates stubs in `.github/` |
-| Architecture de sécurité | `docs/architecture/security-architecture.md` |
-| CI/CD initial | `.github/workflows/ci.yml`, `security.yml` + `dependabot.yml` |
-| Rapport de timeline | `docs/architecture/timeline.md` |
+| Plan d'action détaillé (prose) | **this file** |
+| Plan d'action structuré pour `/claude-mem:do` | [`docs/development-plan.structured.md`](development-plan.structured.md) |
+| Board GitHub | [Project v2 #1](https://github.com/users/aiskool/projects/1) + 9 epics (#11–#19) + 24 labels + 4 milestones ; procédure vues : [`docs/github-project-views.md`](github-project-views.md) |
+| Architecture de sécurité | [`docs/architecture/security-architecture.md`](architecture/security-architecture.md) |
+| CI/CD initial | [`.github/workflows/ci.yml`](../.github/workflows/ci.yml), [`.github/workflows/security.yml`](../.github/workflows/security.yml), [`.github/dependabot.yml`](../.github/dependabot.yml) |
+| Rapport de timeline (calendrier Gantt) | [`docs/architecture/timeline.md`](architecture/timeline.md) |
+| Rapport de timeline (narratif) | [`docs/timeline-report.md`](timeline-report.md) |
+| Snapshot structurel du repo | [`docs/project-snapshot.md`](project-snapshot.md) |
+| Audit sécurité des livrables | [`docs/security-audit.md`](security-audit.md) |
+| Revue sécurité du diff | [`docs/security-review.md`](security-review.md) |
+| Revue de code des configs | [`docs/code-review.md`](code-review.md) |
+| État des MCPs | [`docs/mcp-status.md`](mcp-status.md) |
+| ADRs | [`docs/adr/`](adr/README.md) — ADR-001 à ADR-008 |
+| Politique de contribution | [`CONTRIBUTING.md`](../CONTRIBUTING.md) |
+| Politique de sécurité (disclosure) | [`SECURITY.md`](../SECURITY.md) |
+| Fixtures AFP (spec) | [`tests/fixtures/README.md`](../tests/fixtures/README.md) |
 
 ---
 
