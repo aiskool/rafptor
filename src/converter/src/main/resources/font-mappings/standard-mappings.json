@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "description": "Standard IBM AFP font to TrueType mapping — Liberation fonts (SIL OFL) when available, PDFBox standard-14 fallback otherwise.",
+  "mappings": [
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0H200",
+      "description": "IBM Courier, Latin-1, various sizes",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Liberation Mono",
+      "fallback_font": "Courier",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0N200",
+      "description": "IBM Sonoran Sans Serif, Latin-1",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Liberation Sans",
+      "fallback_font": "Helvetica",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0S200",
+      "description": "IBM Sonoran Serif, Latin-1",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Liberation Serif",
+      "fallback_font": "Times-Roman",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1GI1147",
+      "afp_charset_prefix": "C0H200",
+      "description": "IBM Courier, French EBCDIC (code page 1147)",
+      "ebcdic_encoding": "IBM1147",
+      "truetype_font": "Liberation Mono",
+      "fallback_font": "Courier",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    }
+  ]
+}

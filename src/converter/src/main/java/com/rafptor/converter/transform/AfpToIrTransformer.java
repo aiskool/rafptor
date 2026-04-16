@@ -1,0 +1,81 @@
+package com.rafptor.converter.transform;
+
+import com.rafptor.converter.ConversionConfig;
+import com.rafptor.converter.font.FontMapper;
+import com.rafptor.converter.font.StandardFontMapper;
+import com.rafptor.converter.ir.IrDocument;
+import com.rafptor.converter.ir.IrPage;
+import com.rafptor.converter.ir.IrTextBlock;
+import com.rafptor.parser.model.AfpDocument;
+import com.rafptor.parser.model.AfpPage;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Walks an {@link AfpDocument} and produces an {@link IrDocument}.
+ */
+public final class AfpToIrTransformer {
+
+    private final ConversionConfig config;
+    private final FontMapper fontMapper;
+    private final TextTransformer textTransformer;
+    private final ImageTransformer imageTransformer = new ImageTransformer();
+    private final GraphicTransformer graphicTransformer = new GraphicTransformer();
+    private final BarcodeTransformer barcodeTransformer = new BarcodeTransformer();
+    private final OverlayResolver overlayResolver = new OverlayResolver();
+    private final MetadataExtractor metadataExtractor = new MetadataExtractor();
+
+    private final List<String> warnings = new ArrayList<>();
+
+    public AfpToIrTransformer(ConversionConfig config) {
+        this(config, new StandardFontMapper());
+    }
+
+    public AfpToIrTransformer(ConversionConfig config, FontMapper fontMapper) {
+        if (config == null) {
+            throw new IllegalArgumentException("config must not be null");
+        }
+        if (fontMapper == null) {
+            throw new IllegalArgumentException("fontMapper must not be null");
+        }
+        this.config = config;
+        this.fontMapper = fontMapper;
+        this.textTransformer = new TextTransformer(fontMapper);
+    }
+
+    public IrDocument transform(AfpDocument afp) {
+        if (afp == null) {
+            throw new IllegalArgumentException("afp must not be null");
+        }
+        warnings.clear();
+        IrDocument out = new IrDocument(afp.name());
+        for (AfpPage page : afp.pages()) {
+            IrPage irPage = new IrPage(
+                    page.name(),
+                    config.defaultPageWidthPt(),
+                    config.defaultPageHeightPt(),
+                    config.afpResolution());
+            for (IrTextBlock block : textTransformer.transform(page.textRuns(), irPage)) {
+                irPage.add(block);
+            }
+            // Image / graphic / barcode transformers are stubs today — see warnings.
+            page.resourceReferences().stream()
+                    .filter(r -> r.type() == com.rafptor.parser.model.AfpResource.ResourceType.PAGE_OVERLAY)
+                    .forEach(r -> warnings.add(overlayResolver.warningFor(r)));
+            out.add(irPage);
+        }
+        if (afp.pages().stream().anyMatch(p -> !p.textRuns().isEmpty())) {
+            // We've at least produced text; keep quiet about stubs in the common case.
+        } else {
+            warnings.add("No PTOCA text runs found in the AFP stream.");
+        }
+        out.setMetadata(metadataExtractor.extract(afp));
+        return out;
+    }
+
+    public List<String> warnings() {
+        return Collections.unmodifiableList(warnings);
+    }
+}
