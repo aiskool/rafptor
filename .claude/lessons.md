@@ -84,6 +84,31 @@ For GraphQL mutations with **scalar** variables, use `gh api graphql -f key=valu
 
 ---
 
+## 2026-04-17 — Code Java écrit sans JDK/Maven local
+
+### Problem
+Le poste de dev n'avait ni JDK ni Maven installés. Impossible de faire tourner `mvn verify` avant le commit pour vérifier la compilation et la couverture.
+
+### Cause
+Poste minimaliste : Python 3, Go, Node installables, mais pas Java. La doctrine du projet : pas d'installation silencieuse (risque de polluer l'env).
+
+### Solution
+Code Java 17 écrit en lecture stricte de la syntaxe (sealed interfaces, records, switch patterns). Validation reportée à la CI GitHub Actions (`.github/workflows/ci.yml` → job `java`). Limitation documentée dans le commit. Les erreurs de compilation éventuelles reviennent au second push.
+
+### Rule
+Quand le poste n'a pas la toolchain d'une cible, **autoriser** l'écriture de code mais :
+1. Être conservateur sur la syntaxe (pas de features bleeding-edge non testées).
+2. Garder chaque fichier compact (≤ 100 lignes) pour réduire la surface d'erreur.
+3. Commiter en explicitant la limitation dans le commit message.
+4. S'appuyer sur CI pour la validation. Réparer au plus vite si rouge.
+5. Ne pas installer une toolchain complète pour "juste valider" — la CI est faite pour ça.
+
+**Why:** s'interdire d'écrire du code uniquement parce que la toolchain locale manque crée un blocage plus coûteux que quelques minutes de feedback CI.
+
+**How to apply:** check la toolchain en Phase 0 ; si absente, ajouter une ligne "CI-only validation" au plan et continuer.
+
+---
+
 ## 2026-04-16 — PreToolUse hook on GitHub Actions workflow writes
 
 ### Problem
