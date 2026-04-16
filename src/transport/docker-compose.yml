@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  receiver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rafptor/receiver:dev
+    environment:
+      RAFPTOR_MASTER_PASSWORD: change-me-in-production
+    volumes:
+      - ./dev/config.yaml:/etc/rafptor/config.yaml:ro
+      - ./dev/host_ed25519:/etc/rafptor/ssh_host_ed25519_key:ro
+      - ./dev/authorized_keys:/etc/rafptor/authorized_keys:ro
+      - uploads:/data/uploads
+      - checkpoints:/data/checkpoints
+      - audit:/var/log/rafptor
+    ports:
+      - "2222:2222"
+
+volumes:
+  uploads:
+  checkpoints:
+  audit:
