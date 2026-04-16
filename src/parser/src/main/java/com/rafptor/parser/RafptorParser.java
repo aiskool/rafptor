@@ -1,0 +1,177 @@
+package com.rafptor.parser;
+
+import com.rafptor.parser.exception.AfpParseException;
+import com.rafptor.parser.model.AfpDocument;
+import com.rafptor.parser.model.AfpPage;
+import com.rafptor.parser.model.AfpResource;
+import com.rafptor.parser.model.AfpStructuredField;
+import com.rafptor.parser.model.RawStructuredField;
+import com.rafptor.parser.modca.BeginDocument;
+import com.rafptor.parser.modca.BeginPage;
+import com.rafptor.parser.modca.EndDocument;
+import com.rafptor.parser.modca.EndPage;
+import com.rafptor.parser.modca.IncludeObject;
+import com.rafptor.parser.modca.IncludePageOverlay;
+import com.rafptor.parser.modca.IncludePageSegment;
+import com.rafptor.parser.modca.MapCodedFont;
+import com.rafptor.parser.modca.PresentationTextData;
+import com.rafptor.parser.modca.TagLogicalElement;
+import com.rafptor.parser.ptoca.PtocaParser;
+import com.rafptor.parser.reader.RecordReader;
+import com.rafptor.parser.reader.StructuredFieldReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+/**
+ * Entry point of the Rafptor AFP parser.
+ *
+ * <p>Reads a binary AFP stream, dispatches Structured Fields to their typed parsers,
+ * and assembles an {@link AfpDocument} AST. The whole parse runs inside a
+ * {@link CompletableFuture} so that a single pathological document cannot stall
+ * a worker indefinitely.
+ */
+public final class RafptorParser {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RafptorParser.class);
+
+    private final ParserLimits limits;
+    private final PtocaParser ptocaParser;
+
+    public RafptorParser() {
+        this(ParserLimits.defaults(), new PtocaParser());
+    }
+
+    public RafptorParser(ParserLimits limits, PtocaParser ptocaParser) {
+        if (limits == null) {
+            throw new IllegalArgumentException("limits must not be null");
+        }
+        if (ptocaParser == null) {
+            throw new IllegalArgumentException("ptocaParser must not be null");
+        }
+        this.limits = limits;
+        this.ptocaParser = ptocaParser;
+    }
+
+    public AfpDocument parse(InputStream input) {
+        if (input == null) {
+            throw new IllegalArgumentException("input must not be null");
+        }
+        CompletableFuture<AfpDocument> future = CompletableFuture.supplyAsync(() -> parseInternal(input));
+        try {
+            return future.get(limits.parseTimeoutMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            throw new AfpParseException("Parse timeout after " + limits.parseTimeoutMillis() + " ms", e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AfpParseException("Parse interrupted", e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof AfpParseException afp) {
+                throw afp;
+            }
+            throw new AfpParseException("Parse failed", cause);
+        }
+    }
+
+    private AfpDocument parseInternal(InputStream input) {
+        RecordReader reader = new RecordReader(input, limits);
+        AfpDocument document = new AfpDocument("UNNAMED");
+        AfpPage currentPage = null;
+        int depth = 0;
+
+        while (reader.hasNext()) {
+            RawStructuredField raw = reader.next();
+            AfpStructuredField sf = StructuredFieldReader.dispatch(raw);
+
+            if (isBegin(sf)) {
+                depth++;
+                if (depth > limits.maxNestingDepth()) {
+                    throw new AfpParseException("Nesting depth exceeds " + limits.maxNestingDepth());
+                }
+            } else if (isEnd(sf)) {
+                depth = Math.max(0, depth - 1);
+            }
+
+            switch (sf) {
+                case BeginDocument bdt -> document = new AfpDocument(defaultNameIfBlank(bdt.documentName(), "UNNAMED"));
+                case EndDocument edt -> LOG.debug("end document name={}", edt.documentName());
+                case BeginPage bpg -> currentPage = new AfpPage(defaultNameIfBlank(bpg.pageName(), "PAGE"));
+                case EndPage epg -> {
+                    if (currentPage != null) {
+                        document.addPage(currentPage);
+                        currentPage = null;
+                    } else {
+                        LOG.warn("EndPage without matching BeginPage: {}", epg.pageName());
+                    }
+                }
+                case MapCodedFont mcf -> mcf.entries().forEach(e ->
+                        document.addResource(new AfpResource(defaultNameIfBlank(e.codedFontName(), "FONT"),
+                                AfpResource.ResourceType.CODED_FONT)));
+                case IncludePageOverlay ipo -> addResource(document, currentPage,
+                        new AfpResource(defaultNameIfBlank(ipo.overlayName(), "OVERLAY"),
+                                AfpResource.ResourceType.PAGE_OVERLAY));
+                case IncludePageSegment ips -> addResource(document, currentPage,
+                        new AfpResource(defaultNameIfBlank(ips.segmentName(), "SEGMENT"),
+                                AfpResource.ResourceType.PAGE_SEGMENT));
+                case IncludeObject iob -> addResource(document, currentPage,
+                        new AfpResource(defaultNameIfBlank(iob.objectName(), "OBJECT"),
+                                AfpResource.ResourceType.OBJECT_CONTAINER));
+                case TagLogicalElement tle -> {
+                    if (tle.attributeName() != null && tle.attributeValue() != null) {
+                        document.putTag(tle.attributeName(), tle.attributeValue());
+                    }
+                }
+                case PresentationTextData ptx -> {
+                    if (currentPage != null) {
+                        ptocaParser.parse(ptx).forEach(currentPage::addTextRun);
+                    }
+                }
+                default -> { /* no-op for envelope / unknown fields in this pass */ }
+            }
+
+            if (currentPage != null) {
+                currentPage.addStructuredField(sf);
+            } else {
+                document.addStructuredField(sf);
+            }
+        }
+        LOG.info("parsed records={} bytes={} pages={}",
+                reader.recordsRead(), reader.bytesConsumed(), document.pages().size());
+        return document;
+    }
+
+    private static boolean isBegin(AfpStructuredField sf) {
+        return sf instanceof BeginDocument
+                || sf instanceof BeginPage
+                || sf instanceof com.rafptor.parser.modca.BeginActiveEnvironmentGroup
+                || sf instanceof com.rafptor.parser.modca.BeginResourceGroup
+                || sf instanceof com.rafptor.parser.modca.BeginObjectEnvironmentGroup;
+    }
+
+    private static boolean isEnd(AfpStructuredField sf) {
+        return sf instanceof EndDocument
+                || sf instanceof EndPage
+                || sf instanceof com.rafptor.parser.modca.EndActiveEnvironmentGroup
+                || sf instanceof com.rafptor.parser.modca.EndResourceGroup
+                || sf instanceof com.rafptor.parser.modca.EndObjectEnvironmentGroup;
+    }
+
+    private static void addResource(AfpDocument document, AfpPage currentPage, AfpResource resource) {
+        if (currentPage != null) {
+            currentPage.addResource(resource);
+        } else {
+            document.addResource(resource);
+        }
+    }
+
+    private static String defaultNameIfBlank(String name, String fallback) {
+        return (name == null || name.isBlank()) ? fallback : name;
+    }
+}
