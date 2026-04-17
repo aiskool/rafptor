@@ -152,3 +152,43 @@ When writing GitHub Actions workflow files under `.github/workflows/`, prefer **
 **How to apply:** keep the policy check in mind; use Bash heredoc as the tool path for workflows.
 
 ---
+
+## 2026-04-17 — GitHub Action tag format — verify before bumping
+
+### Problem
+`aquasecurity/trivy-action@0.28.0` and `@0.33.1` failed with "unable to find version" even though those releases existed. Two pushes burned to discover the right form.
+
+### Cause
+The trivy-action repo has **both** `vX.Y.Z` git tags (e.g. `v0.33.1`) and a separate release-only alias `0.35.0` without the `v`. The actions runner resolves `@<ref>` against git tags. Pinning `0.33.1` (no v) fails because that git tag doesn't exist; only `v0.33.1` (with v) or `0.35.0` (unique release) resolve.
+
+### Solution
+Use `gh api repos/OWNER/REPO/git/refs/tags` (not `/releases`) to see the *actual* git tags before writing `@X` in the workflow. Releases and tags can diverge.
+
+### Rule
+Before pinning a GitHub Action to a version: query **git refs/tags**, not `/releases`. If both `vX.Y.Z` and `X.Y.Z` exist, prefer the `v`-prefixed form — it matches the Marketplace convention and is what most docs show.
+
+**Why:** each wrong tag costs one push + ~2 min CI cycle. Two minutes of verification up front avoids the loop.
+
+**How to apply:** run `gh api repos/<owner>/<repo>/git/refs/tags --jq '.[-10:] | .[] | .ref'` before writing any `uses: owner/action@ref`.
+
+---
+
+## 2026-04-17 — ESLint v9 requires flat config
+
+### Problem
+Dashboard `npm run lint` failed on CI with "ESLint couldn't find an eslint.config.(js|mjs|cjs) file". Lint had never run locally before so the missing config wasn't caught.
+
+### Cause
+`package.json` pinned `eslint: ^9.9.0` but the repo had no `.eslintrc.*` *and* no flat `eslint.config.js`. From v9, the legacy `.eslintrc.*` is no longer the default and `--ext .ts,.tsx` is also a no-op (globs come from the config).
+
+### Solution
+Created `eslint.config.js` exporting the flat-config array (ignores, `js.configs.recommended`, `...tseslint.configs.recommended`, rules). Installed `typescript-eslint@^8` dev-dep. Dropped `--ext` from the npm script.
+
+### Rule
+When a project declares `eslint: ^9` in `package.json`, the repo **must** ship `eslint.config.js` (flat) — not `.eslintrc.*`. Install `typescript-eslint@^8` as a peer for `.ts/.tsx` support.
+
+**Why:** v8 and v9 use incompatible config formats; you can't add ESLint v9 as a dep and then rely on v8-era scripts.
+
+**How to apply:** check `package.json` eslint version before writing the lint command; pair each `eslint@9` with a committed flat config.
+
+---
