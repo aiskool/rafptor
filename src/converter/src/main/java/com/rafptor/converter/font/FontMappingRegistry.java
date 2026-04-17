@@ -26,7 +26,7 @@ public final class FontMappingRegistry {
             if (in == null) {
                 return List.of();
             }
-            return parse(new String(in.readAllBytes()));
+            return parse(new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new IllegalStateException("could not read " + DEFAULT_RESOURCE, e);
         }
