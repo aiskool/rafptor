@@ -1,7 +1,13 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:0/rafptor-test   # overridden by embedded mongo
+      uri: mongodb://localhost:27017/rafptor-test   # overridden by embedded mongo
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 7.0.4
 
 rafptor:
   security:

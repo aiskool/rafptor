@@ -1,0 +1,12 @@
+#!/bin/sh
+TOKEN=""
+SERVER=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --token) TOKEN="$2"; shift 2;;
+    --server) SERVER="$2"; shift 2;;
+    *) shift;;
+  esac
+done
+echo "Rafptor agent (linux) started with token $TOKEN server $SERVER"
+sleep 3600

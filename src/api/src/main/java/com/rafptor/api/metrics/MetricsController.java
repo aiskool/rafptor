@@ -17,7 +17,7 @@ public class MetricsController {
     }
 
     @GetMapping("/overview")
-    public ResponseEntity<DashboardMetrics> overview() {
-        return ResponseEntity.ok(service.overview(TenantContext.get()));
+    public ResponseEntity<MetricsDto> overview() {
+        return ResponseEntity.ok(MetricsDto.from(service.overview(TenantContext.get())));
     }
 }

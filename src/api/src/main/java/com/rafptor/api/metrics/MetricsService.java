@@ -24,11 +24,21 @@ public class MetricsService {
                 + documents.countByTenantIdAndStatus(tenantId, DocumentStatus.CONVERTED)
                 + documents.countByTenantIdAndStatus(tenantId, DocumentStatus.VALIDATED);
         double acceptance = total == 0 ? 0.0 : (double) accepted / (double) total;
-        double avgScore = documents.findByTenantId(tenantId, Pageable.ofSize(200))
-                .stream()
+        var page = documents.findByTenantId(tenantId, Pageable.ofSize(200));
+        var docList = page.getContent();
+        double avgScore = docList.stream()
                 .mapToDouble(d -> d.getCompositeScore())
                 .average()
                 .orElse(0.0);
-        return new DashboardMetrics(total, accepted, review, rejected, acceptance, avgScore);
+        double avgStructural = docList.stream()
+                .mapToDouble(d -> d.getStructuralScore())
+                .average()
+                .orElse(0.0);
+        double avgMetadata = docList.stream()
+                .mapToDouble(d -> d.getMetadataScore())
+                .average()
+                .orElse(0.0);
+        return new DashboardMetrics(total, accepted, review, rejected, acceptance,
+                avgScore, avgStructural, avgMetadata);
     }
 }
