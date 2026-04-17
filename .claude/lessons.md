@@ -212,3 +212,76 @@ Whenever two modules exchange a binary format spec'd elsewhere (MO:DCA, IPDS, PD
 **How to apply:** for every new binary SF added on the producer side, add one end-to-end test that feeds the producer output into the consumer parser. Store the expected-valid byte fixture on only *one* side and assert against it from both. The `scripts/run-e2e-pipeline.sh` runner now exists for exactly this purpose on AFP/MO:DCA.
 
 ---
+
+## 2026-04-17 — flapdoodle embed-mongo has a fixed OS×version matrix
+
+### Problem
+`mvn verify` green locally (macOS ARM64) but failed on GitHub Actions' `ubuntu-latest` (= Ubuntu 24.04) with:
+```
+could not resolve package for GenericFeatureAwareVersion{X.Y.Z}:
+  Platform{operatingSystem=Linux, architecture=X86_64, distribution=Ubuntu}
+```
+Tried 7.0.9, 7.0.4, 6.0.12 — all failed. Burned two CI runs chasing the version string.
+
+### Cause
+`de.flapdoodle.embed.mongo.packageresolver` ships a hard-coded matrix of `{OS × architecture × version}` combinations. macOS has a broad support list; Ubuntu only has rules for **20.04 and 22.04** as of resolver 4.11.1 — nothing for Ubuntu 24.04 which is what `ubuntu-latest` now resolves to. Even a version valid on macOS ARM64 fails on a runner whose Ubuntu version the resolver doesn't know.
+
+### Solution
+Two layers:
+1. Pin the Java CI job to `runs-on: ubuntu-22.04` (known to the resolver).
+2. Pick a MongoDB version that appears in *both* the macOS and Ubuntu tables — **6.0.14** does.
+
+Discovery method (no docs, no web search):
+```
+unzip -p ~/.m2/repository/de/flapdoodle/embed/de.flapdoodle.embed.mongo.packageresolver/4.11.1/…jar \
+  de/flapdoodle/embed/mongo/packageresolver/linux/UbuntuPackageFinder.class \
+  | strings | grep -E '^[0-9]+\.[0-9]'
+```
+Yields the exact list of versions the resolver knows about on Ubuntu, including ARM64/X86_64 flavours. Same trick works for `OSXPackageFinder.class`, `FedoraPackageFinder.class`, etc.
+
+### Rule
+Whenever `embed-mongo` fails to resolve a version:
+1. **Don't guess versions** — inspect `*PackageFinder.class` in the packageresolver jar with `unzip -p … | strings | grep -E '^[0-9]+\.[0-9]'`.
+2. **Pin the runner OS version** (`ubuntu-22.04`, not `ubuntu-latest`) — `ubuntu-latest` silently bumps to a distro the resolver hasn't catalogued yet.
+3. Document both the pin *and* the embed-mongo version in the workflow file and in `application-test.yml`, with a TODO to revert once the resolver catches up.
+
+**Why:** each resolver-version mismatch costs one push + ~1m30 CI cycle. Jar inspection costs 30 s and gives ground truth.
+
+**How to apply:** bake `unzip -p packageresolver.jar *PackageFinder.class | strings | grep -E '^[0-9]+\.[0-9]'` into any future embed-mongo upgrade checklist.
+
+---
+
+## 2026-04-17 — MockMvc `authentication()` post-processor runs *after* servlet filters
+
+### Problem
+`ImagingControllerTest.thumbnailEndpointReturnsPng` failed with `IllegalStateException: no tenant id bound to current thread`, even though the test configures `auth.setDetails(new AuthDetails(tenantId, "user"))` before calling `.with(SecurityMockMvcRequestPostProcessors.authentication(auth))`. Meanwhile `OnboardingControllerTest` using the identical pattern worked fine.
+
+### Cause
+The production flow relies on `TenantFilter` (an `OncePerRequestFilter` ordered after the JWT filter) to read `SecurityContextHolder.getContext().getAuthentication()` and set `TenantContext` (a `ThreadLocal<String>`). Controllers then call `TenantContext.get()`.
+
+In MockMvc, `SecurityMockMvcRequestPostProcessors.authentication()` installs the `Authentication` on the `SecurityContextHolder` via a `RequestPostProcessor` — but RequestPostProcessors run **after** the MockMvc servlet filter chain has already executed. By the time `TenantFilter` looked at the holder, it was still empty. The controller then failed because `TenantContext.get()` threw.
+
+`OnboardingController` worked because it accepts `Authentication auth` as a method parameter — Spring MVC injects it directly from the security context at method-invocation time (not from a ThreadLocal written by a filter).
+
+### Solution
+In `ImagingController`, accept `Authentication auth` on every endpoint and resolve the tenant via a helper:
+```java
+private static String resolveTenant(Authentication auth) {
+    if (auth != null && auth.getDetails() instanceof AuthDetails details) {
+        return details.tenantId();
+    }
+    String fromContext = TenantContext.getOrNull();
+    if (fromContext != null) return fromContext;
+    throw new IllegalStateException("no tenant id available");
+}
+```
+This works in both prod (filter populates `TenantContext`, and `Authentication` is also present) and tests (post-processor installs the `Authentication`).
+
+### Rule
+Controllers that need the tenant id must **accept `Authentication auth` as a parameter** and resolve the tenant from `auth.getDetails()`. Do not rely exclusively on `TenantContext.get()` which reads a ThreadLocal populated by a servlet filter — that ThreadLocal is empty under MockMvc when tests use the `authentication()` post-processor.
+
+**Why:** MockMvc's security post-processors run outside the servlet filter pipeline; ThreadLocals set by filters are never populated in that path. Tests that work around this by calling `TenantContext.set()` manually are brittle and bypass the very integration you want to test.
+
+**How to apply:** for any new `@RestController` endpoint that reads tenant, add `Authentication auth` to the signature. Keep `TenantContext.get()` as a fallback only.
+
+---
