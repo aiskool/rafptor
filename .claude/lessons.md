@@ -192,3 +192,23 @@ When a project declares `eslint: ^9` in `package.json`, the repo **must** ship `
 **How to apply:** check `package.json` eslint version before writing the lint command; pair each `eslint@9` with a committed flat config.
 
 ---
+
+## 2026-04-17 — AFP wire-format divergence between simulator (Py) and parser (Java)
+
+### Problem
+End-to-end run failed on the very first AFP stream with `MalformedFieldException: MCF entry length 0 < 2 at offset 0`. Both sides had passing unit tests in isolation.
+
+### Cause
+The Java parser (`modca/MapCodedFont.java`) implements the MCF-2 repeating-group format: each RG starts with a 1-byte **length prefix** covering itself + body. The Python simulator (`generator/afp_stream.py::_make_mcf`) emitted the body with zero padding bytes but no length prefix. First byte = local_id = 0 → parser read `rg_length = 0` → reject. Nothing in the collector tests could detect this because they only assert on the simulator's own format, not on round-trip parseability.
+
+### Solution
+Added the length-prefix byte on the Python side. Single-line fix; collector unit tests still green; parser now accepts every stream the simulator produces. See `fix(collector): MCF repeating-group length prefix…`.
+
+### Rule
+Whenever two modules exchange a binary format spec'd elsewhere (MO:DCA, IPDS, PDF, etc.), the **cross-implementation test is the source of truth**, not each side's unit tests. Symptoms: one side passes its tests, the other side passes its tests, the integration breaks.
+
+**Why:** unit tests lock in the *chosen* wire format; if the two sides chose differently, both test suites are right and the product is still broken.
+
+**How to apply:** for every new binary SF added on the producer side, add one end-to-end test that feeds the producer output into the consumer parser. Store the expected-valid byte fixture on only *one* side and assert against it from both. The `scripts/run-e2e-pipeline.sh` runner now exists for exactly this purpose on AFP/MO:DCA.
+
+---
