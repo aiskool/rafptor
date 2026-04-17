@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rafptor-validator"
+version = "0.1.0"
+description = "Rafptor automated QA — AFP → PDF conversion quality validator"
+requires-python = ">=3.12"
+readme = "README.md"
+license = { text = "Proprietary" }
+authors = [{ name = "Rafptor Team" }]
+dependencies = [
+    "pymupdf==1.24.4",
+    "pillow==10.3.0",
+    "numpy==1.26.4",
+    "pypdf==4.2.0",
+    "pydantic==2.7.1",
+    "structlog==24.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.2.0",
+    "pytest-cov==5.0.0",
+    "hypothesis==6.100.2",
+    "ruff==0.4.4",
+    "mypy==1.10.0",
+]
+
+[project.scripts]
+rafptor-qa = "rafptor_validator.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "B", "S"]
+ignore = ["S101"]  # assert in tests
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*" = ["S101", "S311"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src/rafptor_validator"]
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "--strict-markers -ra"
