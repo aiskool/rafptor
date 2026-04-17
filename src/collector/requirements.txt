@@ -1,0 +1,2 @@
+# The simulator depends on the Python standard library only.
+# No external runtime dependency is allowed — keep this file empty.

@@ -48,3 +48,7 @@ htmlcov/
 
 # Playwright MCP test artifacts
 .playwright-mcp/
+
+# Personal files that should never enter the repo
+*.xlsx
+*.xls
