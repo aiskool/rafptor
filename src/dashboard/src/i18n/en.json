@@ -1,0 +1,106 @@
+{
+  "common": {
+    "continue": "Continue",
+    "back": "Back",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "loading": "Loading…",
+    "close": "Close"
+  },
+  "auth": {
+    "login": {
+      "title": "Turn your legacy documents into modern PDFs.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "forgot": "Forgot password?",
+      "tenantHint": "Your organization",
+      "testimonial": "\"Rafptor converted 2 million documents for us in 48 h. Impressive.\" — CIO, major French bank"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to Rafptor",
+      "subtitle": "Turn your documents into PDFs in a few minutes.",
+      "cta": "Get started"
+    },
+    "connect": {
+      "step": "Step 2 · Connect your system",
+      "description": "Rafptor connects to your server, installs everything automatically, and finds your documents.",
+      "error": "Unable to connect. Check the address and credentials."
+    },
+    "scanning": {
+      "step": "Step 3 · Scanning",
+      "subtitle": "Rafptor is analysing your system…",
+      "counters": {
+        "documents": "Documents found",
+        "fonts": "Fonts detected",
+        "templates": "Page templates",
+        "bytes": "Total volume",
+        "duration": "Scan duration"
+      }
+    },
+    "review": {
+      "step": "Step 4 · Here's what we found",
+      "launch": "Launch migration",
+      "outputFormat": "Output format",
+      "quality": "Quality",
+      "estimate": "Estimate: conversion in ~{minutes} minutes"
+    },
+    "started": {
+      "title": "All set!",
+      "subtitle": "Your {count} documents are being converted. You'll receive an email when it's done.",
+      "view": "View progress",
+      "safeToClose": "You can close this page. Conversion continues in the background."
+    }
+  },
+  "dashboard": {
+    "overview": {
+      "title": "Overview",
+      "progress": "Progress",
+      "migrations": "Active migrations",
+      "converted": "Converted",
+      "inProgress": "In progress",
+      "toCheck": "To review",
+      "errors": "Errors",
+      "fidelity": "Fidelity score",
+      "documentsToCheck": "Documents to review",
+      "noReview": "Nothing needs your attention."
+    }
+  },
+  "documents": {
+    "title": "Documents",
+    "filters": { "all": "All", "converted": "Converted", "toCheck": "To review", "errors": "Errors" },
+    "detail": { "download": "Download", "metadata": "Metadata", "fidelity": "Fidelity score", "pages": "Pages" }
+  },
+  "review": {
+    "queue": { "title": "Documents to review", "empty": "All validated. Good job!" },
+    "compare": {
+      "original": "Original document",
+      "converted": "Converted document",
+      "approve": "Looks good",
+      "reject": "Redo",
+      "overlay": "Overlay",
+      "diff": "Differences",
+      "page": "Page {current}/{total}"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "thresholds": "Validation thresholds",
+    "acceptThreshold": "Auto-accept threshold",
+    "reviewThreshold": "Human-review threshold",
+    "notifications": "Notifications",
+    "notifyOnComplete": "Notify me when a migration is complete",
+    "notifyOnError": "Notify me on error",
+    "account": "Account",
+    "expertMode": "Expert mode",
+    "expertModeHelp": "Show technical details (fine-grained metrics, raw structure)."
+  },
+  "errors": {
+    "connection": "Cannot connect. Check the address and that the port is open.",
+    "auth": "Invalid credentials.",
+    "deploy": "Agent installation failed.",
+    "unknown": "An unexpected error occurred."
+  }
+}

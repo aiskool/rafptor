@@ -1,0 +1,119 @@
+{
+  "common": {
+    "continue": "Continuer",
+    "back": "Retour",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "loading": "Chargement…",
+    "close": "Fermer"
+  },
+  "auth": {
+    "login": {
+      "title": "Transformez vos documents hérités en PDF modernes.",
+      "email": "Email",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "forgot": "Mot de passe oublié ?",
+      "tenantHint": "Votre organisation",
+      "testimonial": "« Rafptor nous a permis de convertir 2 millions de documents en 48 h. Impressionnant. » — Directeur IT, grande banque française"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Bienvenue sur Rafptor",
+      "subtitle": "Transformez vos documents en PDF en quelques minutes.",
+      "cta": "Commencer"
+    },
+    "connect": {
+      "step": "Étape 2 · Connecter votre système",
+      "description": "Rafptor se connecte à votre serveur, installe tout automatiquement, et détecte vos documents.",
+      "error": "Impossible de se connecter. Vérifiez l'adresse et les identifiants."
+    },
+    "scanning": {
+      "step": "Étape 3 · Analyse en cours",
+      "subtitle": "Rafptor analyse votre système…",
+      "counters": {
+        "documents": "Documents trouvés",
+        "fonts": "Polices détectées",
+        "templates": "Modèles de pages",
+        "bytes": "Volume total",
+        "duration": "Durée du scan"
+      }
+    },
+    "review": {
+      "step": "Étape 4 · Voici ce qu'on a trouvé",
+      "launch": "Lancer la migration",
+      "outputFormat": "Format de sortie",
+      "quality": "Qualité",
+      "estimate": "Estimation : conversion en ~{minutes} minutes"
+    },
+    "started": {
+      "title": "C'est parti !",
+      "subtitle": "Vos {count} documents sont en cours de conversion. Vous recevrez un email quand ce sera terminé.",
+      "view": "Voir la progression",
+      "safeToClose": "Vous pouvez fermer cette page. La conversion continue en arrière-plan."
+    }
+  },
+  "dashboard": {
+    "overview": {
+      "title": "Vue d'ensemble",
+      "progress": "Progression",
+      "migrations": "Migrations en cours",
+      "converted": "Convertis",
+      "inProgress": "En cours",
+      "toCheck": "À vérifier",
+      "errors": "Erreurs",
+      "fidelity": "Score de fidélité",
+      "documentsToCheck": "Documents à vérifier",
+      "noReview": "Aucun document ne nécessite votre attention."
+    }
+  },
+  "documents": {
+    "title": "Documents",
+    "filters": {
+      "all": "Tous",
+      "converted": "Convertis",
+      "toCheck": "À vérifier",
+      "errors": "Erreurs"
+    },
+    "detail": {
+      "download": "Télécharger",
+      "metadata": "Métadonnées",
+      "fidelity": "Score de fidélité",
+      "pages": "Pages"
+    }
+  },
+  "review": {
+    "queue": {
+      "title": "Documents à vérifier",
+      "empty": "Tout est validé. Bon travail !"
+    },
+    "compare": {
+      "original": "Document original",
+      "converted": "Document converti",
+      "approve": "C'est bon",
+      "reject": "À refaire",
+      "overlay": "Superposition",
+      "diff": "Différences",
+      "page": "Page {current}/{total}"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "thresholds": "Seuils de validation",
+    "acceptThreshold": "Seuil d'acceptation automatique",
+    "reviewThreshold": "Seuil de revue humaine",
+    "notifications": "Notifications",
+    "notifyOnComplete": "Notification quand une migration est terminée",
+    "notifyOnError": "Notification en cas d'erreur",
+    "account": "Compte",
+    "expertMode": "Mode expert",
+    "expertModeHelp": "Affiche les détails techniques (métriques fines, structure brute)."
+  },
+  "errors": {
+    "connection": "Connexion impossible. Vérifiez l'adresse et que le port est ouvert.",
+    "auth": "Identifiants incorrects.",
+    "deploy": "Installation de l'agent échouée.",
+    "unknown": "Une erreur inattendue s'est produite."
+  }
+}
