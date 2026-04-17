@@ -200,3 +200,9 @@ Event shape (same as GET progress response):
   "counters": {}
 }
 ```
+
+## Runner pin
+
+The java CI job is pinned to `ubuntu-22.04` because the flapdoodle
+embedded-mongo packageresolver (4.11.1) has no rule for Ubuntu 24.04.
+Revisit once the resolver catches up.
