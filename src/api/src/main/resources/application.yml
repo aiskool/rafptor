@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: rafptor-api
+  data:
+    mongodb:
+      uri: ${RAFPTOR_MONGODB_URI:mongodb://localhost:27017/rafptor}
+  main:
+    banner-mode: "off"
+
+server:
+  port: ${RAFPTOR_API_PORT:8080}
+
+rafptor:
+  security:
+    jwt-secret: ${RAFPTOR_JWT_SECRET:}
+  cors:
+    allowed-origins: ${RAFPTOR_CORS_ALLOWED_ORIGINS:http://localhost:4041}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  pattern:
+    console: '{"ts":"%d{yyyy-MM-dd''T''HH:mm:ss.SSSXXX}","level":"%level","logger":"%logger{40}","msg":"%msg"}%n'
+  level:
+    root: INFO
+    com.rafptor.api: INFO

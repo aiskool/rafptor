@@ -1,33 +1,41 @@
-# Module 7 (frontend) — Dashboard (React / TypeScript)
+# Module 7 (frontend) — Dashboard
 
-Operator and reviewer UI for migration monitoring, metrics, and the exception queue.
+React 18 + Vite + TypeScript dashboard consuming the Rafptor API (Module 7 backend).
 
-## Stack
+## Build & dev
 
-- Vite + React 18 + TypeScript 5
-- TanStack Router + Query
-- Tailwind CSS
-- Vitest + React Testing Library
-- Playwright for E2E
+```bash
+cd src/dashboard
+npm install
+cp .env.example .env      # adjust VITE_API_URL / VITE_WS_URL
+npm run dev               # port 4041 (proxies /api and /ws to the Spring Boot API on :8080)
+npm run build
+```
 
-## Structure
+## Pages
 
-| Path | Purpose |
-|------|---------|
-| `src/components/` | Shared UI primitives |
-| `src/pages/` | Route-level views (overview, exceptions, admin) |
-| `src/hooks/` | API + WebSocket hooks |
-| `src/services/` | API client (OIDC-aware) |
+| Route | Purpose |
+|-------|---------|
+| `/login` | Email + password + tenant id |
+| `/` | Overview dashboard with 5 key metrics |
+| `/pipelines` | Pipeline job list |
+| `/documents` | Document list with filters + pagination |
+| `/documents/:id` | Per-document score breakdown and warnings |
+| `/review` | Queue of documents with status REVIEW |
+| `/review/:id` | Side-by-side review — AFP ref, PDF, diff, SSIM heatmap, approve/reject |
+| `/fonts` | Mapping explorer (stub — Module 4 wiring next) |
+| `/audit` | Admin-only event log (stub) |
 
-## Accessibility
+## Security posture
 
-Target: WCAG 2.2 AA. Every interactive component has keyboard support, ARIA labels, and visible focus states.
+- JWT access token stored **in memory only** via Zustand (no `localStorage`).
+- Automatic refresh on 401 via axios interceptor; single-flight guard.
+- No document bytes downloaded without an auth header — PDF via `fetchDocumentPdfBlob`.
+- Dark theme, banking-grade aesthetic (DM Sans / DM Mono, Grafana/Datadog-inspired).
 
-## Security
+## Known follow-ups
 
-- Tokens stored in HTTP-only secure cookies only; no `localStorage` for auth.
-- CSP `default-src 'self'` + trusted types.
-- SameSite=Strict cookies; CSRF tokens on mutating requests.
-- All API requests over TLS 1.3, mTLS-backed at the edge.
-
-See also: `docs/development-plan.md` §3 Module 7.
+- WebSocket live updates for pipeline progress and review queue (wiring ready in `src/api/websocket.ts`; not yet subscribed from pages).
+- Quality-trend chart with Recharts — data endpoint pending on the backend.
+- Real AFP reference / PDF render / diff panels in `/review/:id`; current view shows placeholders while the backend serves the diff images.
+- E2E Playwright suite.

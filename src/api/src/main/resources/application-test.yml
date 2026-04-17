@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:0/rafptor-test   # overridden by embedded mongo
+
+rafptor:
+  security:
+    jwt-secret: "test-secret-minimum-32-bytes-long-xxxxxxxxxxxxxxx"
+  cors:
+    allowed-origins: "http://localhost:4041"
