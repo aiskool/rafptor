@@ -39,6 +39,16 @@ coverage/
 .coverage
 htmlcov/
 
+# TypeScript / Python build artefacts
+*.tsbuildinfo
+*.egg-info/
+
+# Dashboard: .ts is the source — .js next to .tsx is a compilation artefact
+src/dashboard/src/**/*.js
+
+# Property-based test database
+.jqwik-database
+
 # Prompts
 *PROMPT*
 *prompt*
