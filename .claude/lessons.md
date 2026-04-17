@@ -22,6 +22,30 @@ Format per entry:
 
 ---
 
+## 2026-04-17 — `git add -A` ramasse des fichiers personnels au root
+
+### Problem
+Un fichier `Budget_Road_Trip_Sud_USA.xlsx` du répertoire personnel s'est retrouvé dans un commit autopilot via `git add -A`. Détecté avant `git push` et annulé.
+
+### Cause
+`git add -A` stage tout le répertoire de travail, y compris les fichiers au root non gitignorés. Sur Rafptor le `.gitignore` ne couvrait pas `*.xlsx`.
+
+### Solution
+`git reset --soft HEAD~1` + unstage du fichier + ajout `*.xlsx` / `*.xls` au `.gitignore` + recommit propre. Push seulement après `git ls-files | grep -i <pattern>` pour vérifier.
+
+### Rule
+Avant chaque `git add -A && git commit` autopilot :
+1. `git status --short` et lire **tous** les fichiers stagés.
+2. Repérer les fichiers au root qui n'appartiennent pas au commit (`*.xlsx`, `*.pdf` personnels, notes).
+3. Si doute → `git add <paths explicites>` plutôt que `-A`.
+4. Après commit et avant push → `git show --stat HEAD` pour un dernier regard.
+
+**Why:** un fichier personnel pushé dans un repo public = fuite à vie (archives externes, forks, GitHub history).
+
+**How to apply:** systématiser la vérification avant tout commit autopilot ; enrichir `.gitignore` dès qu'un pattern personnel apparaît au root.
+
+---
+
 ## 2026-04-16 — Skills mismatch vs scope
 
 ### Problem
