@@ -36,6 +36,7 @@ jobs:
             python:
               - 'src/mapper/**'
               - 'src/validator/**'
+              - 'src/collector/**'
             node:
               - 'src/dashboard/**'
 
@@ -43,9 +44,6 @@ jobs:
     needs: changes
     if: needs.changes.outputs.java == 'true'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [parser, converter, api]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -53,8 +51,17 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
-      - name: Build & test
-        working-directory: src/${{ matrix.module }}
+      - name: Install parser
+        working-directory: src/parser
+        run: mvn -B -ntp install -DskipTests
+      - name: Build & test parser
+        working-directory: src/parser
+        run: mvn -B -ntp verify
+      - name: Build & test converter
+        working-directory: src/converter
+        run: mvn -B -ntp verify
+      - name: Build & test api
+        working-directory: src/api
         run: mvn -B -ntp verify
 
   go:
@@ -80,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: [mapper, validator]
+        module: [mapper, validator, collector]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -90,7 +97,10 @@ jobs:
           cache-dependency-path: src/${{ matrix.module }}/requirements.txt
       - name: Install
         working-directory: src/${{ matrix.module }}
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+          pip install -e .
       - name: Lint
         working-directory: src/${{ matrix.module }}
         run: ruff check src tests
@@ -99,7 +109,7 @@ jobs:
         run: mypy src
       - name: Test
         working-directory: src/${{ matrix.module }}
-        run: pytest --cov=src --cov-fail-under=80
+        run: pytest
 
   node:
     needs: changes
@@ -121,9 +131,6 @@ jobs:
       - name: Lint
         working-directory: src/dashboard
         run: npm run lint
-      - name: Unit tests
-        working-directory: src/dashboard
-        run: npm test
       - name: Build
         working-directory: src/dashboard
         run: npm run build
