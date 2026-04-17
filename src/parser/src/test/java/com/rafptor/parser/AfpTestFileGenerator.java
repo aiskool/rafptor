@@ -103,15 +103,17 @@ public final class AfpTestFileGenerator {
     public static byte[] tlePayload(String key, String value) {
         byte[] keyBytes = key.getBytes(EBCDIC);
         byte[] valueBytes = value.getBytes(EBCDIC);
-        byte[] tripletValue = new byte[2 + valueBytes.length];
-        tripletValue[0] = (byte) (2 + valueBytes.length);
-        tripletValue[1] = 0x02;
-        System.arraycopy(valueBytes, 0, tripletValue, 2, valueBytes.length);
-
+        // Triplet 0x02 Fully Qualified Name — carries the key.
         byte[] tripletKey = new byte[2 + keyBytes.length];
         tripletKey[0] = (byte) (2 + keyBytes.length);
-        tripletKey[1] = 0x36;
+        tripletKey[1] = 0x02;
         System.arraycopy(keyBytes, 0, tripletKey, 2, keyBytes.length);
+
+        // Triplet 0x36 Attribute Value — carries the value.
+        byte[] tripletValue = new byte[2 + valueBytes.length];
+        tripletValue[0] = (byte) (2 + valueBytes.length);
+        tripletValue[1] = 0x36;
+        System.arraycopy(valueBytes, 0, tripletValue, 2, valueBytes.length);
 
         byte[] out = new byte[tripletKey.length + tripletValue.length];
         System.arraycopy(tripletKey, 0, out, 0, tripletKey.length);

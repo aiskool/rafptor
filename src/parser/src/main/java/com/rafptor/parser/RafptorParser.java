@@ -99,41 +99,45 @@ public final class RafptorParser {
                 depth = Math.max(0, depth - 1);
             }
 
-            switch (sf) {
-                case BeginDocument bdt -> document = new AfpDocument(defaultNameIfBlank(bdt.documentName(), "UNNAMED"));
-                case EndDocument edt -> LOG.debug("end document name={}", edt.documentName());
-                case BeginPage bpg -> currentPage = new AfpPage(defaultNameIfBlank(bpg.pageName(), "PAGE"));
-                case EndPage epg -> {
-                    if (currentPage != null) {
-                        document.addPage(currentPage);
-                        currentPage = null;
-                    } else {
-                        LOG.warn("EndPage without matching BeginPage: {}", epg.pageName());
-                    }
+            if (sf instanceof BeginDocument bdt) {
+                document = new AfpDocument(defaultNameIfBlank(bdt.documentName(), "UNNAMED"));
+            } else if (sf instanceof EndDocument edt) {
+                LOG.debug("end document name={}", edt.documentName());
+            } else if (sf instanceof BeginPage bpg) {
+                currentPage = new AfpPage(defaultNameIfBlank(bpg.pageName(), "PAGE"));
+            } else if (sf instanceof EndPage epg) {
+                if (currentPage != null) {
+                    document.addPage(currentPage);
+                    currentPage = null;
+                } else {
+                    LOG.warn("EndPage without matching BeginPage: {}", epg.pageName());
                 }
-                case MapCodedFont mcf -> mcf.entries().forEach(e ->
-                        document.addResource(new AfpResource(defaultNameIfBlank(e.codedFontName(), "FONT"),
-                                AfpResource.ResourceType.CODED_FONT)));
-                case IncludePageOverlay ipo -> addResource(document, currentPage,
+            } else if (sf instanceof MapCodedFont mcf) {
+                for (MapCodedFont.Entry e : mcf.entries()) {
+                    document.addResource(new AfpResource(
+                            defaultNameIfBlank(e.codedFontName(), "FONT"),
+                            AfpResource.ResourceType.CODED_FONT));
+                }
+            } else if (sf instanceof IncludePageOverlay ipo) {
+                addResource(document, currentPage,
                         new AfpResource(defaultNameIfBlank(ipo.overlayName(), "OVERLAY"),
                                 AfpResource.ResourceType.PAGE_OVERLAY));
-                case IncludePageSegment ips -> addResource(document, currentPage,
+            } else if (sf instanceof IncludePageSegment ips) {
+                addResource(document, currentPage,
                         new AfpResource(defaultNameIfBlank(ips.segmentName(), "SEGMENT"),
                                 AfpResource.ResourceType.PAGE_SEGMENT));
-                case IncludeObject iob -> addResource(document, currentPage,
+            } else if (sf instanceof IncludeObject iob) {
+                addResource(document, currentPage,
                         new AfpResource(defaultNameIfBlank(iob.objectName(), "OBJECT"),
                                 AfpResource.ResourceType.OBJECT_CONTAINER));
-                case TagLogicalElement tle -> {
-                    if (tle.attributeName() != null && tle.attributeValue() != null) {
-                        document.putTag(tle.attributeName(), tle.attributeValue());
-                    }
+            } else if (sf instanceof TagLogicalElement tle) {
+                if (tle.attributeName() != null && tle.attributeValue() != null) {
+                    document.putTag(tle.attributeName(), tle.attributeValue());
                 }
-                case PresentationTextData ptx -> {
-                    if (currentPage != null) {
-                        ptocaParser.parse(ptx).forEach(currentPage::addTextRun);
-                    }
+            } else if (sf instanceof PresentationTextData ptx) {
+                if (currentPage != null) {
+                    ptocaParser.parse(ptx).forEach(currentPage::addTextRun);
                 }
-                default -> { /* no-op for envelope / unknown fields in this pass */ }
             }
 
             if (currentPage != null) {

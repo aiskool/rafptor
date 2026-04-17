@@ -133,8 +133,10 @@ public final class RecordReader implements Iterator<RawStructuredField> {
         int dataLength = declaredLength - HEADER_SIZE;
         byte[] data = readExact(dataLength);
 
-        bytesConsumed += (long) (declaredLength - 1); // -1: cc already counted
-        incrementDocumentSize(declaredLength - 1);
+        // declaredLength covers length(2) + id(3) + flags(1) + reserved(2) + data(N).
+        // bytesConsumed already counted the 1-byte CC prefix, so add declaredLength.
+        bytesConsumed += (long) declaredLength;
+        incrementDocumentSize(declaredLength);
         recordsRead++;
 
         StructuredFieldId id = new StructuredFieldId(idClass, idType, idCategory);
