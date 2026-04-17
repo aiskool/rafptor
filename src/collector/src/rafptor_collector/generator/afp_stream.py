@@ -79,12 +79,19 @@ class AfpStreamGenerator:
         charset_name: str = "C0H20000",
         codepage_name: str = "T1V10500",
     ) -> bytes:
-        """Simplified Map Coded Font with a single repeating group."""
+        """Simplified Map Coded Font with a single repeating group.
+
+        Wire format expected by the parser (MCF-2 variant):
+        ``[rg_length][local_id][charset 8B EBCDIC][codepage 8B EBCDIC]``
+        ``rg_length`` covers itself + the 1-byte local-id + the name bytes.
+        """
+        body = bytearray()
+        body.append(font_local_id & 0xFF)
+        body.extend(self._encode_text(charset_name[:8].ljust(8)))
+        body.extend(self._encode_text(codepage_name[:8].ljust(8)))
         rg = bytearray()
-        rg.append(font_local_id & 0xFF)
-        rg.extend(b"\x00\x00\x00")
-        rg.extend(self._encode_text(charset_name[:8].ljust(8)))
-        rg.extend(self._encode_text(codepage_name[:8].ljust(8)))
+        rg.append(1 + len(body))  # length prefix: includes the length byte itself
+        rg.extend(body)
         return bytes(rg)
 
     def generate_document(
