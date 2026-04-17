@@ -12,8 +12,8 @@ def test_minimal_document_starts_with_bdt() -> None:
 
 def test_document_ends_with_edt() -> None:
     stream = AfpStreamGenerator().generate_document(doc_name="TESTDOC")
-    # Last record = 8-byte header + 8-byte EDT payload.
-    final_record_start = len(stream) - (8 + 8)
+    # Last record = 1-byte CC + 8-byte header + 8-byte EDT payload.
+    final_record_start = len(stream) - (1 + 8 + 8)
     assert stream[final_record_start] == c.AFP_CC
     assert stream[final_record_start + 3 : final_record_start + 6] == c.SF_EDT
 
@@ -45,9 +45,9 @@ def test_cp500_encoding() -> None:
     assert encoded == b"\xC1"  # "A" in EBCDIC cp500
 
 
-def test_cp1147_encoding() -> None:
-    gen = AfpStreamGenerator(encoding="cp1147")
-    encoded = gen._encode_text("é")  # type: ignore[attr-defined]
+def test_cp1140_encoding() -> None:
+    gen = AfpStreamGenerator(encoding="cp1140")
+    encoded = gen._encode_text("€")  # type: ignore[attr-defined]
     assert len(encoded) == 1
 
 

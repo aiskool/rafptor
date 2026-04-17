@@ -18,7 +18,7 @@ def render_glyph(
 ) -> Image.Image:
     if not char:
         raise ValueError("char must not be empty")
-    font = ImageFont.truetype(str(ttf_path), size_px)
+    font = ImageFont.truetype(str(ttf_path), size_px)  # type: ignore[no-untyped-call]
     try:
         bbox = font.getbbox(char)
     except Exception:  # pragma: no cover - fontTools/PIL compat shim

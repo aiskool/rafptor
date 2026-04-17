@@ -18,11 +18,13 @@ def _score(verdict: QaVerdict, composite: float) -> QaScore:
 
 
 def test_accepted_maps_to_archive() -> None:
-    decision = route_document("doc1", Path("/tmp/doc1.pdf"), _score(QaVerdict.ACCEPTED, 0.95))
+    pdf = Path("/tmp/doc1.pdf")  # noqa: S108
+    decision = route_document("doc1", pdf, _score(QaVerdict.ACCEPTED, 0.95))
     assert decision.action == "archive"
     assert "auto-validated" in decision.reason.lower()
 
 
 def test_rejected_maps_to_reconversion() -> None:
-    decision = route_document("doc1", Path("/tmp/doc1.pdf"), _score(QaVerdict.REJECTED, 0.5))
+    pdf = Path("/tmp/doc1.pdf")  # noqa: S108
+    decision = route_document("doc1", pdf, _score(QaVerdict.REJECTED, 0.5))
     assert decision.action == "flag_for_reconversion"

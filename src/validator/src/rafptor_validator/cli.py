@@ -56,7 +56,9 @@ def main(argv: list[str] | None = None) -> int:
     p_report.add_argument("results", type=Path, help="aggregate JSON from batch")
     p_report.add_argument("--output", type=Path, required=True)
 
-    p_baseline = subparsers.add_parser("baseline", help="Rasterise a gold-standard PDF as reference")
+    p_baseline = subparsers.add_parser(
+        "baseline", help="Rasterise a gold-standard PDF as reference"
+    )
     p_baseline.add_argument("pdf_dir", type=Path)
     p_baseline.add_argument("--output", type=Path, required=True)
     p_baseline.add_argument("--dpi", type=int, default=300)

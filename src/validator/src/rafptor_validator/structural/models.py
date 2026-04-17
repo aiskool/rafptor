@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 
 @dataclass
@@ -18,7 +19,7 @@ class TextValidationResult:
     overall_match_ratio: float
     total_afp_chars: int
     total_matching_chars: int
-    page_results: list[dict] = field(default_factory=list)
+    page_results: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass

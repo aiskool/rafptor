@@ -19,15 +19,29 @@ def _visual(score: float) -> VisualScore:
 
 
 def _text(ratio: float) -> TextValidationResult:
-    return TextValidationResult(overall_match_ratio=ratio, total_afp_chars=10, total_matching_chars=int(10 * ratio))
+    return TextValidationResult(
+        overall_match_ratio=ratio,
+        total_afp_chars=10,
+        total_matching_chars=int(10 * ratio),
+    )
 
 
 def _pages(match: bool) -> PageValidationResult:
-    return PageValidationResult(afp_page_count=1, pdf_page_count=1 if match else 2, pages_match=match, message="")
+    return PageValidationResult(
+        afp_page_count=1,
+        pdf_page_count=1 if match else 2,
+        pages_match=match,
+        message="",
+    )
 
 
 def _tle(ratio: float) -> TleValidationResult:
-    return TleValidationResult(total_tle=1, preserved_tle=int(ratio), match_ratio=ratio, passed=ratio >= 1.0)
+    return TleValidationResult(
+        total_tle=1,
+        preserved_tle=int(ratio),
+        match_ratio=ratio,
+        passed=ratio >= 1.0,
+    )
 
 
 def test_perfect_scores_are_accepted() -> None:

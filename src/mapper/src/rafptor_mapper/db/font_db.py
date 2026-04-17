@@ -10,22 +10,22 @@ from __future__ import annotations
 
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import Protocol
+from typing import Any, Protocol
 
 from ..matching.models import MatchResult
 
 
 class FontDatabase(Protocol):
     def save_mapping(self, result: MatchResult, client_id: str) -> None: ...
-    def find_existing_mapping(self, afp_font_name: str) -> dict | None: ...
-    def get_mapping_stats(self) -> dict: ...
+    def find_existing_mapping(self, afp_font_name: str) -> dict[str, Any] | None: ...
+    def get_mapping_stats(self) -> dict[str, Any]: ...
 
 
 class InMemoryFontDatabase:
     """Reference implementation used by tests and the dev CLI."""
 
     def __init__(self) -> None:
-        self._items: list[dict] = []
+        self._items: list[dict[str, Any]] = []
 
     def save_mapping(self, result: MatchResult, client_id: str) -> None:
         doc = asdict(result)
@@ -34,13 +34,13 @@ class InMemoryFontDatabase:
         doc["validated"] = True
         self._items.append(doc)
 
-    def find_existing_mapping(self, afp_font_name: str) -> dict | None:
+    def find_existing_mapping(self, afp_font_name: str) -> dict[str, Any] | None:
         for doc in self._items:
             if doc.get("afp_font_name") == afp_font_name:
                 return doc
         return None
 
-    def get_mapping_stats(self) -> dict:
+    def get_mapping_stats(self) -> dict[str, Any]:
         total = len(self._items)
         confidences = {"high": 0, "medium": 0, "low": 0}
         for doc in self._items:
@@ -55,12 +55,12 @@ class MongoFontDatabase:
 
     def __init__(self, uri: str, database: str = "rafptor") -> None:
         try:
-            from pymongo import MongoClient  # type: ignore[import-not-found]
+            from pymongo import MongoClient
         except ImportError as exc:
             raise RuntimeError(
                 "pymongo is required for MongoFontDatabase but is not installed"
             ) from exc
-        self._client = MongoClient(uri)
+        self._client: Any = MongoClient(uri)
         self._db = self._client[database]
         self._coll = self._db["font_mappings"]
 
@@ -71,10 +71,13 @@ class MongoFontDatabase:
         doc["validated"] = True
         self._coll.insert_one(doc)
 
-    def find_existing_mapping(self, afp_font_name: str) -> dict | None:
-        return self._coll.find_one({"afp_font_name": afp_font_name})
+    def find_existing_mapping(self, afp_font_name: str) -> dict[str, Any] | None:
+        result: dict[str, Any] | None = self._coll.find_one(
+            {"afp_font_name": afp_font_name}
+        )
+        return result
 
-    def get_mapping_stats(self) -> dict:
+    def get_mapping_stats(self) -> dict[str, Any]:
         total = self._coll.count_documents({})
         by_confidence: dict[str, int] = {}
         for doc in self._coll.find({}, {"confidence": 1}):

@@ -21,7 +21,7 @@ def _result() -> QaPipelineResult:
         document_id="doc-1",
         verdict=QaVerdict.ACCEPTED,
         composite_score=0.95,
-        pdf_path=Path("/tmp/doc-1.pdf"),
+        pdf_path=Path("/tmp/doc-1.pdf"),  # noqa: S108
         timestamp=datetime(2026, 4, 17, 12, 0, tzinfo=timezone.utc),
         action="archive",
         reason="ok",

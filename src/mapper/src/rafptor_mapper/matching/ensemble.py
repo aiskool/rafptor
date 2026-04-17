@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ..config import CONFIDENCE_HIGH, CONFIDENCE_MEDIUM, DEFAULT_WEIGHTS
 from .metrics_matcher import compare_metrics
@@ -45,7 +45,7 @@ def find_best_match(
     afp_widths: dict[str, float],
     afp_height: float,
     afp_baseline: float,
-    candidates: list[dict],
+    candidates: list[dict[str, Any]],
 ) -> list[MatchResult]:
     """Return candidates sorted by combined score (best first).
 

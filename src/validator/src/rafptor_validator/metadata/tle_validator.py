@@ -20,7 +20,7 @@ def _extract_pdf_metadata(pdf_path: Path) -> dict[str, str]:
                 continue
             merged[str(key)] = str(value)
         try:
-            xmp_xml = doc.xref_xml_metadata()  # type: ignore[attr-defined]
+            xmp_xml = doc.xref_xml_metadata()
         except Exception:  # pragma: no cover - PyMuPDF compat shim
             xmp_xml = None
         if xmp_xml:

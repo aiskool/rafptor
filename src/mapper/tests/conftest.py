@@ -30,7 +30,7 @@ def tiny_afp_charset(tmp_path: Path) -> Path:
     logic (length + id + payload).
     """
     data = bytearray()
-    # Unknown structured field: 0x5A | length=0x0009 | id=0xD3 0xFF 0xFF | flags+reserved | 1 byte payload
+    # Unknown SF: 0x5A | len=0x0009 | id=0xD3 0xFF 0xFF | flags+reserved | 1-byte payload
     data += bytes([0x5A, 0x00, 0x09, 0xD3, 0xFF, 0xFF, 0x00, 0x00, 0x00])
     data += bytes([0x00])
     path = tmp_path / "charset.bin"

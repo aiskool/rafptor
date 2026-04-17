@@ -7,6 +7,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+from typing import Any
 
 from .afp_font.glyph_extractor import extract_all_glyphs
 from .afp_font.reader import AfpFontReader
@@ -95,7 +96,7 @@ def _cmd_match(args: argparse.Namespace) -> int:
     baseline = estimate_baseline(font.glyphs)
 
     catalog = FontCatalog(args.catalog)
-    candidates: list[dict] = []
+    candidates: list[dict[str, Any]] = []
     chars = list(afp_glyphs.keys())[:32]
     for ttf in catalog.get_all():
         try:
@@ -152,11 +153,11 @@ def _cmd_batch(args: argparse.Namespace) -> int:
         height = estimate_height(font.glyphs)
         baseline = estimate_baseline(font.glyphs)
         chars = list(afp_glyphs.keys())[:32]
-        candidates = []
+        candidates: list[dict[str, Any]] = []
         for ttf in catalog.get_all():
             try:
                 glyphs = render_charset(ttf.path, chars)
-            except Exception:  # noqa: BLE001
+            except Exception:  # noqa: BLE001, S112
                 continue
             candidates.append(
                 {

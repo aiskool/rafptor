@@ -28,7 +28,7 @@ def validate_pdfa(pdf_path: Path) -> PdfAValidationResult:
         if obj and "OutputIntents" in obj:
             has_intent = True
         try:
-            xmp_xml = doc.xref_xml_metadata()  # type: ignore[attr-defined]
+            xmp_xml = doc.xref_xml_metadata()
         except Exception:  # pragma: no cover
             xmp_xml = None
         if xmp_xml:

@@ -9,7 +9,6 @@ from ..bundle.assembler import BundleAssembler
 from ..generator.afp_resources import generate_overlay, generate_standard_font
 from ..generator.afp_stream import AfpStreamGenerator
 
-
 _DOC_TYPES = [
     "RELEVE", "FACTURE", "AVIS", "RELEVE", "FACTURE",
     "RELEVE", "AVIS", "FACTURE", "RELEVE", "RELEVE",

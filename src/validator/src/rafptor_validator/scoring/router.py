@@ -7,7 +7,6 @@ from pathlib import Path
 
 from .models import QaDecision, QaScore, QaVerdict
 
-
 _ACTIONS = {
     QaVerdict.ACCEPTED: "archive",
     QaVerdict.NEEDS_REVIEW: "queue_for_review",
@@ -21,7 +20,10 @@ def _reason(score: QaScore) -> str:
         return f"Score {pct} >= accept threshold — auto-validated."
     if score.verdict is QaVerdict.NEEDS_REVIEW:
         worst = score.details.get("ssim_min_page", "n/a")
-        return f"Score {pct} between review and accept thresholds — human review required (worst-page SSIM={worst})."
+        return (
+            f"Score {pct} between review and accept thresholds — "
+            f"human review required (worst-page SSIM={worst})."
+        )
     return (
         f"Score {pct} below review threshold — reconversion required "
         f"(text match={score.details.get('text_match_ratio', 'n/a')}, "

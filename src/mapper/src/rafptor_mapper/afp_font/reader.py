@@ -14,9 +14,8 @@ and the stream is never executed.
 from __future__ import annotations
 
 import struct
-from dataclasses import field
 from pathlib import Path
-from typing import BinaryIO
+from typing import Any, BinaryIO
 
 from ..config import MAX_CHARSET_SIZE
 from .models import AfpFont, CharsetInfo, FontMetadata, GlyphEntry
@@ -57,9 +56,9 @@ class AfpFontReader:
 
     def _parse_stream(
         self, f: BinaryIO
-    ) -> tuple[FontMetadata, list[dict], bytes, list[str]]:
+    ) -> tuple[FontMetadata, list[dict[str, Any]], bytes, list[str]]:
         metadata = FontMetadata()
-        index_entries: list[dict] = []
+        index_entries: list[dict[str, Any]] = []
         patterns = bytearray()
         warnings: list[str] = []
 
@@ -137,10 +136,10 @@ class AfpFontReader:
                 metadata.resolution_y = res_y
 
     @staticmethod
-    def _parse_font_index(data: bytes) -> list[dict]:
+    def _parse_font_index(data: bytes) -> list[dict[str, Any]]:
         # Each entry uses an 8-byte GCGID followed by big-endian metric shorts.
         # The full record length is vendor-dependent; 26 bytes is a common value.
-        entries: list[dict] = []
+        entries: list[dict[str, Any]] = []
         entry_size = 26
         if not data or len(data) < entry_size:
             return entries
@@ -165,7 +164,7 @@ class AfpFontReader:
 
     @staticmethod
     def _assemble(
-        index: list[dict],
+        index: list[dict[str, Any]],
         patterns: bytes,
         metadata: FontMetadata,
         warnings: list[str],

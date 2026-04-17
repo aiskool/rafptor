@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from typing import Any
 
-SEED_MAPPINGS: list[dict] = [
+SEED_MAPPINGS: list[dict[str, Any]] = [
     {
         "afp_codepage": "T1V10500",
         "afp_charset_prefix": "C0H200",

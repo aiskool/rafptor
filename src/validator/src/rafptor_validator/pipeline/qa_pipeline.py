@@ -10,6 +10,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from PIL.Image import Image as PilImage
+
 from ..config import DEFAULT_DPI
 from ..metadata.models import TleValidationResult
 from ..metadata.tle_validator import validate_tle
@@ -17,7 +19,7 @@ from ..scoring.models import QaDecision, QaVerdict
 from ..scoring.router import route_document
 from ..scoring.scorer import compute_qa_score
 from ..scoring.thresholds import ScoringThresholds, ScoringWeights
-from ..structural.models import PageValidationResult, TextValidationResult
+from ..structural.models import TextValidationResult
 from ..structural.page_validator import validate_page_count
 from ..structural.text_validator import compare_text, extract_pdf_text
 from ..visual.afp_rasterizer import load_reference_images
@@ -76,7 +78,7 @@ def _empty_visual_score() -> VisualScore:
 
 
 def _run_visual_comparison(
-    pdf_pages: list,
+    pdf_pages: list[PilImage],
     reference_dir: Path | None,
     diff_output_dir: Path | None,
     warnings: list[str],

@@ -9,6 +9,7 @@ heuristic that is well-behaved on text whose order is preserved.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import fitz
 
@@ -46,7 +47,7 @@ def compare_text(
 ) -> TextValidationResult:
     total_afp = 0
     total_match = 0
-    page_results: list[dict] = []
+    page_results: list[dict[str, Any]] = []
 
     max_pages = max(len(afp_text_pages), len(pdf_text_pages))
     for i in range(max_pages):

@@ -24,7 +24,8 @@ def glyph_to_image(glyph: GlyphEntry) -> Image.Image:
     bits = bits[:, : glyph.width]
     # AFP: 1 = ink (black). PIL L: 0 = black, 255 = white.
     pixels = ((1 - bits) * 255).astype(np.uint8)
-    return Image.fromarray(pixels, mode="L")
+    img: Image.Image = Image.fromarray(pixels, mode="L")  # type: ignore[no-untyped-call]
+    return img
 
 
 def normalize_glyph(img: Image.Image, target_size: int = GLYPH_TARGET_SIZE) -> Image.Image:

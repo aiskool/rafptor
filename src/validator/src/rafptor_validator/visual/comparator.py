@@ -9,6 +9,8 @@ exactly ``1.0`` and entirely uncorrelated inputs yield scores close to ``0``.
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 from PIL import Image
 
@@ -26,7 +28,7 @@ def _ensure_same_size(ref: Image.Image, test: Image.Image) -> Image.Image:
     return test.resize(ref.size, Image.Resampling.LANCZOS)
 
 
-def _ssim_single(a: np.ndarray, b: np.ndarray) -> float:
+def _ssim_single(a: "np.ndarray[Any, Any]", b: "np.ndarray[Any, Any]") -> float:
     """SSIM between two already-aligned float64 arrays."""
     if a.size == 0 or b.size == 0:
         return 1.0
@@ -102,7 +104,7 @@ def compute_pixel_diff(
     percentage = count / total
     rgb = np.stack([np.asarray(test)] * 3, axis=-1).astype(np.uint8)
     rgb[mask] = (255, 50, 50)
-    return count, percentage, Image.fromarray(rgb, mode="RGB")
+    return count, percentage, Image.fromarray(rgb, mode="RGB")  # type: ignore[no-untyped-call]
 
 
 def compare_page(
