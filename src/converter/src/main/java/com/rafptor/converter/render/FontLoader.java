@@ -39,22 +39,26 @@ public final class FontLoader {
     }
 
     private PDFont tryLoadTrueType(PDDocument document, String name) {
-        String fileName = name.replace(" ", "") + ".ttf";
-        InputStream in = FontLoader.class.getResourceAsStream("/fonts/" + fileName);
-        if (in != null) {
-            try (InputStream stream = in) {
-                return org.apache.pdfbox.pdmodel.font.PDType0Font.load(document, stream);
-            } catch (Exception ignore) {
-                // fall through to disk lookup
-            }
-        }
-        if (fontDir != null) {
-            Path onDisk = fontDir.resolve(fileName);
-            if (Files.exists(onDisk)) {
-                try (InputStream stream = Files.newInputStream(onDisk)) {
+        String base = name.replace(" ", "");
+        // Try common filename variants: "Name.ttf", "Name-Regular.ttf", "NameRegular.ttf".
+        String[] candidates = { base + ".ttf", base + "-Regular.ttf", base + "Regular.ttf" };
+        for (String fileName : candidates) {
+            InputStream in = FontLoader.class.getResourceAsStream("/fonts/" + fileName);
+            if (in != null) {
+                try (InputStream stream = in) {
                     return org.apache.pdfbox.pdmodel.font.PDType0Font.load(document, stream);
                 } catch (Exception ignore) {
-                    // fall through to standard-14
+                    // try next candidate
+                }
+            }
+            if (fontDir != null) {
+                Path onDisk = fontDir.resolve(fileName);
+                if (Files.exists(onDisk)) {
+                    try (InputStream stream = Files.newInputStream(onDisk)) {
+                        return org.apache.pdfbox.pdmodel.font.PDType0Font.load(document, stream);
+                    } catch (Exception ignore) {
+                        // try next
+                    }
                 }
             }
         }

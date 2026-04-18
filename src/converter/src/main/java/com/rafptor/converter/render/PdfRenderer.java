@@ -92,6 +92,10 @@ public final class PdfRenderer {
 
     private void renderText(PDDocument doc, PDPageContentStream cs, IrTextBlock text, double pdfY)
             throws IOException {
+        String rendered = sanitize(text.text());
+        if (rendered.isEmpty()) {
+            return;
+        }
         PDFont font = fontLoader.load(doc, text.fontName());
         Color color = ColorUtil.parse(text.color());
         cs.beginText();
@@ -101,8 +105,43 @@ public final class PdfRenderer {
         if (text.charSpacing() != 0) {
             cs.setCharacterSpacing((float) text.charSpacing());
         }
-        cs.showText(text.text());
+        try {
+            cs.showText(rendered);
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            // The current font lacks a glyph for some character — typically
+            // a PDFBox standard-14 fallback meeting a Unicode code point
+            // outside WinAnsiEncoding, or a TrueType font without a mapping
+            // for a control-range char. Retry with an ASCII-only rewrite;
+            // if even that fails we drop the run rather than abort the page.
+            try {
+                cs.showText(asciiOnly(rendered));
+            } catch (IllegalArgumentException | IllegalStateException ignore) {
+                // give up silently on this run
+            }
+        }
         cs.endText();
+    }
+
+    private static String sanitize(String text) {
+        StringBuilder sb = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            // Drop C0 controls except tab, keep printable Unicode.
+            if (c < 0x20 && c != '\t') {
+                continue;
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+    private static String asciiOnly(String text) {
+        StringBuilder sb = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            sb.append(c >= 0x20 && c < 0x7F ? c : '?');
+        }
+        return sb.toString();
     }
 
     private void renderImage(PDDocument doc, PDPageContentStream cs, IrImage img, double pdfY,
