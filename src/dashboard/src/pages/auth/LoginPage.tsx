@@ -22,7 +22,7 @@ export default function LoginPage() {
     setBusy(true);
     try {
       await login(email, password, tenant);
-      navigate("/");
+      navigate("/onboarding/welcome");
     } catch {
       pushToast({ title: t("errors.auth"), variant: "danger" });
     } finally {

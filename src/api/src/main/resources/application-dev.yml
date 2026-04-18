@@ -1,0 +1,19 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/rafptor-dev
+
+rafptor:
+  security:
+    jwt-secret: "dev-only-secret-do-not-use-in-production-xxxxxxxxxx"
+  cors:
+    allowed-origins: "http://localhost:4041"
+  dev:
+    user:
+      email: "aiskoolapp@gmail.com"
+      password: "Test1234!devseed"
+      tenant: "rafptor-demo"
+
+logging:
+  level:
+    com.rafptor.api: DEBUG

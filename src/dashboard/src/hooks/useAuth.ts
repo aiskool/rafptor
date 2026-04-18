@@ -1,9 +1,16 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import * as authApi from "@/api/auth";
 
 export function useAuth() {
   const { accessToken, user, setTokens, setUser, clear } = useAuthStore();
+
+  useEffect(() => {
+    // Rehydrate the user profile on refresh when we have a token but no user.
+    if (accessToken && !user) {
+      authApi.me().then(setUser).catch(() => clear());
+    }
+  }, [accessToken, user, setUser, clear]);
 
   const login = useCallback(
     async (email: string, password: string, tenantId: string) => {

@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { CheckCircle2, FileText, HelpCircle, LayoutDashboard, Settings } from "lucide-react";
+import { CheckCircle2, FileText, HelpCircle, LayoutDashboard, Plus, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Divider } from "@/components/ui/Divider";
 
@@ -9,6 +9,12 @@ const NAV = [
   { to: "/review", label: "Vérification", icon: CheckCircle2 },
   { to: "/settings", label: "Paramètres", icon: Settings },
 ];
+
+const PRIMARY_ACTION = {
+  to: "/onboarding/welcome",
+  label: "Nouvelle analyse",
+  icon: Plus,
+};
 
 export function Sidebar() {
   return (
@@ -20,6 +26,15 @@ export function Sidebar() {
         </span>
       </div>
       <Divider />
+      <div className="px-3 pt-3">
+        <NavLink
+          to={PRIMARY_ACTION.to}
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-3 py-2 text-sm font-medium text-white hover:bg-accent-hover transition-colors"
+        >
+          <PRIMARY_ACTION.icon className="h-4 w-4" />
+          {PRIMARY_ACTION.label}
+        </NavLink>
+      </div>
       <nav className="flex flex-1 flex-col gap-0.5 p-3">
         {NAV.map(({ to, label, icon: Icon }) => (
           <NavLink

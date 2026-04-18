@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { UserProfile } from "@/api/types";
 
 interface AuthState {
@@ -11,16 +12,20 @@ interface AuthState {
 }
 
 /**
- * Tokens are kept in memory only — never in localStorage — so a full
- * page refresh requires a new login. A production build will upgrade the
- * refresh flow to an HTTP-only secure cookie set by the backend.
+ * Persisted to localStorage so a page refresh keeps the session. A production
+ * build will upgrade the refresh flow to an HTTP-only secure cookie set by
+ * the backend and drop the refreshToken from the persisted state.
  */
-export const useAuthStore = create<AuthState>((set) => ({
-  accessToken: null,
-  refreshToken: null,
-  user: null,
-  setTokens: (access, refresh) =>
-    set({ accessToken: access, refreshToken: refresh }),
-  setUser: (user) => set({ user }),
-  clear: () => set({ accessToken: null, refreshToken: null, user: null }),
-}));
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      refreshToken: null,
+      user: null,
+      setTokens: (access, refresh) => set({ accessToken: access, refreshToken: refresh }),
+      setUser: (user) => set({ user }),
+      clear: () => set({ accessToken: null, refreshToken: null, user: null }),
+    }),
+    { name: "rafptor-auth" }
+  )
+);

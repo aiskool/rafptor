@@ -1,15 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import { FileText } from "lucide-react";
+import { Link } from "react-router-dom";
+import { FileText, Plus } from "lucide-react";
 import { DocumentCard, type DocumentCardData } from "@/components/data/DocumentCard";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
 import { t } from "@/i18n";
 
 type Filter = "all" | "converted" | "toCheck" | "errors";
 
-// Demo data; replace with /api/documents?filter= and pagination.
+// Swap for a real /api/documents?filter= fetch once the backend is wired.
+const HAS_DATA = false;
+
 function makeDemo(n: number): DocumentCardData[] {
+  if (!HAS_DATA) return [];
   return Array.from({ length: n }).map((_, i) => ({
     id: `doc_${i + 1}`,
     name: `REL_${String(i + 1).padStart(5, "0")}`,
@@ -78,7 +83,19 @@ export default function DocumentsPage() {
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={<FileText className="h-5 w-5" />}
-          title="Aucun document dans ce filtre"
+          title={items.length === 0 ? "Aucun document pour l'instant" : "Aucun document dans ce filtre"}
+          description={
+            items.length === 0
+              ? "Lancez une première analyse pour voir vos documents convertis ici."
+              : undefined
+          }
+          action={
+            items.length === 0 ? (
+              <Link to="/onboarding/welcome">
+                <Button leftIcon={<Plus className="h-4 w-4" />}>Nouvelle analyse</Button>
+              </Link>
+            ) : undefined
+          }
         />
       ) : (
         <>
