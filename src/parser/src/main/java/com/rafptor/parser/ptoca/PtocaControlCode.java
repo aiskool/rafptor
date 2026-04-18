@@ -7,7 +7,10 @@ package com.rafptor.parser.ptoca;
  */
 public final class PtocaControlCode {
 
-    public static final int SET_CODED_FONT_LOCAL = 0xF1;
+    // Canonical MO:DCA PTOCA opcodes with LSB cleared. On the wire the LSB
+    // can be set when a chained continuation follows; {@link PtocaParser}
+    // always masks with 0xFE before comparing against these constants.
+    public static final int SET_CODED_FONT_LOCAL = 0xF0;
     public static final int ABSOLUTE_MOVE_BASELINE = 0xD2;
     public static final int ABSOLUTE_MOVE_INLINE = 0xC6;
     public static final int RELATIVE_MOVE_INLINE = 0xC8;
