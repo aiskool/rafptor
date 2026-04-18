@@ -1,6 +1,5 @@
 package com.rafptor.parser.reader;
 
-import com.rafptor.parser.exception.MalformedFieldException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +31,12 @@ public final class TripletParser {
         while (pos < end) {
             int length = data[pos] & 0xFF;
             if (length < 2) {
-                throw new MalformedFieldException("Triplet length " + length + " < 2 at offset " + pos);
+                // Padding / stop byte encountered — stop rather than abort the whole record.
+                break;
             }
             if (pos + length > end) {
-                throw new MalformedFieldException(
-                        "Triplet of declared length " + length + " extends past end at offset " + pos);
+                // Truncated triplet at the tail: accept what was read so far.
+                break;
             }
             int id = data[pos + 1] & 0xFF;
             byte[] value = new byte[length - 2];

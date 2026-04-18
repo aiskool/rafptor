@@ -80,8 +80,8 @@ public final class PtocaParser {
             } else {
                 length = header;
                 if (length < 2 || pos + 1 >= data.length) {
-                    throw new MalformedFieldException(
-                            "PTOCA chained length " + length + " invalid at offset " + pos);
+                    // Padding / truncated sequence: stop tolerantly, keep what we have.
+                    break;
                 }
                 opcode = data[pos + 1] & 0xFF;
                 payloadOffset = pos + 2;
@@ -89,9 +89,8 @@ public final class PtocaParser {
 
             int sequenceEnd = payloadOffset + (length - 2);
             if (sequenceEnd > data.length) {
-                throw new MalformedFieldException(
-                        "PTOCA sequence of declared length " + length
-                                + " extends past payload at offset " + pos);
+                // Truncated PTOCA payload — stop without aborting the page.
+                break;
             }
 
             switch (opcode) {

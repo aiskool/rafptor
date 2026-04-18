@@ -1,13 +1,11 @@
 package com.rafptor.parser.reader;
 
-import com.rafptor.parser.exception.MalformedFieldException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TripletParserTest {
@@ -24,17 +22,20 @@ class TripletParserTest {
     }
 
     @Test
-    void rejects_length_below_two() {
+    void tolerates_length_below_two_as_padding() {
+        // 0x01 is an invalid triplet length; treat as padding and stop.
         byte[] data = new byte[]{0x01, 0x00};
-        assertThrows(MalformedFieldException.class,
-                () -> TripletParser.parseAll(data, 0, data.length));
+        List<TripletParser.Triplet> triplets = TripletParser.parseAll(data, 0, data.length);
+        assertTrue(triplets.isEmpty());
     }
 
     @Test
-    void rejects_truncated_triplet() {
-        byte[] data = new byte[]{0x05, 0x02, (byte) 'A'};
-        assertThrows(MalformedFieldException.class,
-                () -> TripletParser.parseAll(data, 0, data.length));
+    void tolerates_truncated_triplet_at_tail() {
+        // Valid triplet followed by a truncated declaration: keep what was parsed.
+        byte[] data = new byte[]{0x04, 0x02, 'A', 'B', 0x05, 0x02, 'X'};
+        List<TripletParser.Triplet> triplets = TripletParser.parseAll(data, 0, data.length);
+        assertEquals(1, triplets.size());
+        assertEquals(0x02, triplets.get(0).id());
     }
 
     @Test
