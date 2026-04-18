@@ -33,4 +33,26 @@ class TextTransformerTest {
                 .transform(List.of(new PtocaTextRun(0, 0, 0, "")), page);
         assertTrue(blocks.isEmpty());
     }
+
+    @Test
+    void routesMonoVsSansVsSerifByCharsetPrefix() {
+        IrPage page = new IrPage("p", 595, 842, 240);
+        TextTransformer t = new TextTransformer(new StandardFontMapper());
+        var monoRun = new PtocaTextRun(1, 0, 0, "Mono");
+        var sansRun = new PtocaTextRun(2, 0, 0, "Sans");
+        var serifRun = new PtocaTextRun(3, 0, 0, "Serif");
+        var fontAssignments = java.util.Map.of(
+                1, "C0H20000",   // IBM Courier  -> Liberation Mono
+                2, "C0N20080",   // IBM Sonoran Sans Serif -> Liberation Sans
+                3, "C0S20110");  // IBM Sonoran Serif -> Liberation Serif
+        List<IrTextBlock> blocks = t.transform(
+                List.of(monoRun, sansRun, serifRun), page, fontAssignments);
+        assertEquals(3, blocks.size());
+        assertTrue(blocks.get(0).fontName().toLowerCase().contains("mono"),
+                "mono run: " + blocks.get(0).fontName());
+        assertTrue(blocks.get(1).fontName().toLowerCase().contains("sans"),
+                "sans run: " + blocks.get(1).fontName());
+        assertTrue(blocks.get(2).fontName().toLowerCase().contains("serif"),
+                "serif run: " + blocks.get(2).fontName());
+    }
 }

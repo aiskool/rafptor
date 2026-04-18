@@ -124,9 +124,11 @@ public final class RafptorParser {
                 }
             } else if (sf instanceof MapCodedFont mcf) {
                 for (MapCodedFont.Entry e : mcf.entries()) {
-                    document.addResource(new AfpResource(
-                            defaultNameIfBlank(e.codedFontName(), "FONT"),
-                            AfpResource.ResourceType.CODED_FONT));
+                    String name = defaultNameIfBlank(e.codedFontName(), "FONT");
+                    document.addResource(new AfpResource(name, AfpResource.ResourceType.CODED_FONT));
+                    if (currentPage != null) {
+                        currentPage.putFontAssignment(e.localId(), name);
+                    }
                 }
             } else if (sf instanceof IncludePageOverlay ipo) {
                 addResource(document, currentPage,

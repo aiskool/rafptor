@@ -45,6 +45,29 @@ public final class StandardFontMapper implements FontMapper {
         return defaultMapping;
     }
 
+    @Override
+    public FontMapping findByCharsetPrefix(String prefix) {
+        if (prefix == null || prefix.isEmpty()) return null;
+        String upper = prefix.toUpperCase();
+        // Exact match first.
+        for (FontMapping m : mappings) {
+            if (upper.equalsIgnoreCase(m.afpCharsetPrefix())) {
+                return m;
+            }
+        }
+        // Prefix match either way — "C0N2" matches the "C0N200" mapping entry,
+        // and "C0N20080" (a full charset name) also matches it.
+        for (FontMapping m : mappings) {
+            String candidate = m.afpCharsetPrefix();
+            if (candidate == null || candidate.isEmpty()) continue;
+            String candUpper = candidate.toUpperCase();
+            if (candUpper.startsWith(upper) || upper.startsWith(candUpper)) {
+                return m;
+            }
+        }
+        return null;
+    }
+
     public List<FontMapping> mappings() {
         return mappings;
     }

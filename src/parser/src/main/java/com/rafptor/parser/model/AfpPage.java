@@ -4,7 +4,9 @@ import com.rafptor.parser.ptoca.PtocaTextRun;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * One page of a parsed AFP document.
@@ -16,6 +18,7 @@ public final class AfpPage {
     private final List<AfpResource> resourceReferences;
     private final List<AfpStructuredField> structuredFields;
     private final List<AfpImageObject> images;
+    private final Map<Integer, String> fontAssignments;
     private PageGeometry geometry;
 
     public AfpPage(String name) {
@@ -24,6 +27,7 @@ public final class AfpPage {
         this.resourceReferences = new ArrayList<>();
         this.structuredFields = new ArrayList<>();
         this.images = new ArrayList<>();
+        this.fontAssignments = new HashMap<>();
     }
 
     public String name() {
@@ -80,5 +84,14 @@ public final class AfpPage {
             throw new IllegalArgumentException("image must not be null");
         }
         images.add(image);
+    }
+
+    /** Local font id → coded-font resource name, as declared by MCF on this page. */
+    public Map<Integer, String> fontAssignments() {
+        return Collections.unmodifiableMap(fontAssignments);
+    }
+
+    public void putFontAssignment(int localId, String codedFontName) {
+        fontAssignments.put(localId, codedFontName == null ? "" : codedFontName);
     }
 }
