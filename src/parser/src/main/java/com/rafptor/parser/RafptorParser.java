@@ -14,8 +14,11 @@ import com.rafptor.parser.modca.IncludeObject;
 import com.rafptor.parser.modca.IncludePageOverlay;
 import com.rafptor.parser.modca.IncludePageSegment;
 import com.rafptor.parser.modca.MapCodedFont;
+import com.rafptor.parser.modca.PageDescriptor;
 import com.rafptor.parser.modca.PresentationTextData;
+import com.rafptor.parser.modca.PresentationTextDescriptor;
 import com.rafptor.parser.modca.TagLogicalElement;
+import com.rafptor.parser.model.PageGeometry;
 import com.rafptor.parser.ptoca.PtocaParser;
 import com.rafptor.parser.reader.RecordReader;
 import com.rafptor.parser.reader.StructuredFieldReader;
@@ -138,6 +141,14 @@ public final class RafptorParser {
                 if (currentPage != null) {
                     ptocaParser.parse(ptx).forEach(currentPage::addTextRun);
                 }
+            } else if (sf instanceof PageDescriptor pgd) {
+                if (currentPage != null) {
+                    mergeGeometry(currentPage, pgd, null);
+                }
+            } else if (sf instanceof PresentationTextDescriptor ptd) {
+                if (currentPage != null) {
+                    mergeGeometry(currentPage, null, ptd);
+                }
             }
 
             if (currentPage != null) {
@@ -177,5 +188,32 @@ public final class RafptorParser {
 
     private static String defaultNameIfBlank(String name, String fallback) {
         return (name == null || name.isBlank()) ? fallback : name;
+    }
+
+    /**
+     * Fold PGD or PTD values into the current page's geometry, preserving any
+     * previously-seen values from the sibling descriptor.
+     */
+    private static void mergeGeometry(AfpPage page, PageDescriptor pgd, PresentationTextDescriptor ptd) {
+        PageGeometry current = page.geometry();
+        int width = current != null ? current.widthLUnits() : 0;
+        int height = current != null ? current.heightLUnits() : 0;
+        int xRes = current != null ? current.xResolution() : 0;
+        int yRes = current != null ? current.yResolution() : 0;
+        int ptxX = current != null ? current.ptxXResolution() : 0;
+        int ptxY = current != null ? current.ptxYResolution() : 0;
+        if (pgd != null) {
+            width = pgd.widthLUnits();
+            height = pgd.heightLUnits();
+            xRes = Math.max(1, pgd.xResolution());
+            yRes = Math.max(1, pgd.yResolution());
+        }
+        if (ptd != null) {
+            ptxX = Math.max(0, ptd.xResolution());
+            ptxY = Math.max(0, ptd.yResolution());
+        }
+        if (xRes == 0) xRes = 240;
+        if (yRes == 0) yRes = 240;
+        page.setGeometry(new PageGeometry(width, height, xRes, yRes, ptxX, ptxY));
     }
 }

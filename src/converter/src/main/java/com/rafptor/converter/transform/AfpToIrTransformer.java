@@ -8,6 +8,7 @@ import com.rafptor.converter.ir.IrPage;
 import com.rafptor.converter.ir.IrTextBlock;
 import com.rafptor.parser.model.AfpDocument;
 import com.rafptor.parser.model.AfpPage;
+import com.rafptor.parser.model.PageGeometry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,11 +53,19 @@ public final class AfpToIrTransformer {
         warnings.clear();
         IrDocument out = new IrDocument(afp.name());
         for (AfpPage page : afp.pages()) {
-            IrPage irPage = new IrPage(
-                    page.name(),
-                    config.defaultPageWidthPt(),
-                    config.defaultPageHeightPt(),
-                    config.afpResolution());
+            PageGeometry geom = page.geometry();
+            double widthPt = geom != null ? geom.widthPt() : config.defaultPageWidthPt();
+            double heightPt = geom != null ? geom.heightPt() : config.defaultPageHeightPt();
+            int resolution = geom != null
+                    ? geom.effectivePtxResolution()
+                    : config.afpResolution();
+            // Guard against degenerate or absent geometry values — some test
+            // fixtures do not carry a PGD, and the Liberation-only PDF must
+            // still stay in the printable-area ballpark.
+            if (widthPt <= 1 || widthPt > 10_000) widthPt = config.defaultPageWidthPt();
+            if (heightPt <= 1 || heightPt > 10_000) heightPt = config.defaultPageHeightPt();
+            if (resolution <= 0) resolution = config.afpResolution();
+            IrPage irPage = new IrPage(page.name(), widthPt, heightPt, resolution);
             for (IrTextBlock block : textTransformer.transform(page.textRuns(), irPage)) {
                 irPage.add(block);
             }

@@ -15,6 +15,7 @@ public final class AfpPage {
     private final List<PtocaTextRun> textRuns;
     private final List<AfpResource> resourceReferences;
     private final List<AfpStructuredField> structuredFields;
+    private PageGeometry geometry;
 
     public AfpPage(String name) {
         this.name = name;
@@ -25,6 +26,14 @@ public final class AfpPage {
 
     public String name() {
         return name;
+    }
+
+    public PageGeometry geometry() {
+        return geometry;
+    }
+
+    public void setGeometry(PageGeometry geometry) {
+        this.geometry = geometry;
     }
 
     public List<PtocaTextRun> textRuns() {

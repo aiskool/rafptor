@@ -19,7 +19,9 @@ import com.rafptor.parser.modca.IncludePageSegment;
 import com.rafptor.parser.modca.MapCodedFont;
 import com.rafptor.parser.modca.MapDataResource;
 import com.rafptor.parser.modca.NoOperation;
+import com.rafptor.parser.modca.PageDescriptor;
 import com.rafptor.parser.modca.PresentationTextData;
+import com.rafptor.parser.modca.PresentationTextDescriptor;
 import com.rafptor.parser.modca.TagLogicalElement;
 import com.rafptor.parser.modca.UnknownStructuredField;
 
@@ -53,7 +55,9 @@ public final class StructuredFieldReader {
             Map.entry(StructuredFieldId.of(0xD3, 0xAF, 0xC3).toInt(), IncludeObject::parse),
             Map.entry(StructuredFieldId.of(0xD3, 0xA0, 0x90).toInt(), TagLogicalElement::parse),
             Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0xEE).toInt(), NoOperation::parse),
-            Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0x9B).toInt(), PresentationTextData::parse)
+            Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0x9B).toInt(), PresentationTextData::parse),
+            Map.entry(StructuredFieldId.of(0xD3, 0xA6, 0xAF).toInt(), PageDescriptor::parse),
+            Map.entry(StructuredFieldId.of(0xD3, 0xB1, 0x9B).toInt(), PresentationTextDescriptor::parse)
     );
 
     private StructuredFieldReader() {
