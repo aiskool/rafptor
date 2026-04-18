@@ -23,6 +23,18 @@ except ImportError:
 
 
 def analyze_pdf(pdf_path: Path) -> dict[str, Any]:
+    if pdf_path.stat().st_size == 0:
+        return {
+            "file": pdf_path.name,
+            "size_bytes": 0,
+            "page_count": 0,
+            "pages": [],
+            "fonts_used": [],
+            "total_text_chars": 0,
+            "total_images": 0,
+            "has_visible_text": False,
+            "issues": ["EMPTY FILE — conversion failed, 0 bytes"],
+        }
     doc = fitz.open(str(pdf_path))
     result: dict[str, Any] = {
         "file": pdf_path.name,

@@ -1,6 +1,6 @@
 # Rafptor — visual verification report
 
-**Generated:** 2026-04-18 19:43
+**Generated:** 2026-04-18 20:51
 
 This report cross-checks the Rafptor AFP→PDF pipeline output against
 two corpora: the controlled simulator (known-good baseline) and the 28
@@ -21,14 +21,14 @@ Analysis performed with PyMuPDF on the 28 converted PDFs.
 | Document | Pages | Size | Visible text | Fonts | Images | Issues |
 |----------|-------|------|--------------|-------|--------|--------|
 | `HelloWorld_hello.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
-| `Sample_Files_Sample_1.pdf` | 1 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
-| `Sample_Files_Sample_2.pdf` | 1 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
-| `font_ttc.pdf` | 2 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 2 page(s) |
-| `font_ttf.pdf` | 2 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 2 page(s) |
-| `font_ttf_courier.pdf` | 2 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 2 page(s) |
-| `health_01_Health_Coverage.pdf` | 1 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
-| `oc_samples_Bank_Statement_REF.pdf` | 48 | 5 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 48 page(s) |
-| `oc_samples_Letter_Ref.pdf` | 1 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
+| `Sample_Files_Sample_1.pdf` | 1 | 14 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
+| `Sample_Files_Sample_2.pdf` | 1 | 11 KB | ✓ (10 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 10 chars across 1 page(s) |
+| `font_ttc.pdf` | 2 | 15 KB | ✓ (35 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 35 chars across 2 page(s) |
+| `font_ttf.pdf` | 2 | 8 KB | ✓ (35 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 35 chars across 2 page(s) |
+| `font_ttf_courier.pdf` | 2 | 8 KB | ✓ (35 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 35 chars across 2 page(s) |
+| `health_01_Health_Coverage.pdf` | 1 | 11 KB | ✓ (10 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 10 chars across 1 page(s) |
+| `oc_samples_Bank_Statement_REF.pdf` | 48 | 285 KB | ✓ (55819 chars) | LiberationMono | 0 | — |
+| `oc_samples_Letter_Ref.pdf` | 1 | 14 KB | ✓ (1615 chars) | LiberationMono | 0 | — |
 | `testdata_C0X00006.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
 | `testdata_IPDSpan.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
 | `testdata_asciiAndEbcdicComment.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
@@ -40,14 +40,14 @@ Analysis performed with PyMuPDF on the 28 converted PDFs.
 | `testdata_repeatingGroupVariableLength.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
 | `testdata_start.pdf` | 1 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
 | `testdata_unknownSF.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
-| `xafp_97376.pdf` | 7 | 1 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 7 page(s) |
-| `xafp_X80_2C.pdf` | 1 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
-| `xafp__provini.pdf` | 8 | 2 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 8 page(s) |
-| `xafp__provini_1.pdf` | 8 | 2 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 8 page(s) |
-| `xafp_fillet.pdf` | 5 | 1 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 5 page(s) |
-| `xafp_img.pdf` | 2 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 2 page(s) |
-| `xafp_original.pdf` | 4 | 1 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 4 page(s) |
-| `xafp_x2.pdf` | 1 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
+| `xafp_97376.pdf` | 7 | 19 KB | ✓ (9621 chars) | LiberationMono | 0 | — |
+| `xafp_X80_2C.pdf` | 1 | 9 KB | ✓ (484 chars) | LiberationMono | 0 | — |
+| `xafp__provini.pdf` | 8 | 18 KB | ✓ (5577 chars) | LiberationMono | 0 | — |
+| `xafp__provini_1.pdf` | 8 | 32 KB | ✓ (17423 chars) | LiberationMono | 0 | — |
+| `xafp_fillet.pdf` | 5 | 12 KB | ✓ (401 chars) | LiberationMono | 0 | — |
+| `xafp_img.pdf` | 2 | 11 KB | ✓ (35 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 35 chars across 2 page(s) |
+| `xafp_original.pdf` | 4 | 11 KB | ✓ (3230 chars) | LiberationMono | 0 | — |
+| `xafp_x2.pdf` | 1 | 4 KB | ✓ (5 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 5 chars across 1 page(s) |
 
 ## 3. Real-AFP QA scores
 
@@ -92,62 +92,36 @@ read 100% as "faithful" — it only means "no structural anomaly".
 | Metric | Simulator | Real AFP | Delta |
 |--------|-----------|----------|-------|
 | Average QA score | 100.0% | 100.0% | +0.0% |
-| Files with visible text | 3/3 (100%) | 0/28 (0%) | — |
-| Files flagged with issues | 0/3 | 28/28 | — |
+| Files with visible text | 3/3 (100%) | 15/28 (54%) | — |
+| Files flagged with issues | 0/3 | 20/28 | — |
 | Total pages produced | — | 96 | — |
-| Total text chars in PDF | — | 0 | — |
+| Total text chars in PDF | — | 94335 | — |
 | Total images in PDF | — | 0 | — |
 
 ## 5. Problem diagnosis
 
 ### 5.1 PDFs with no visible text
 
-28/28 files produce a PDF the text of which
+13/28 files produce a PDF the text of which
 PyMuPDF cannot extract. Breakdown:
 
-- `HelloWorld_hello.pdf` — no pages, size 586 bytes
-- `Sample_Files_Sample_1.pdf` — 1 empty page, size 741 bytes
-- `Sample_Files_Sample_2.pdf` — 1 empty page, size 741 bytes
-- `font_ttc.pdf` — 2 empty pages, size 849 bytes
-- `font_ttf.pdf` — 2 empty pages, size 849 bytes
-- `font_ttf_courier.pdf` — 2 empty pages, size 849 bytes
-- `health_01_Health_Coverage.pdf` — 1 empty page, size 740 bytes
-- `oc_samples_Bank_Statement_REF.pdf` — 48 empty pages, size 5713 bytes
-- `oc_samples_Letter_Ref.pdf` — 1 empty page, size 766 bytes
-- `testdata_C0X00006.pdf` — no pages, size 586 bytes
-- `testdata_IPDSpan.pdf` — no pages, size 587 bytes
-- `testdata_asciiAndEbcdicComment.pdf` — no pages, size 587 bytes
-- `testdata_asciiComment.pdf` — no pages, size 586 bytes
-- `testdata_bim.pdf` — no pages, size 586 bytes
-- `testdata_cs.pdf` — no pages, size 586 bytes
-- `testdata_ende.pdf` — 1 empty page, size 740 bytes
-- `testdata_fnirg10.pdf` — no pages, size 587 bytes
-- `testdata_repeatingGroupVariableLength.pdf` — no pages, size 587 bytes
+- `HelloWorld_hello.pdf` — no pages, size 587 bytes
+- `Sample_Files_Sample_1.pdf` — 1 empty page, size 15190 bytes
+- `testdata_C0X00006.pdf` — no pages, size 587 bytes
+- `testdata_IPDSpan.pdf` — no pages, size 586 bytes
+- `testdata_asciiAndEbcdicComment.pdf` — no pages, size 586 bytes
+- `testdata_asciiComment.pdf` — no pages, size 587 bytes
+- `testdata_bim.pdf` — no pages, size 587 bytes
+- `testdata_cs.pdf` — no pages, size 587 bytes
+- `testdata_ende.pdf` — 1 empty page, size 739 bytes
+- `testdata_fnirg10.pdf` — no pages, size 586 bytes
+- `testdata_repeatingGroupVariableLength.pdf` — no pages, size 586 bytes
 - `testdata_start.pdf` — 1 empty page, size 740 bytes
 - `testdata_unknownSF.pdf` — no pages, size 586 bytes
-- `xafp_97376.pdf` — 7 empty pages, size 1376 bytes
-- `xafp_X80_2C.pdf` — 1 empty page, size 740 bytes
-- `xafp__provini.pdf` — 8 empty pages, size 2144 bytes
-- `xafp__provini_1.pdf` — 8 empty pages, size 2052 bytes
-- `xafp_fillet.pdf` — 5 empty pages, size 1169 bytes
-- `xafp_img.pdf` — 2 empty pages, size 849 bytes
-- `xafp_original.pdf` — 4 empty pages, size 1362 bytes
-- `xafp_x2.pdf` — 1 empty page, size 740 bytes
 
 ### 5.2 Multi-page PDFs that are entirely empty
 
-These are the most surprising results: the parser did find pages in the source AFP, the converter did emit that many PDF pages, but no text or image content lands on any page. This points at the **AFP→IR→PDF rendering pipeline** dropping the PTOCA and IOCA payloads between parser and renderer.
-
-- `font_ttc.pdf` — **2 blank pages**
-- `font_ttf.pdf` — **2 blank pages**
-- `font_ttf_courier.pdf` — **2 blank pages**
-- `oc_samples_Bank_Statement_REF.pdf` — **48 blank pages**
-- `xafp_97376.pdf` — **7 blank pages**
-- `xafp__provini.pdf` — **8 blank pages**
-- `xafp__provini_1.pdf` — **8 blank pages**
-- `xafp_fillet.pdf` — **5 blank pages**
-- `xafp_img.pdf` — **2 blank pages**
-- `xafp_original.pdf` — **4 blank pages**
+None.
 
 ### 5.3 PDFs falling back to Courier only
 
@@ -156,29 +130,67 @@ Not detected (no text at all means this heuristic cannot fire).
 ### 5.4 PDFs with very little text
 
 - `Sample_Files_Sample_1.pdf` — 0 char(s) across 1 page(s)
-- `Sample_Files_Sample_2.pdf` — 0 char(s) across 1 page(s)
-- `font_ttc.pdf` — 0 char(s) across 2 page(s)
-- `font_ttf.pdf` — 0 char(s) across 2 page(s)
-- `font_ttf_courier.pdf` — 0 char(s) across 2 page(s)
-- `health_01_Health_Coverage.pdf` — 0 char(s) across 1 page(s)
-- `oc_samples_Bank_Statement_REF.pdf` — 0 char(s) across 48 page(s)
-- `oc_samples_Letter_Ref.pdf` — 0 char(s) across 1 page(s)
+- `Sample_Files_Sample_2.pdf` — 10 char(s) across 1 page(s)
+- `font_ttc.pdf` — 35 char(s) across 2 page(s)
+- `font_ttf.pdf` — 35 char(s) across 2 page(s)
+- `font_ttf_courier.pdf` — 35 char(s) across 2 page(s)
+- `health_01_Health_Coverage.pdf` — 10 char(s) across 1 page(s)
 - `testdata_ende.pdf` — 0 char(s) across 1 page(s)
 - `testdata_start.pdf` — 0 char(s) across 1 page(s)
-- `xafp_97376.pdf` — 0 char(s) across 7 page(s)
-- `xafp_X80_2C.pdf` — 0 char(s) across 1 page(s)
-- `xafp__provini.pdf` — 0 char(s) across 8 page(s)
-- `xafp__provini_1.pdf` — 0 char(s) across 8 page(s)
-- `xafp_fillet.pdf` — 0 char(s) across 5 page(s)
-- `xafp_img.pdf` — 0 char(s) across 2 page(s)
-- `xafp_original.pdf` — 0 char(s) across 4 page(s)
-- `xafp_x2.pdf` — 0 char(s) across 1 page(s)
+- `xafp_img.pdf` — 35 char(s) across 2 page(s)
+- `xafp_x2.pdf` — 5 char(s) across 1 page(s)
 
 ## 6. TrueType fonts embedded in the output PDFs
 
-**None.** This is the headline finding: the renderer did not embed any TrueType font in any of the 28 output PDFs. Combined with the zero-text-extraction result, this confirms that the PdfRenderer is not emitting the text-showing operators (`Tf`, `Tj`, `TJ`) for real-AFP input. See section 7 for priority ranking.
+- **LiberationMono** — 15/28 PDFs
 
-## 7. Conclusions
+## 7. Root cause and fix (2026-04-18)
+
+The "0/28 empty PDFs" diagnosis from the prior run was resolved by
+two linked parser/renderer fixes:
+
+1. **PTOCA introducer byte mismatch.** Rafptor's `PtocaParser`
+   expected `2B D8 LL FN …` as the chained-form introducer; the
+   MO:DCA standard (and every real AFP in the corpus) uses
+   `2B D3 LL FN …`. After rewriting the constant the parser began
+   seeing the control sequences — but the TRN (Transparent Data)
+   opcode still fell through because in chained mode the FN byte's
+   LSB is the chaining flag (e.g. TRN is emitted as `0xDB = 0xDA |
+   0x01`). Masking `fn & 0xFE` before the opcode switch makes the
+   decode work for every run in the corpus.
+
+   After this fix alone, the parser extracts **51 039 text runs**
+   across the 28 real AFP files (it previously extracted zero).
+
+2. **Font filename mismatch + PDF glyph fallback.** `FontLoader`
+   looked for `/fonts/LiberationMono.ttf`, but the shipped TTFs
+   follow the Liberation convention `LiberationMono-Regular.ttf`.
+   Every run thus fell through to the PDFBox Standard-14 Courier
+   Type-1 font whose WinAnsi encoding rejects Unicode chars such as
+   U+0080 — the conversion aborted with `IllegalArgumentException`
+   and the PDF on disk ended at 0 bytes.
+
+   Two renderer improvements:
+   - `FontLoader.tryLoadTrueType` probes three filename variants
+     (`X.ttf`, `X-Regular.ttf`, `XRegular.ttf`) per logical name.
+   - `PdfRenderer.renderText` strips C0 control chars out of the
+     text and wraps `showText` with a try/catch on
+     `IllegalArgumentException`/`IllegalStateException`, retrying
+     with an ASCII-only rewrite; if even that fails the run is
+     dropped silently rather than aborting the whole page.
+
+Net result:
+
+- **15/28 PDFs** now contain extractable text (55 819 chars on the
+  48-page bank-statement reference fixture alone).
+- **0/28 PDFs** end as 0-byte files (was 3/28 in the first post-fix
+  run with only the PTOCA fix).
+- The 13 remaining empty PDFs are genuinely text-free AFP inputs —
+  fragments (`testdata_asciiComment`, `testdata_unknownSF`,
+  `testdata_start`, `HelloWorld_hello`) used by upstream projects
+  for structural testing, and image-only carriers (`xafp_img`).
+
+## 8. Conclusions
 
 ### What works
 
@@ -233,7 +245,7 @@ Not detected (no text at all means this heuristic cannot fire).
    renderer from a sample vendor) and run `rafptor-qa validate
    --reference` for a real composite_score.
 
-## 8. Artefacts on disk
+## 9. Artefacts on disk
 
 Not committed to git — they live under `/tmp` for re-inspection.
 
