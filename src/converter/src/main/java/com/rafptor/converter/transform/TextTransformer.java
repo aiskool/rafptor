@@ -93,7 +93,7 @@ public final class TextTransformer {
         if (m != null) return m;
 
         // Heuristic on family letter (position 2 of C0XX* names).
-        if (resourceName.length() >= 3 && resourceName.startsWith("C0")) {
+        if (resourceName.startsWith("C0")) {
             char fam = resourceName.charAt(2);
             FontMapping byFamily = switch (fam) {
                 case 'H' -> fontMapper.findByCharsetPrefix("C0H2");
