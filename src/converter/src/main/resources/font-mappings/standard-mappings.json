@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "description": "Standard IBM AFP font to TrueType mapping — Liberation fonts (SIL OFL) when available, PDFBox standard-14 fallback otherwise.",
+  "version": "1.1",
+  "description": "Standard IBM AFP → TrueType mappings. Primary targets are Liberation (SIL OFL), with IBM Plex and Source Pro as candidates for specialised IBM typefaces. The PDFBox standard-14 fallback_font is used when the TrueType is absent at render time.",
   "mappings": [
     {
       "afp_codepage": "T1V10500",
@@ -41,6 +41,116 @@
       "description": "IBM Courier, French EBCDIC (code page 1147)",
       "ebcdic_encoding": "IBM1147",
       "truetype_font": "Liberation Mono",
+      "fallback_font": "Courier",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0LG",
+      "description": "IBM Letter Gothic — fixed-width monospace used for forms",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "IBM Plex Mono",
+      "fallback_font": "Courier",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0PE",
+      "description": "IBM Prestige Elite — typewriter-style monospace",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "IBM Plex Mono",
+      "fallback_font": "Courier",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0GT",
+      "description": "IBM Gothic — sans-serif for headings",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "IBM Plex Sans",
+      "fallback_font": "Helvetica",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0TM",
+      "description": "IBM Times Roman — serif for body text",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "IBM Plex Serif",
+      "fallback_font": "Times-Roman",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0H400",
+      "description": "IBM Courier Bold, Latin-1",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Liberation Mono",
+      "fallback_font": "Courier-Bold",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 12
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0N400",
+      "description": "IBM Sonoran Sans Serif Bold, Latin-1",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Liberation Sans",
+      "fallback_font": "Helvetica-Bold",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 12
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0S400",
+      "description": "IBM Sonoran Serif Bold, Latin-1",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Liberation Serif",
+      "fallback_font": "Times-Bold",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 12
+    },
+    {
+      "afp_codepage": "T1000259",
+      "afp_charset_prefix": "C0OA",
+      "description": "OCR-A — optical character recognition font (banking, forms)",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Share Tech Mono",
+      "fallback_font": "Courier",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1000260",
+      "afp_charset_prefix": "C0OB",
+      "description": "OCR-B — optical character recognition font (international)",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Share Tech Mono",
+      "fallback_font": "Courier",
+      "scale_factor": 1.0,
+      "baseline_offset": 0,
+      "default_point_size": 10
+    },
+    {
+      "afp_codepage": "T1V10500",
+      "afp_charset_prefix": "C0MI",
+      "description": "MICR E-13B — magnetic ink for bank check processing. No free MICR font committed; Share Tech Mono is a visual fallback.",
+      "ebcdic_encoding": "IBM500",
+      "truetype_font": "Share Tech Mono",
       "fallback_font": "Courier",
       "scale_factor": 1.0,
       "baseline_offset": 0,

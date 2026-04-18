@@ -62,3 +62,7 @@ src/dashboard/src/**/*.js
 # Personal files that should never enter the repo
 *.xlsx
 *.xls
+
+# Noto CJK / Indic extended — installed via scripts/download-fonts.sh
+src/mapper/data/ttf_catalog/universal/noto/cjk/
+src/mapper/data/ttf_catalog/universal/noto/indic-extra/
