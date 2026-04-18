@@ -13,11 +13,15 @@ import com.rafptor.parser.modca.EndPage;
 import com.rafptor.parser.modca.IncludeObject;
 import com.rafptor.parser.modca.IncludePageOverlay;
 import com.rafptor.parser.modca.IncludePageSegment;
+import com.rafptor.parser.modca.BeginImageObject;
+import com.rafptor.parser.modca.EndImageObject;
+import com.rafptor.parser.modca.ImageRasterData;
 import com.rafptor.parser.modca.MapCodedFont;
 import com.rafptor.parser.modca.PageDescriptor;
 import com.rafptor.parser.modca.PresentationTextData;
 import com.rafptor.parser.modca.PresentationTextDescriptor;
 import com.rafptor.parser.modca.TagLogicalElement;
+import com.rafptor.parser.model.AfpImageObject;
 import com.rafptor.parser.model.PageGeometry;
 import com.rafptor.parser.ptoca.PtocaParser;
 import com.rafptor.parser.reader.RecordReader;
@@ -25,6 +29,7 @@ import com.rafptor.parser.reader.StructuredFieldReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -88,6 +93,8 @@ public final class RafptorParser {
         AfpDocument document = new AfpDocument("UNNAMED");
         AfpPage currentPage = null;
         int depth = 0;
+        String currentImageName = null;
+        ByteArrayOutputStream currentImageRaw = null;
 
         while (reader.hasNext()) {
             RawStructuredField raw = reader.next();
@@ -149,6 +156,24 @@ public final class RafptorParser {
                 if (currentPage != null) {
                     mergeGeometry(currentPage, null, ptd);
                 }
+            } else if (sf instanceof BeginImageObject bim) {
+                currentImageName = bim.name();
+                currentImageRaw = new ByteArrayOutputStream();
+            } else if (sf instanceof ImageRasterData ird) {
+                if (currentImageRaw != null) {
+                    byte[] data = ird.data();
+                    currentImageRaw.write(data, 0, data.length);
+                }
+            } else if (sf instanceof EndImageObject eim) {
+                if (currentPage != null && currentImageRaw != null) {
+                    byte[] imgBytes = currentImageRaw.toByteArray();
+                    AfpImageObject.Encoding enc = detectEncoding(imgBytes);
+                    currentPage.addImage(new AfpImageObject(
+                            currentImageName != null ? currentImageName : defaultNameIfBlank(eim.name(), "IMAGE"),
+                            enc, 0, 0, imgBytes));
+                }
+                currentImageName = null;
+                currentImageRaw = null;
             }
 
             if (currentPage != null) {
@@ -188,6 +213,20 @@ public final class RafptorParser {
 
     private static String defaultNameIfBlank(String name, String fallback) {
         return (name == null || name.isBlank()) ? fallback : name;
+    }
+
+    private static AfpImageObject.Encoding detectEncoding(byte[] raw) {
+        if (raw.length >= 2) {
+            int b0 = raw[0] & 0xFF;
+            int b1 = raw[1] & 0xFF;
+            if (b0 == 0xFF && b1 == 0xD8) return AfpImageObject.Encoding.JPEG;
+            if (b0 == 0x42 && b1 == 0x4D) return AfpImageObject.Encoding.BMP;
+        }
+        // IOCA encodings start with Function-Set / Image-Segment markers
+        // (0x91 = Begin Image Content, 0x9C = Image Encoding etc.); we do not
+        // decode them at this stage — just flag as FS45 (uncompressed IOCA),
+        // the most common case for banking-grade AFP.
+        return AfpImageObject.Encoding.IOCA_FS45;
     }
 
     /**

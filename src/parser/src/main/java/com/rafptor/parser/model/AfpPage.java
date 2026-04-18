@@ -15,6 +15,7 @@ public final class AfpPage {
     private final List<PtocaTextRun> textRuns;
     private final List<AfpResource> resourceReferences;
     private final List<AfpStructuredField> structuredFields;
+    private final List<AfpImageObject> images;
     private PageGeometry geometry;
 
     public AfpPage(String name) {
@@ -22,6 +23,7 @@ public final class AfpPage {
         this.textRuns = new ArrayList<>();
         this.resourceReferences = new ArrayList<>();
         this.structuredFields = new ArrayList<>();
+        this.images = new ArrayList<>();
     }
 
     public String name() {
@@ -67,5 +69,16 @@ public final class AfpPage {
             throw new IllegalArgumentException("sf must not be null");
         }
         structuredFields.add(sf);
+    }
+
+    public List<AfpImageObject> images() {
+        return Collections.unmodifiableList(images);
+    }
+
+    public void addImage(AfpImageObject image) {
+        if (image == null) {
+            throw new IllegalArgumentException("image must not be null");
+        }
+        images.add(image);
     }
 }

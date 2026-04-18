@@ -69,7 +69,9 @@ public final class AfpToIrTransformer {
             for (IrTextBlock block : textTransformer.transform(page.textRuns(), irPage)) {
                 irPage.add(block);
             }
-            // Image / graphic / barcode transformers are stubs today — see warnings.
+            imageTransformer.transform(page.images(), irPage).forEach(irPage::add);
+            warnings.addAll(imageTransformer.warnings());
+            // Graphic / barcode transformers are stubs today — see warnings.
             page.resourceReferences().stream()
                     .filter(r -> r.type() == com.rafptor.parser.model.AfpResource.ResourceType.PAGE_OVERLAY)
                     .forEach(r -> warnings.add(overlayResolver.warningFor(r)));

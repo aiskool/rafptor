@@ -17,6 +17,9 @@ import com.rafptor.parser.modca.IncludeObject;
 import com.rafptor.parser.modca.IncludePageOverlay;
 import com.rafptor.parser.modca.IncludePageSegment;
 import com.rafptor.parser.modca.MapCodedFont;
+import com.rafptor.parser.modca.BeginImageObject;
+import com.rafptor.parser.modca.EndImageObject;
+import com.rafptor.parser.modca.ImageRasterData;
 import com.rafptor.parser.modca.MapDataResource;
 import com.rafptor.parser.modca.NoOperation;
 import com.rafptor.parser.modca.PageDescriptor;
@@ -57,7 +60,10 @@ public final class StructuredFieldReader {
             Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0xEE).toInt(), NoOperation::parse),
             Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0x9B).toInt(), PresentationTextData::parse),
             Map.entry(StructuredFieldId.of(0xD3, 0xA6, 0xAF).toInt(), PageDescriptor::parse),
-            Map.entry(StructuredFieldId.of(0xD3, 0xB1, 0x9B).toInt(), PresentationTextDescriptor::parse)
+            Map.entry(StructuredFieldId.of(0xD3, 0xB1, 0x9B).toInt(), PresentationTextDescriptor::parse),
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xFB).toInt(), BeginImageObject::parse),
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xFB).toInt(), EndImageObject::parse),
+            Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0xFB).toInt(), ImageRasterData::parse)
     );
 
     private StructuredFieldReader() {
