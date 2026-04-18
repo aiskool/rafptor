@@ -1,6 +1,6 @@
 # Rafptor — visual verification report
 
-**Generated:** 2026-04-18 20:51
+**Generated:** 2026-04-18 23:31
 
 This report cross-checks the Rafptor AFP→PDF pipeline output against
 two corpora: the controlled simulator (known-good baseline) and the 28
@@ -21,14 +21,14 @@ Analysis performed with PyMuPDF on the 28 converted PDFs.
 | Document | Pages | Size | Visible text | Fonts | Images | Issues |
 |----------|-------|------|--------------|-------|--------|--------|
 | `HelloWorld_hello.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
-| `Sample_Files_Sample_1.pdf` | 1 | 14 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
-| `Sample_Files_Sample_2.pdf` | 1 | 11 KB | ✓ (10 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 10 chars across 1 page(s) |
-| `font_ttc.pdf` | 2 | 15 KB | ✓ (35 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 35 chars across 2 page(s) |
-| `font_ttf.pdf` | 2 | 8 KB | ✓ (35 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 35 chars across 2 page(s) |
-| `font_ttf_courier.pdf` | 2 | 8 KB | ✓ (35 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 35 chars across 2 page(s) |
-| `health_01_Health_Coverage.pdf` | 1 | 11 KB | ✓ (10 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 10 chars across 1 page(s) |
-| `oc_samples_Bank_Statement_REF.pdf` | 48 | 285 KB | ✓ (55819 chars) | LiberationMono | 0 | — |
-| `oc_samples_Letter_Ref.pdf` | 1 | 14 KB | ✓ (1615 chars) | LiberationMono | 0 | — |
+| `Sample_Files_Sample_1.pdf` | 1 | 14 KB | ✓ (2103 chars) | LiberationMono | 0 | — |
+| `Sample_Files_Sample_2.pdf` | 1 | 11 KB | ✓ (2020 chars) | LiberationMono | 0 | — |
+| `font_ttc.pdf` | 2 | 15 KB | ✓ (1965 chars) | LiberationMono | 0 | — |
+| `font_ttf.pdf` | 2 | 8 KB | ✓ (580 chars) | LiberationMono | 0 | — |
+| `font_ttf_courier.pdf` | 2 | 8 KB | ✓ (580 chars) | LiberationMono | 0 | — |
+| `health_01_Health_Coverage.pdf` | 1 | 11 KB | ✓ (2020 chars) | LiberationMono | 0 | — |
+| `oc_samples_Bank_Statement_REF.pdf` | 48 | 300 KB | ✓ (65413 chars) | LiberationMono | 0 | — |
+| `oc_samples_Letter_Ref.pdf` | 1 | 14 KB | ✓ (1798 chars) | LiberationMono | 0 | — |
 | `testdata_C0X00006.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
 | `testdata_IPDSpan.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
 | `testdata_asciiAndEbcdicComment.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
@@ -40,14 +40,14 @@ Analysis performed with PyMuPDF on the 28 converted PDFs.
 | `testdata_repeatingGroupVariableLength.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
 | `testdata_start.pdf` | 1 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only; VERY LITTLE TEXT — only 0 chars across 1 page(s) |
 | `testdata_unknownSF.pdf` | 0 | 0 KB | ✗ (0 chars) | — | 0 | NO VISIBLE TEXT — PDF empty or image-only |
-| `xafp_97376.pdf` | 7 | 19 KB | ✓ (9621 chars) | LiberationMono | 0 | — |
-| `xafp_X80_2C.pdf` | 1 | 9 KB | ✓ (484 chars) | LiberationMono | 0 | — |
-| `xafp__provini.pdf` | 8 | 18 KB | ✓ (5577 chars) | LiberationMono | 0 | — |
-| `xafp__provini_1.pdf` | 8 | 32 KB | ✓ (17423 chars) | LiberationMono | 0 | — |
-| `xafp_fillet.pdf` | 5 | 12 KB | ✓ (401 chars) | LiberationMono | 0 | — |
-| `xafp_img.pdf` | 2 | 11 KB | ✓ (35 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 35 chars across 2 page(s) |
-| `xafp_original.pdf` | 4 | 11 KB | ✓ (3230 chars) | LiberationMono | 0 | — |
-| `xafp_x2.pdf` | 1 | 4 KB | ✓ (5 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 5 chars across 1 page(s) |
+| `xafp_97376.pdf` | 7 | 19 KB | ✓ (13617 chars) | LiberationMono | 0 | — |
+| `xafp_X80_2C.pdf` | 1 | 9 KB | ✓ (551 chars) | LiberationMono | 0 | — |
+| `xafp__provini.pdf` | 8 | 18 KB | ✓ (5443 chars) | LiberationMono | 0 | — |
+| `xafp__provini_1.pdf` | 8 | 32 KB | ✓ (17424 chars) | LiberationMono | 0 | — |
+| `xafp_fillet.pdf` | 5 | 12 KB | ✓ (794 chars) | LiberationMono | 0 | — |
+| `xafp_img.pdf` | 2 | 11 KB | ✓ (595 chars) | LiberationMono | 0 | — |
+| `xafp_original.pdf` | 4 | 11 KB | ✓ (3290 chars) | LiberationMono | 0 | — |
+| `xafp_x2.pdf` | 1 | 4 KB | ✓ (33 chars) | LiberationMono | 0 | VERY LITTLE TEXT — only 33 chars across 1 page(s) |
 
 ## 3. Real-AFP QA scores
 
@@ -92,31 +92,30 @@ read 100% as "faithful" — it only means "no structural anomaly".
 | Metric | Simulator | Real AFP | Delta |
 |--------|-----------|----------|-------|
 | Average QA score | 100.0% | 100.0% | +0.0% |
-| Files with visible text | 3/3 (100%) | 15/28 (54%) | — |
-| Files flagged with issues | 0/3 | 20/28 | — |
+| Files with visible text | 3/3 (100%) | 16/28 (57%) | — |
+| Files flagged with issues | 0/3 | 13/28 | — |
 | Total pages produced | — | 96 | — |
-| Total text chars in PDF | — | 94335 | — |
+| Total text chars in PDF | — | 118226 | — |
 | Total images in PDF | — | 0 | — |
 
 ## 5. Problem diagnosis
 
 ### 5.1 PDFs with no visible text
 
-13/28 files produce a PDF the text of which
+12/28 files produce a PDF the text of which
 PyMuPDF cannot extract. Breakdown:
 
-- `HelloWorld_hello.pdf` — no pages, size 587 bytes
-- `Sample_Files_Sample_1.pdf` — 1 empty page, size 15190 bytes
-- `testdata_C0X00006.pdf` — no pages, size 587 bytes
+- `HelloWorld_hello.pdf` — no pages, size 586 bytes
+- `testdata_C0X00006.pdf` — no pages, size 586 bytes
 - `testdata_IPDSpan.pdf` — no pages, size 586 bytes
 - `testdata_asciiAndEbcdicComment.pdf` — no pages, size 586 bytes
-- `testdata_asciiComment.pdf` — no pages, size 587 bytes
-- `testdata_bim.pdf` — no pages, size 587 bytes
-- `testdata_cs.pdf` — no pages, size 587 bytes
-- `testdata_ende.pdf` — 1 empty page, size 739 bytes
+- `testdata_asciiComment.pdf` — no pages, size 586 bytes
+- `testdata_bim.pdf` — no pages, size 586 bytes
+- `testdata_cs.pdf` — no pages, size 586 bytes
+- `testdata_ende.pdf` — 1 empty page, size 742 bytes
 - `testdata_fnirg10.pdf` — no pages, size 586 bytes
 - `testdata_repeatingGroupVariableLength.pdf` — no pages, size 586 bytes
-- `testdata_start.pdf` — 1 empty page, size 740 bytes
+- `testdata_start.pdf` — 1 empty page, size 743 bytes
 - `testdata_unknownSF.pdf` — no pages, size 586 bytes
 
 ### 5.2 Multi-page PDFs that are entirely empty
@@ -129,20 +128,13 @@ Not detected (no text at all means this heuristic cannot fire).
 
 ### 5.4 PDFs with very little text
 
-- `Sample_Files_Sample_1.pdf` — 0 char(s) across 1 page(s)
-- `Sample_Files_Sample_2.pdf` — 10 char(s) across 1 page(s)
-- `font_ttc.pdf` — 35 char(s) across 2 page(s)
-- `font_ttf.pdf` — 35 char(s) across 2 page(s)
-- `font_ttf_courier.pdf` — 35 char(s) across 2 page(s)
-- `health_01_Health_Coverage.pdf` — 10 char(s) across 1 page(s)
 - `testdata_ende.pdf` — 0 char(s) across 1 page(s)
 - `testdata_start.pdf` — 0 char(s) across 1 page(s)
-- `xafp_img.pdf` — 35 char(s) across 2 page(s)
-- `xafp_x2.pdf` — 5 char(s) across 1 page(s)
+- `xafp_x2.pdf` — 33 char(s) across 1 page(s)
 
 ## 6. TrueType fonts embedded in the output PDFs
 
-- **LiberationMono** — 15/28 PDFs
+- **LiberationMono** — 16/28 PDFs
 
 ## 7. Root cause and fix (2026-04-18)
 
