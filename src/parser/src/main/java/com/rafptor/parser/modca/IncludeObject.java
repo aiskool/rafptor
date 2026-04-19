@@ -36,9 +36,41 @@ public record IncludeObject(StructuredFieldId id, String objectName,
         String name = ModcaUtil.decodeFirstName(d, 8);
         int xo = read3(d, 10);
         int yo = read3(d, 13);
+        // MO:DCA IOB carries the object-area size as a triplet X'4C'
+        // somewhere after the fixed header rather than at a fixed offset.
+        // Byte 20..22 was the pre-triplet convention; keep it as a fallback.
         int xs = read3(d, 20);
         int ys = read3(d, 23);
+        int[] size = scanObjectAreaSizeTriplet(d);
+        if (size != null) {
+            xs = size[0];
+            ys = size[1];
+        }
         return new IncludeObject(raw.id(), name, xo, yo, xs, ys);
+    }
+
+    /**
+     * Walk the tail of the IOB body looking for triplet X'4C' (OBJECT AREA
+     * SIZE). Its wire layout: {@code [tl=0x09][tid=0x4C][base][xExt3][yExt3]}.
+     * Returns {@code {xExtent, yExtent}} in L-units or {@code null} if the
+     * triplet is absent or malformed.
+     */
+    private static int[] scanObjectAreaSizeTriplet(byte[] d) {
+        // Triplet search starts after the fixed header. The standard header
+        // is 26 bytes, but several producers add 10 bytes of qualifier data;
+        // we scan from the earliest plausible position (16) to the end.
+        for (int start = 16; start + 9 <= d.length; start++) {
+            int tl = d[start] & 0xFF;
+            int tid = d[start + 1] & 0xFF;
+            if (tl == 0x09 && tid == 0x4C) {
+                int xExt = read3(d, start + 3);
+                int yExt = read3(d, start + 6);
+                if (xExt > 0 && yExt > 0) {
+                    return new int[]{xExt, yExt};
+                }
+            }
+        }
+        return null;
     }
 
     private static int read3(byte[] d, int o) {
