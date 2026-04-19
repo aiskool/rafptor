@@ -457,3 +457,31 @@ Treat AFP AMB / PTOCA baseline coordinates as **baselines**, not top-of-box. Whe
 **How to apply:** when plumbing any vertical coordinate from an AFP text control to a PDF drawing call, document explicitly whether it is baseline or top. Default to baseline, and add a test fixture that renders a run at a known baseline Y against an expected pixel position.
 
 ---
+
+## 2026-04-19 — Prove absence of a visual element byte-by-byte before claiming "not in the AFP"
+
+### Problem
+Earlier in this session I claimed the table row separators and the hypothetical round bullets "are not in the AFP" based on a rough grep for `#DDDDDD` and an opcode census. The user legitimately pushed back: "tu as dit pareil pour le logo et il y était — fais un dump complet". This was the third time my "not in the AFP" conclusion was challenged, and the previous two times I was wrong (logo was in `D3 EE 92`; DIR/DBR were mis-classified).
+
+### Cause
+Shortcut investigations: I'd inspect a subset of the stream, fail to find the signature, then generalise. But AFP containers are nested: `D3 EE 9B` is catalogued as "IPD (Image Picture Data)" but this file uses it as a **Presentation Text Data** envelope — discovered only when walking every byte.
+
+### Solution
+Exhaustive diagnostic required before any "absence" claim:
+1. **SF census**: every byte consumed, no orphans. Print each SF id + length, verify sum equals file size.
+2. **Nested decode**: any SF whose payload starts with `2B D3` is a PTOCA control-sequence stream, regardless of its MO:DCA label. Walk it.
+3. **Opcode enumeration**: list every CS opcode (masked) in every PTX block. Flag any not in the known table — those are the suspects.
+4. **Colour-state trace**: for every DIR/DBR, compute the active SEC/STC at that point. Missing colour states often hide "invisible" elements.
+5. **Raw byte grep**: search for the expected hex signature (e.g., `DD DD DD` for #DDDDDD) across the whole file.
+6. **Positional correlation**: for every path found in the reference PDF, check whether any AFP rule exists at the same Y ± 1pt.
+
+Only if all six steps come up empty may you write "not in the AFP" — and say so with numbers, not vibes.
+
+### Rule
+Never conclude "not in the AFP" without a six-step proof. Publish the counts (SFs, opcodes, colour palette) in the blind-test doc. If you can't show the user a byte-by-byte audit, the answer is still "unknown", not "absent".
+
+**Why:** three missed discoveries cost multiple rounds of user corrections; the habit of partial investigation is the root cause. Explicit byte accounting removes the guesswork.
+
+**How to apply:** whenever an AFP conversion diverges from a reference and the suspected cause is "missing source data", run the six-step audit before touching code. The audit itself often reveals where the element actually lives (nested envelope, odd-parity opcode, triplet we skip).
+
+---

@@ -87,9 +87,37 @@ Analysé honnêtement, après la correction de la baseline :
 | Source | Contribution SSIM |
 |---|---|
 | Arial TTF vs Liberation Sans métriques (antialiasing, kerning) | −0.04 |
-| Bordures subtiles + ombres du tableau que le moteur de référence synthétise mais qui ne sont pas dans le stream AFP | −0.03 |
+| Séparateurs gris de ligne de tableau synthétisés par le moteur de référence | −0.03 |
 | Anti-aliasing micro-différences (rasterizer PDFBox vs poppler) | −0.02 |
 | **Total** | **−0.09** |
+
+## Preuve byte-par-byte : les séparateurs #DDDDDD n'existent PAS dans l'AFP
+
+Enquête déclenchée par une demande utilisateur (« le même pattern logo peut se répéter, TROUVE-les »). J'avais raison la première fois, mais cette fois je le prouve :
+
+1. **Census SFs intégral** — 25 structured fields consomment exactement 12 784 bytes sur 12 784. Zéro byte orphelin. Chaque SF est dispatché par `StructuredFieldReader`. Aucun SF ignoré.
+
+2. **Double PTX** — La présence de 51 rules venait de DEUX streams `D3 EE 9B` (IPD/PTX) : 421 bytes + 6 188 bytes = 25 + 26 = 51 rules.
+
+3. **Enumération exhaustive des opcodes PTOCA** dans les 761 CS du grand PTX — TOUS reconnus :
+   - 332 AMI, 306 TRN, 84 AMB, 16 DIR, 10 DBR, 7 SEC, 5 SCFL, 1 STO. Zéro opcode inconnu.
+
+4. **Palette de couleurs PTOCA** — chaque DIR/DBR des deux streams tracé avec sa SEC active :
+   ```
+   #FFFFFF × 10   (bordures blanches de page)
+   #2196F3 × 15   (barres d'en-tête + segments)
+   #000000 × 26   (carrés bullets + underline URL)
+   -------
+   Grey  × 0     ← aucun DDDDDD dans le stream
+   ```
+
+5. **Scan byte-brut** de la séquence `DD DD DD` dans les 12 784 bytes : **0 occurrence**.
+
+6. **Corrélation positionnelle** — les 21 séparateurs gris de la référence sont à Y_pdf = {379.5, 473.25, 580.5, 674.25} pt (= {7590, 9465, 11610, 13485} L-units depuis le haut). Aucun DIR/DBR de l'AFP ne se trouve à ces baselines.
+
+**Conclusion** : le moteur de référence AFPWorld applique une règle de style implicite ("trait gris 0.75pt entre chaque ligne de tableau") qui n'est pas encodée dans le MO:DCA. Rafptor rend fidèlement ce qui est dans la source. Synthétiser ces traits serait de l'invention, pas de la fidélité — et introduirait des faux positifs sur tout autre document.
+
+Les puces rondes ● en bas de page (« Call 1-800… » / « Or visit… ») **n'existent pas non plus** dans la référence : le texte y apparaît en indentation simple, sans bullet. C'était un faux problème dans l'énoncé initial.
 
 ## E2E regression
 
