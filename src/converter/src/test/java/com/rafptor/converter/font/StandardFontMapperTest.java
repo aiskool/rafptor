@@ -37,7 +37,9 @@ class StandardFontMapperTest {
     void fallsBackToDefaultMappingOnMiss() {
         StandardFontMapper m = new StandardFontMapper();
         FontMapping map = m.map("UNKNOWN", "UNKNOWN");
-        assertEquals("Liberation Mono", map.trueTypeFont());
+        // Default fallback is Liberation Sans (Arial-equivalent metrics) so
+        // streams without a resolvable coded-font land on a proportional face.
+        assertEquals("Liberation Sans", map.trueTypeFont());
     }
 
     @Test

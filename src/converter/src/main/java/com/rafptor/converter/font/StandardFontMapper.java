@@ -14,9 +14,13 @@ public final class StandardFontMapper implements FontMapper {
 
     public StandardFontMapper(List<FontMapping> mappings) {
         this.mappings = mappings == null ? List.of() : List.copyOf(mappings);
+        // Default fallback: Liberation Sans has Arial-equivalent metrics so
+        // streams that declare a TrueType font via MDR (without a Coded Font
+        // resource we can map) land on an Arial-like face by default instead
+        // of a monospace that forces every glyph into a fixed-pitch cell.
         this.defaultMapping = new FontMapping(
                 "", "", "Default fallback", "IBM500",
-                "Liberation Mono", "Helvetica",
+                "Liberation Sans", "Helvetica",
                 1.0, 0.0, 10.0, FontMetrics.defaults());
     }
 
