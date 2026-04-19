@@ -38,12 +38,26 @@ class AfpStreamGenerator:
         self,
         lines: list[tuple[int, int, str]],
         font_local_id: int = 0,
+        rotate_font_ids: tuple[int, ...] | None = None,
     ) -> bytes:
-        ptoca = bytearray()
-        # Set Coded Font Local: length 3, function F1, font id
-        ptoca.extend(bytes([0x03, c.PTOCA_SCFL, font_local_id & 0xFF]))
+        """Emit a PTOCA stream for ``lines``.
 
-        for x, y, text in lines:
+        When ``rotate_font_ids`` is provided, each line switches the Set
+        Coded Font Local opcode to the next id in the tuple (round-robin).
+        Useful so the generated document exercises more than one MCF entry
+        and downstream font routing gets a real workout.
+        """
+        ptoca = bytearray()
+        initial_id = rotate_font_ids[0] if rotate_font_ids else font_local_id
+        ptoca.extend(bytes([0x03, c.PTOCA_SCFL, initial_id & 0xFF]))
+
+        current_id = initial_id
+        for idx, (x, y, text) in enumerate(lines):
+            if rotate_font_ids:
+                target_id = rotate_font_ids[idx % len(rotate_font_ids)]
+                if target_id != current_id:
+                    ptoca.extend(bytes([0x03, c.PTOCA_SCFL, target_id & 0xFF]))
+                    current_id = target_id
             # Absolute Move Baseline: [length=4][D2][y_hi][y_lo]
             ptoca.extend(struct.pack(">BBH", 0x04, c.PTOCA_AMB, y & 0xFFFF))
             # Absolute Move Inline: [length=4][C6][x_hi][x_lo]
@@ -94,6 +108,21 @@ class AfpStreamGenerator:
         rg.extend(body)
         return bytes(rg)
 
+    def _make_mcf_multi(
+        self,
+        entries: list[tuple[int, str]],
+        codepage_name: str = "T1V10500",
+    ) -> bytes:
+        """MCF payload with multiple repeating groups.
+
+        Each entry is ``(local_id, charset_name)`` and emits one RG in the
+        same classic MCF-2 form as :meth:`_make_mcf`.
+        """
+        out = bytearray()
+        for local_id, charset in entries:
+            out.extend(self._make_mcf(local_id, charset, codepage_name))
+        return bytes(out)
+
     def generate_document(
         self,
         doc_name: str = "TESTDOC",
@@ -113,10 +142,16 @@ class AfpStreamGenerator:
             for key, value in tle_metadata.items():
                 self._write_sf(c.SF_TLE, self._make_tle(key, value))
 
+        mcf_entries = [
+            (1, "C0H20000"),  # Courier / Liberation Mono
+            (2, "C0N20000"),  # Sonoran Sans Serif / Liberation Sans
+            (3, "C0S20000"),  # Sonoran Serif / Liberation Serif
+        ]
+        rotate = tuple(local_id for local_id, _ in mcf_entries)
         for page_num in range(1, page_count + 1):
             self._write_sf(c.SF_BPG)
             self._write_sf(c.SF_BAG)
-            self._write_sf(c.SF_MCF, self._make_mcf(font_local_id=0))
+            self._write_sf(c.SF_MCF, self._make_mcf_multi(mcf_entries))
             self._write_sf(c.SF_EAG)
             if include_overlay_ref:
                 self._write_sf(c.SF_IPO, self._encode_text(include_overlay_ref[:8].ljust(8)))
@@ -126,7 +161,7 @@ class AfpStreamGenerator:
                 lines=lines_per_page,
                 doc_name=doc_name,
             )
-            self._write_sf(c.SF_PTX, self._make_ptoca(lines, font_local_id=0))
+            self._write_sf(c.SF_PTX, self._make_ptoca(lines, rotate_font_ids=rotate))
             self._write_sf(c.SF_EPG)
 
         self._write_sf(c.SF_EDT, self._encode_text(doc_name[:8].ljust(8)))

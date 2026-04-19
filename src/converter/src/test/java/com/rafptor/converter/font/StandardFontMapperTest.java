@@ -46,4 +46,23 @@ class StandardFontMapperTest {
         FontMapping map = m.map("T1GI1147", "C0H200");
         assertEquals("IBM1147", map.ebcdicEncoding());
     }
+
+    @Test
+    void findByCharsetPrefixRoutesFullIbmNameToLongestMatch() {
+        // A real-world 8-byte IBM coded-font name must land on the
+        // corresponding Liberation family — not on a shorter generic prefix.
+        StandardFontMapper m = new StandardFontMapper();
+        FontMapping mono = m.findByCharsetPrefix("C0H20000");
+        FontMapping sans = m.findByCharsetPrefix("C0N20080");
+        FontMapping serif = m.findByCharsetPrefix("C0S20080");
+        assertNotNull(mono);
+        assertNotNull(sans);
+        assertNotNull(serif);
+        assertTrue(mono.trueTypeFont().toLowerCase().contains("mono"),
+                "mono: " + mono.trueTypeFont());
+        assertTrue(sans.trueTypeFont().toLowerCase().contains("sans"),
+                "sans: " + sans.trueTypeFont());
+        assertTrue(serif.trueTypeFont().toLowerCase().contains("serif"),
+                "serif: " + serif.trueTypeFont());
+    }
 }

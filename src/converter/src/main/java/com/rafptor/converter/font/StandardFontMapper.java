@@ -49,19 +49,37 @@ public final class StandardFontMapper implements FontMapper {
     public FontMapping findByCharsetPrefix(String prefix) {
         if (prefix == null || prefix.isEmpty()) return null;
         String upper = prefix.toUpperCase();
-        // Exact match first.
+        // Exact match wins.
         for (FontMapping m : mappings) {
             if (upper.equalsIgnoreCase(m.afpCharsetPrefix())) {
                 return m;
             }
         }
-        // Prefix match either way — "C0N2" matches the "C0N200" mapping entry,
-        // and "C0N20080" (a full charset name) also matches it.
+        // Otherwise keep the longest mapping-prefix that is a prefix of the
+        // lookup key. A full charset name "C0N20080" must select "C0N200"
+        // rather than "C0N" so that producers that use the official 8-byte
+        // IBM coded-font names land on the right family without tripping on
+        // shorter generic families.
+        FontMapping best = null;
+        int bestLen = -1;
         for (FontMapping m : mappings) {
             String candidate = m.afpCharsetPrefix();
             if (candidate == null || candidate.isEmpty()) continue;
             String candUpper = candidate.toUpperCase();
-            if (candUpper.startsWith(upper) || upper.startsWith(candUpper)) {
+            if (upper.startsWith(candUpper) && candUpper.length() > bestLen) {
+                best = m;
+                bestLen = candUpper.length();
+            }
+        }
+        if (best != null) return best;
+        // Reverse direction — a short lookup ("C0N2") should still reach the
+        // longer mapping entry ("C0N200") when the caller has not decoded the
+        // full 8-byte name.
+        for (FontMapping m : mappings) {
+            String candidate = m.afpCharsetPrefix();
+            if (candidate == null || candidate.isEmpty()) continue;
+            String candUpper = candidate.toUpperCase();
+            if (candUpper.startsWith(upper)) {
                 return m;
             }
         }
