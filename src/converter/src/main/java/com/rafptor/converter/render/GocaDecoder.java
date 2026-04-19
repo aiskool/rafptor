@@ -34,12 +34,19 @@ public final class GocaDecoder {
     private GocaDecoder() {}
 
     /** A primitive the renderer must emit. */
-    public sealed interface DrawOrder permits Line, Rect, SetLineWidth, SetColor {}
+    public sealed interface DrawOrder
+            permits Line, Rect, RoundedRect, SetLineWidth, SetColor, SetLineType {}
 
     public record Line(int x1, int y1, int x2, int y2) implements DrawOrder {}
     public record Rect(int x, int y, int width, int height) implements DrawOrder {}
+    public record RoundedRect(int x, int y, int width, int height, int rx, int ry)
+            implements DrawOrder {}
     public record SetLineWidth(double widthDesignUnits) implements DrawOrder {}
     public record SetColor(String hexRgb) implements DrawOrder {}
+
+    /** GOCA line-type patterns. Matches GSLT order code byte. */
+    public enum LineType { SOLID, DOTTED, SHORT_DASH, DASH_DOT, LONG_DASH }
+    public record SetLineType(LineType pattern) implements DrawOrder {}
 
     /**
      * Standard GOCA colour table (8-colour subset of {@code PCP} Basic Colour
@@ -137,6 +144,29 @@ public final class GocaDecoder {
                         out.add(new SetColor(rgb));
                     }
                 }
+                case 0x18 -> {
+                    // GSLT — set line type (1 byte pattern code).
+                    if (length >= 1) {
+                        out.add(new SetLineType(mapLineType(data[bodyStart] & 0xFF)));
+                    }
+                }
+                case 0xE1, 0xE3, 0xC6 -> {
+                    // GCBOX — rounded rectangle: 4-byte opposite corner +
+                    // 2-byte rx + 2-byte ry.
+                    if (length >= 8) {
+                        int x2 = readI16(data, bodyStart);
+                        int y2 = readI16(data, bodyStart + 2);
+                        int rx = readI16(data, bodyStart + 4);
+                        int ry = readI16(data, bodyStart + 6);
+                        int x = Math.min(currentX, x2);
+                        int y = Math.min(currentY, y2);
+                        int w = Math.abs(x2 - currentX);
+                        int h = Math.abs(y2 - currentY);
+                        out.add(new RoundedRect(x, y, w, h, Math.abs(rx), Math.abs(ry)));
+                        currentX = x2;
+                        currentY = y2;
+                    }
+                }
                 default -> { /* tolerant skip */ }
             }
             pos = bodyEnd;
@@ -151,8 +181,19 @@ public final class GocaDecoder {
         return switch (op) {
             case 0x21 -> 4;   // GSPS
             case 0x19 -> 1;   // GSLW
+            case 0x18 -> 1;   // GSLT
             case 0x0A -> 1;   // GSCOL
             default -> 0;
+        };
+    }
+
+    private static LineType mapLineType(int code) {
+        return switch (code) {
+            case 0x01 -> LineType.DOTTED;
+            case 0x02 -> LineType.SHORT_DASH;
+            case 0x03 -> LineType.DASH_DOT;
+            case 0x05 -> LineType.LONG_DASH;
+            default   -> LineType.SOLID;
         };
     }
 

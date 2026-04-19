@@ -33,17 +33,17 @@ public final class GraphicTransformer {
             if (orders.isEmpty()) continue;
             double lineWidth = DEFAULT_LINE_WIDTH_PT;
             String stroke = "#000000";
+            IrGraphic.StrokePattern pattern = IrGraphic.StrokePattern.SOLID;
             double originX = page.toPointsX(g.xOriginLUnits());
             double originY = page.toPointsY(g.yOriginLUnits());
             for (GocaDecoder.DrawOrder o : orders) {
                 if (o instanceof GocaDecoder.SetLineWidth slw) {
-                    // GOCA line width is in design units; scale the same way
-                    // as coordinates so the stroke reads naturally at any
-                    // resolution. 1 design unit at 240 dpi ≈ 0.3 pt.
                     lineWidth = Math.max(0.1, page.toPointsX(
                             (int) Math.round(slw.widthDesignUnits())));
                 } else if (o instanceof GocaDecoder.SetColor sc) {
                     stroke = sc.hexRgb();
+                } else if (o instanceof GocaDecoder.SetLineType slt) {
+                    pattern = mapPattern(slt.pattern());
                 } else if (o instanceof GocaDecoder.Line l) {
                     double x1 = originX + page.toPointsX(l.x1());
                     double y1 = originY + page.toPointsY(l.y1());
@@ -51,7 +51,7 @@ public final class GraphicTransformer {
                     double y2 = originY + page.toPointsY(l.y2());
                     out.add(new IrGraphic(
                             x1, y1, 0, IrGraphic.Shape.LINE,
-                            x2, y2, 0, 0, lineWidth, stroke, null));
+                            x2, y2, 0, 0, 0.0, lineWidth, stroke, null, pattern));
                 } else if (o instanceof GocaDecoder.Rect r) {
                     double x = originX + page.toPointsX(r.x());
                     double y = originY + page.toPointsY(r.y());
@@ -59,11 +59,32 @@ public final class GraphicTransformer {
                     double h = page.toPointsY(r.height());
                     out.add(new IrGraphic(
                             x, y, 0, IrGraphic.Shape.RECT,
-                            0, 0, w, h, lineWidth, stroke, null));
+                            0, 0, w, h, 0.0, lineWidth, stroke, null, pattern));
+                } else if (o instanceof GocaDecoder.RoundedRect rr) {
+                    double x = originX + page.toPointsX(rr.x());
+                    double y = originY + page.toPointsY(rr.y());
+                    double w = page.toPointsX(rr.width());
+                    double h = page.toPointsY(rr.height());
+                    double r = Math.max(
+                            page.toPointsX(rr.rx()),
+                            page.toPointsY(rr.ry()));
+                    out.add(new IrGraphic(
+                            x, y, 0, IrGraphic.Shape.ROUND_RECT,
+                            0, 0, w, h, r, lineWidth, stroke, null, pattern));
                 }
             }
         }
         return out;
+    }
+
+    private static IrGraphic.StrokePattern mapPattern(GocaDecoder.LineType lt) {
+        return switch (lt) {
+            case DOTTED     -> IrGraphic.StrokePattern.DOTTED;
+            case SHORT_DASH -> IrGraphic.StrokePattern.SHORT_DASH;
+            case DASH_DOT   -> IrGraphic.StrokePattern.DASH_DOT;
+            case LONG_DASH  -> IrGraphic.StrokePattern.LONG_DASH;
+            default         -> IrGraphic.StrokePattern.SOLID;
+        };
     }
 
     public String notImplementedWarning() {

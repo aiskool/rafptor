@@ -176,6 +176,7 @@ public final class PdfRenderer {
             cs.setNonStrokingColor(ColorUtil.parse(g.fillColor()));
         }
         cs.setLineWidth((float) g.lineWidth());
+        applyDashPattern(cs, g.strokePattern(), g.lineWidth());
         switch (g.shape()) {
             case LINE, RULE -> {
                 double y2 = pdfY - (g.y2() - g.y());
@@ -193,6 +194,66 @@ public final class PdfRenderer {
                     cs.stroke();
                 }
             }
+            case ROUND_RECT -> {
+                float x = (float) g.x();
+                float y = (float) (pdfY - g.height());
+                float w = (float) g.width();
+                float h = (float) g.height();
+                float r = (float) Math.min(g.cornerRadius(),
+                        Math.min(w, h) / 2.0f);
+                renderRoundedRect(cs, x, y, w, h, r, g.fillColor() != null);
+            }
+        }
+        // Reset dash so we do not poison subsequent graphics / text.
+        if (g.strokePattern() != IrGraphic.StrokePattern.SOLID) {
+            cs.setLineDashPattern(new float[0], 0);
+        }
+    }
+
+    private static void applyDashPattern(PDPageContentStream cs,
+                                         IrGraphic.StrokePattern p,
+                                         double lineWidth) throws IOException {
+        float lw = (float) Math.max(lineWidth, 0.5);
+        float[] pattern = switch (p) {
+            case DOTTED     -> new float[]{lw, lw * 2};
+            case SHORT_DASH -> new float[]{lw * 3, lw * 2};
+            case DASH_DOT   -> new float[]{lw * 3, lw * 2, lw, lw * 2};
+            case LONG_DASH  -> new float[]{lw * 6, lw * 3};
+            default         -> null;
+        };
+        if (pattern != null) {
+            cs.setLineDashPattern(pattern, 0);
+        } else {
+            cs.setLineDashPattern(new float[0], 0);
+        }
+    }
+
+    /**
+     * Draw a rounded rectangle by stitching together four Bézier-approximated
+     * quarter-circles. PDFBox exposes only straight-segment primitives so the
+     * {@code curveTo} calls use the classic {@code k} control-point factor
+     * 0.552284749831 to keep the arcs visually circular.
+     */
+    private static void renderRoundedRect(PDPageContentStream cs,
+                                          float x, float y, float w, float h,
+                                          float r, boolean filled) throws IOException {
+        final float k = 0.552284749831f * r;
+        float xr = x + w;
+        float yt = y + h;
+        cs.moveTo(x + r, y);
+        cs.lineTo(xr - r, y);
+        cs.curveTo(xr - r + k, y, xr, y + r - k, xr, y + r);
+        cs.lineTo(xr, yt - r);
+        cs.curveTo(xr, yt - r + k, xr - r + k, yt, xr - r, yt);
+        cs.lineTo(x + r, yt);
+        cs.curveTo(x + r - k, yt, x, yt - r + k, x, yt - r);
+        cs.lineTo(x, y + r);
+        cs.curveTo(x, y + r - k, x + r - k, y, x + r, y);
+        cs.closePath();
+        if (filled) {
+            cs.fillAndStroke();
+        } else {
+            cs.stroke();
         }
     }
 }

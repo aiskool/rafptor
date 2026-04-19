@@ -48,6 +48,27 @@ class GocaDecoderTest {
     }
 
     @Test
+    void decodesLineTypeAndRoundedBox() {
+        // GSLT (18) 02 → short-dash line
+        // GSPS (21) 00 00 00 00 → (0,0)
+        // GCBOX (E1 08) 00 64 00 C8 00 0A 00 0A → rounded box to (100, 200) r=(10,10)
+        byte[] data = new byte[]{
+                0x18, 0x02,
+                0x21, 0x00, 0x00, 0x00, 0x00,
+                (byte) 0xE1, 0x08, 0x00, 0x64, 0x00, (byte) 0xC8, 0x00, 0x0A, 0x00, 0x0A
+        };
+        List<GocaDecoder.DrawOrder> orders = GocaDecoder.decodeOrders(data);
+        assertEquals(2, orders.size());
+        GocaDecoder.SetLineType slt = (GocaDecoder.SetLineType) orders.get(0);
+        assertEquals(GocaDecoder.LineType.SHORT_DASH, slt.pattern());
+        GocaDecoder.RoundedRect rr = (GocaDecoder.RoundedRect) orders.get(1);
+        assertEquals(100, rr.width());
+        assertEquals(200, rr.height());
+        assertEquals(10, rr.rx());
+        assertEquals(10, rr.ry());
+    }
+
+    @Test
     void decodesBoxOrder() {
         // GSPS 00 00 00 00 → position (0,0)
         // GBOX long-form (C0 04) 00 64 00 C8 → box to (100, 200)
