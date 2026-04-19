@@ -52,6 +52,26 @@ export interface DashboardMetrics {
   rejectedCount: number;
   acceptanceRate: number;
   avgCompositeScore: number;
+  fidelityScore: number;
+}
+
+/**
+ * JSON payload returned by {@code GET /api/metrics/overview}. Uses
+ * business-neutral snake_case keys — the dashboard normalises to the
+ * camelCase {@link DashboardMetrics} shape via {@code fetchOverview}.
+ */
+export interface MetricsApiResponse {
+  total_documents: number;
+  accepted_count: number;
+  documents_to_check: number;
+  rejected_count: number;
+  conversion_success_rate: number;
+  fidelity_score: number;
+  technical_details?: {
+    ssim_avg?: number;
+    structural_score?: number;
+    metadata_score?: number;
+  };
 }
 
 export interface PageResponse<T> {

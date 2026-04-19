@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import {
   AlertTriangle,
-  ArrowRight,
   Check,
   Clock,
-  FileText,
   LayoutDashboard,
   Plus,
   XCircle,
@@ -13,35 +11,15 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/Ca
 import { Progress } from "@/components/ui/Progress";
 import { MetricCard } from "@/components/data/MetricCard";
 import { Sparkline } from "@/components/data/Sparkline";
-import { ScoreBadge } from "@/components/data/ScoreBadge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
+import type { DashboardMetrics } from "@/api/types";
 import { t } from "@/i18n";
 
-interface ReviewItem {
-  id: string;
-  name: string;
-  score: number;
-  pages: number;
-}
-
-interface Migration {
-  projectName: string;
-  progress: number;
-  converted: number;
-  inProgress: number;
-  toCheck: number;
-  errors: number;
-  fidelity: number;
-  spark: number[];
-  review: ReviewItem[];
-}
-
-// Swap for real data once /api/metrics/overview is wired.
-const migrations: Migration[] = [];
-
 export default function OverviewPage() {
-  const current = migrations[0];
+  const { data, loading, error } = useDashboardMetrics();
 
   return (
     <div className="flex flex-col gap-6">
@@ -49,7 +27,9 @@ export default function OverviewPage() {
         <div>
           <h1 className="text-2xl font-semibold text-text-primary">Vue d'ensemble</h1>
           <p className="text-sm text-text-secondary">
-            {current ? "Suivi de vos migrations en cours." : "Commencez votre première analyse."}
+            {data && data.totalDocuments > 0
+              ? "Suivi de vos migrations en cours."
+              : "Commencez votre première analyse."}
           </p>
         </div>
         <Link to="/onboarding/welcome">
@@ -59,8 +39,33 @@ export default function OverviewPage() {
         </Link>
       </div>
 
-      {current ? <Populated migration={current} /> : <Empty />}
+      {loading && !data ? <Loading /> : error && !data ? <ErrorState message={error} /> : null}
+      {data && data.totalDocuments > 0 ? <Populated metrics={data} /> : data ? <Empty /> : null}
     </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="flex flex-col gap-4">
+      <Skeleton className="h-24 w-full" />
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-32 w-full" />
+        ))}
+      </div>
+      <Skeleton className="h-40 w-full" />
+    </div>
+  );
+}
+
+function ErrorState({ message }: { message: string }) {
+  return (
+    <Card padding="md" className="border-danger/40 bg-danger-subtle">
+      <p className="text-sm text-danger">
+        Impossible de charger les métriques : {message}
+      </p>
+    </Card>
   );
 }
 
@@ -81,48 +86,61 @@ function Empty() {
   );
 }
 
-function Populated({ migration }: { migration: Migration }) {
+function Populated({ metrics }: { metrics: DashboardMetrics }) {
+  const converted = metrics.acceptedCount;
+  const toCheck = metrics.reviewCount;
+  const errors = metrics.rejectedCount;
+  const inProgress = Math.max(
+    0,
+    metrics.totalDocuments - converted - toCheck - errors
+  );
+  const processed = converted + toCheck + errors;
+  const progress = metrics.totalDocuments > 0
+    ? Math.round((processed / metrics.totalDocuments) * 100)
+    : 0;
+  const fidelity = metrics.fidelityScore || metrics.avgCompositeScore || 0;
+
   return (
     <>
       <Card padding="lg" className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold text-text-primary">
-              Migration « {migration.projectName} »
+              Migration en cours
             </h2>
             <p className="text-sm text-text-secondary">
-              {migration.progress}% · {t("dashboard.overview.progress").toLowerCase()}
+              {progress}% · {t("dashboard.overview.progress").toLowerCase()} · {metrics.totalDocuments} documents au total
             </p>
           </div>
           <span className="rounded-full bg-accent-subtle px-3 py-1 text-xs text-accent">
-            En cours
+            {progress >= 100 ? "Terminée" : "En cours"}
           </span>
         </div>
-        <Progress value={migration.progress} size="lg" />
+        <Progress value={progress} size="lg" />
       </Card>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <MetricCard
           label={t("dashboard.overview.converted")}
-          value={migration.converted}
+          value={converted}
           accent="success"
           icon={<Check className="h-4 w-4 text-success" />}
         />
         <MetricCard
           label={t("dashboard.overview.inProgress")}
-          value={migration.inProgress}
+          value={inProgress}
           accent="accent"
           icon={<Clock className="h-4 w-4 text-accent" />}
         />
         <MetricCard
           label={t("dashboard.overview.toCheck")}
-          value={migration.toCheck}
+          value={toCheck}
           accent="warning"
           icon={<AlertTriangle className="h-4 w-4 text-warning" />}
         />
         <MetricCard
           label={t("dashboard.overview.errors")}
-          value={migration.errors}
+          value={errors}
           accent="danger"
           icon={<XCircle className="h-4 w-4 text-danger" />}
         />
@@ -131,57 +149,18 @@ function Populated({ migration }: { migration: Migration }) {
       <Card padding="lg" className="flex flex-col gap-3">
         <CardHeader>
           <CardTitle>{t("dashboard.overview.fidelity")}</CardTitle>
-          <CardDescription>30 derniers documents</CardDescription>
+          <CardDescription>
+            Moyenne sur {metrics.totalDocuments} document{metrics.totalDocuments > 1 ? "s" : ""}
+          </CardDescription>
         </CardHeader>
         <div className="flex items-center gap-8">
           <div className="text-5xl font-semibold tabular-nums text-text-primary">
-            {(migration.fidelity * 100).toFixed(1)}
+            {(fidelity * 100).toFixed(1)}
             <span className="text-2xl text-text-muted">%</span>
           </div>
-          <Sparkline data={migration.spark} width={280} height={48} />
+          {/* Sparkline left as a follow-up when the backend exposes a time series. */}
+          <Sparkline data={[fidelity, fidelity, fidelity]} width={280} height={48} />
         </div>
-      </Card>
-
-      <Card padding="md">
-        <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-base font-medium text-text-primary">
-            {t("dashboard.overview.documentsToCheck")}
-          </h3>
-          <Link
-            to="/review"
-            className="inline-flex items-center gap-1 text-xs text-accent hover:text-accent-hover"
-          >
-            Voir tout <ArrowRight className="h-3 w-3" />
-          </Link>
-        </div>
-        {migration.review.length === 0 ? (
-          <EmptyState
-            icon={<Check className="h-5 w-5" />}
-            title={t("dashboard.overview.noReview")}
-          />
-        ) : (
-          <ul className="flex flex-col divide-y divide-border">
-            {migration.review.map((d) => (
-              <li key={d.id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-                <FileText className="h-4 w-4 text-text-muted" />
-                <span className="flex-1 truncate text-sm text-text-primary">{d.name}</span>
-                <ScoreBadge score={d.score} animated={false} />
-                <span className="w-16 text-right text-xs text-text-muted tabular-nums">
-                  {d.pages} p.
-                </span>
-                <Link to={`/review/${d.id}`}>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    rightIcon={<ArrowRight className="h-3.5 w-3.5" />}
-                  >
-                    Vérifier
-                  </Button>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
       </Card>
     </>
   );

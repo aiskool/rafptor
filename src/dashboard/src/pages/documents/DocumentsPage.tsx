@@ -1,64 +1,90 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { FileText, Plus } from "lucide-react";
+import { FileText, Plus, AlertCircle } from "lucide-react";
 import { DocumentCard, type DocumentCardData } from "@/components/data/DocumentCard";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
+import { listDocuments } from "@/api/documents";
+import type { Document } from "@/api/types";
 import { t } from "@/i18n";
 
 type Filter = "all" | "converted" | "toCheck" | "errors";
 
-// Swap for a real /api/documents?filter= fetch once the backend is wired.
-const HAS_DATA = false;
+const FILTER_TO_STATUS: Record<Filter, string | undefined> = {
+  all: undefined,
+  converted: "ACCEPTED",
+  toCheck: "NEEDS_REVIEW",
+  errors: "REJECTED",
+};
 
-function makeDemo(n: number): DocumentCardData[] {
-  if (!HAS_DATA) return [];
-  return Array.from({ length: n }).map((_, i) => ({
-    id: `doc_${i + 1}`,
-    name: `REL_${String(i + 1).padStart(5, "0")}`,
-    pageCount: 1 + (i % 12),
-    fidelityScore: 0.7 + (i % 30) / 100,
-    createdAt: new Date(Date.now() - i * 60_000 * 5).toISOString(),
-  }));
+const PAGE_SIZE = 20;
+
+function toCardData(d: Document): DocumentCardData {
+  return {
+    id: d.id,
+    name: d.sourceAfpName || d.id,
+    pageCount: d.pageCount,
+    fidelityScore: d.compositeScore,
+    createdAt: d.createdAt,
+    thumbnailUrl: `/api/documents/${d.id}/thumbnail`,
+  };
 }
 
 export default function DocumentsPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [items, setItems] = useState<DocumentCardData[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const sentinel = useRef<HTMLDivElement>(null);
 
+  const load = useCallback(
+    async (newFilter: Filter, pageToLoad: number, replace: boolean) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await listDocuments({
+          status: FILTER_TO_STATUS[newFilter],
+          page: pageToLoad,
+          size: PAGE_SIZE,
+        });
+        const mapped = response.content.map(toCardData);
+        setItems((prev) => (replace ? mapped : [...prev, ...mapped]));
+        const loaded = (replace ? 0 : items.length) + mapped.length;
+        setHasMore(loaded < response.totalElements && mapped.length > 0);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Erreur de chargement");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [items.length]
+  );
+
   useEffect(() => {
-    setLoading(true);
-    const id = setTimeout(() => {
-      setItems(makeDemo(12));
-      setLoading(false);
-    }, 300);
-    return () => clearTimeout(id);
+    setPage(0);
+    load(filter, 0, true);
+    // `load` intentionally not in deps to avoid re-running on every item append.
   }, [filter]);
 
   useEffect(() => {
-    if (!sentinel.current) return;
+    if (!sentinel.current || !hasMore || loading) return;
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting && !loading && items.length > 0 && items.length < 120) {
-          setItems((prev) => [...prev, ...makeDemo(12).map((d, i) => ({ ...d, id: `${d.id}_${prev.length + i}` }))]);
+        if (entries[0]?.isIntersecting) {
+          const next = page + 1;
+          setPage(next);
+          load(filter, next, false);
         }
       },
       { rootMargin: "400px" }
     );
     io.observe(sentinel.current);
     return () => io.disconnect();
-  }, [loading, items.length]);
-
-  const filtered = items.filter((d) => {
-    if (filter === "converted") return d.fidelityScore >= 0.9;
-    if (filter === "toCheck") return d.fidelityScore >= 0.7 && d.fidelityScore < 0.9;
-    if (filter === "errors") return d.fidelityScore < 0.7;
-    return true;
-  });
+  }, [filter, hasMore, loading, page, load]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -74,23 +100,33 @@ export default function DocumentsPage() {
         </Tabs>
       </div>
 
-      {loading && items.length === 0 ? (
+      {error ? (
+        <EmptyState
+          icon={<AlertCircle className="h-5 w-5" />}
+          title="Impossible de charger les documents"
+          description={error}
+        />
+      ) : loading && items.length === 0 ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {Array.from({ length: 10 }).map((_, i) => (
             <Skeleton key={i} className="aspect-[5/7] w-full" />
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : items.length === 0 ? (
         <EmptyState
           icon={<FileText className="h-5 w-5" />}
-          title={items.length === 0 ? "Aucun document pour l'instant" : "Aucun document dans ce filtre"}
+          title={
+            filter === "all"
+              ? "Aucun document pour l'instant"
+              : "Aucun document dans ce filtre"
+          }
           description={
-            items.length === 0
+            filter === "all"
               ? "Lancez une première analyse pour voir vos documents convertis ici."
               : undefined
           }
           action={
-            items.length === 0 ? (
+            filter === "all" ? (
               <Link to="/onboarding/welcome">
                 <Button leftIcon={<Plus className="h-4 w-4" />}>Nouvelle analyse</Button>
               </Link>
@@ -100,11 +136,11 @@ export default function DocumentsPage() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {filtered.map((d) => (
+            {items.map((d) => (
               <DocumentCard key={d.id} doc={d} />
             ))}
           </div>
-          <div ref={sentinel} className="h-8 w-full" />
+          {hasMore ? <div ref={sentinel} className="h-8 w-full" /> : null}
         </>
       )}
     </div>
