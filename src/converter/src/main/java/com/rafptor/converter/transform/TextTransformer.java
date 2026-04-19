@@ -51,7 +51,8 @@ public final class TextTransformer {
         }
         List<IrTextBlock> out = new ArrayList<>(runs.size());
         FontMapping defaultMapping = fontMapper.defaultMapping();
-        for (PtocaTextRun run : runs) {
+        for (int i = 0; i < runs.size(); i++) {
+            PtocaTextRun run = runs.get(i);
             if (run.text().isEmpty()) {
                 continue;
             }
@@ -61,17 +62,74 @@ public final class TextTransformer {
             FontMapping m = resolveMapping(resourceName, defaultMapping);
             double x = page.toPointsX(run.inlinePosition());
             double y = page.toPointsY(run.baselinePosition());
+            double fontSize = m.defaultPointSize() * m.scaleFactor();
             String color = run.colorHex() == null || run.colorHex().isBlank()
                     ? "#000000" : run.colorHex();
+            String text = run.text();
+            // If the next run is on the same baseline and starts visibly to the
+            // right of where this run's glyph box will end, append a space so
+            // downstream text-layer consumers (search, accessibility, copy) see
+            // a word boundary. Visual position remains anchored by the next
+            // run's own AMI — the appended space character is absorbed into
+            // this run's advance and does not shift later runs because each
+            // IrTextBlock is emitted with its own absolute newLineAtOffset.
+            if (shouldAppendWordBreak(runs, i, page, fontSize)) {
+                text = text + ' ';
+            }
             out.add(new IrTextBlock(
                     x, y, 0,
-                    run.text(),
+                    text,
                     m.trueTypeFont(),
-                    m.defaultPointSize() * m.scaleFactor(),
+                    fontSize,
                     0.0,
                     color));
         }
         return out;
+    }
+
+    /**
+     * A PTOCA composer can emit consecutive TRN runs on the same baseline
+     * without encoding any space character between them, relying on the
+     * upstream font's glyph widths to leave a visible gap at AMI-declared
+     * positions. When the glyph width of our substitute font happens to
+     * match, the two runs render seamlessly and word boundaries disappear
+     * from the extracted text layer. We synthesise that boundary here when
+     * the next run's starting X is clearly to the right of this run's last
+     * character: the PDF content then contains one ASCII space per logical
+     * word break.
+     */
+    private static boolean shouldAppendWordBreak(List<PtocaTextRun> runs, int i,
+                                                 IrPage page, double fontSize) {
+        if (i + 1 >= runs.size()) {
+            return false;
+        }
+        PtocaTextRun cur = runs.get(i);
+        PtocaTextRun next = runs.get(i + 1);
+        if (next.text().isEmpty()) {
+            return false;
+        }
+        if (cur.baselinePosition() != next.baselinePosition()) {
+            return false;
+        }
+        // If the current text already ends with whitespace, nothing to add.
+        String t = cur.text();
+        if (t.isEmpty() || Character.isWhitespace(t.charAt(t.length() - 1))) {
+            return false;
+        }
+        // If the next run begins with whitespace, skip too.
+        if (Character.isWhitespace(next.text().charAt(0))) {
+            return false;
+        }
+        double curX = page.toPointsX(cur.inlinePosition());
+        double nextX = page.toPointsX(next.inlinePosition());
+        // Estimate current run's rendered width: ~0.55 × fontSize per average
+        // character for a sans-serif face. This is intentionally conservative
+        // — when it under-estimates we emit a redundant space, which is
+        // harmless; when it over-estimates we drop the space and the runs
+        // remain glued, which is the status quo.
+        double estWidth = t.length() * fontSize * 0.55;
+        double gapPt = nextX - (curX + estWidth);
+        return gapPt >= fontSize * 0.15; // ~1.5pt at 10pt — smaller than a word space
     }
 
     /**
