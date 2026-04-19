@@ -21,7 +21,7 @@ command -v mvn  >/dev/null || fail "maven not on PATH"
 [[ -x "$VENV_BIN/rafptor-collect" ]] || fail "rafptor-collect not in $VENV_BIN"
 
 rm -rf "$E2E_DIR"
-mkdir -p "$E2E_DIR"/{output,reference,diffs,qa_results}
+mkdir -p "$E2E_DIR"/{output,reference,diffs,qa_results,afp-text}
 
 say "Step 1/5 — generate bundle"
 "$VENV_BIN/rafptor-collect" simulate \
@@ -35,7 +35,9 @@ pushd "$REPO_DIR/src/parser" >/dev/null
 mvn -B -ntp install -DskipTests -Djacoco.skip=true -Dspotbugs.skip=true -q
 mvn -B -ntp dependency:build-classpath -Dmdep.outputFile=/tmp/parser.cp -q
 PARSER_CP="target/rafptor-parser-0.1.0-SNAPSHOT.jar:$(cat /tmp/parser.cp)"
-java -cp "$PARSER_CP" com.rafptor.parser.E2EParseTest "$E2E_DIR/bundle/streams"
+java -cp "$PARSER_CP" com.rafptor.parser.E2EParseTest \
+    "$E2E_DIR/bundle/streams" \
+    --emit-text-json "$E2E_DIR/afp-text"
 popd >/dev/null
 
 say "Step 3/5 — mapper analyse (first font)"
@@ -60,8 +62,13 @@ say "Step 5/5 — QA baseline + validation"
 "$VENV_BIN/rafptor-qa" baseline "$E2E_DIR/output" --output "$E2E_DIR/reference" --dpi 150
 for pdf in "$E2E_DIR"/output/*.pdf; do
     base="$(basename "$pdf" .pdf)"
+    afp_text_flag=()
+    if [[ -f "$E2E_DIR/afp-text/${base}.text.json" ]]; then
+        afp_text_flag=(--afp-text "$E2E_DIR/afp-text/${base}.text.json")
+    fi
     "$VENV_BIN/rafptor-qa" validate "$pdf" \
         --reference "$E2E_DIR/reference/$base" \
+        "${afp_text_flag[@]}" \
         --dpi 150 \
         --output "$E2E_DIR/qa_results/${base}.json" \
         --diff-dir "$E2E_DIR/diffs/$base" >/dev/null
