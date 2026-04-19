@@ -4,6 +4,7 @@ import com.rafptor.parser.AfpTestFileGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -77,6 +78,67 @@ class PtocaParserTest {
         List<PtocaTextRun> runs = parser.parseBytes(trn);
         assertEquals(1, runs.size());
         assertEquals("ÉTÉ", runs.get(0).text());
+    }
+
+    @Test
+    void per_local_id_code_page_selects_decoder() {
+        // Two runs on two distinct local font ids, each with its own code page.
+        // Bytes that look identical in IBM037 vs IBM500 would hide the bug, so
+        // use code points that differ: U+00A2 (¢) is 0x4A in IBM037 and 0xB0 in
+        // IBM500. We encode the same word in both charsets and assert that the
+        // right charset was used for each run.
+        byte[] en = "HELLO".getBytes(java.nio.charset.Charset.forName("IBM037"));
+        byte[] fr = "SANTÉ".getBytes(java.nio.charset.Charset.forName("IBM500"));
+        byte[] scfl1 = {0x03, (byte) 0xF1, 0x01};
+        byte[] trn1 = prefixTrn(en);
+        byte[] scfl2 = {0x03, (byte) 0xF1, 0x02};
+        byte[] trn2 = prefixTrn(fr);
+        byte[] data = concat(scfl1, trn1, scfl2, trn2);
+
+        PtocaParser parser = new PtocaParser();
+        Map<Integer, String> codePages = Map.of(1, "T1V10037", 2, "T1V10500");
+        List<PtocaTextRun> runs = parser.parseBytes(data, codePages);
+        assertEquals(2, runs.size());
+        assertEquals("HELLO", runs.get(0).text());
+        assertEquals(1, runs.get(0).localFontId());
+        assertEquals("SANTÉ", runs.get(1).text());
+        assertEquals(2, runs.get(1).localFontId());
+    }
+
+    @Test
+    void detects_utf16_be_trn_payload() {
+        // MO:DCA/P5 streams produced by DOC1 / Adobe Output / Compart emit
+        // Unicode code points inside TRN when the coded font is a TrueType
+        // resource mapped through MDR. The decoder must auto-detect that
+        // shape rather than force EBCDIC conversion.
+        byte[] utf16 = "Hello".getBytes(java.nio.charset.StandardCharsets.UTF_16BE);
+        byte[] trn = new byte[2 + utf16.length];
+        trn[0] = (byte) (2 + utf16.length);
+        trn[1] = (byte) 0xDA;
+        System.arraycopy(utf16, 0, trn, 2, utf16.length);
+        PtocaParser parser = new PtocaParser();
+        List<PtocaTextRun> runs = parser.parseBytes(trn);
+        assertEquals(1, runs.size());
+        assertEquals("Hello", runs.get(0).text());
+    }
+
+    @Test
+    void unknown_code_page_falls_back_to_ibm500() {
+        byte[] text = "OK".getBytes(java.nio.charset.Charset.forName("IBM500"));
+        byte[] scfl = {0x03, (byte) 0xF1, 0x07};
+        byte[] trn = prefixTrn(text);
+        PtocaParser parser = new PtocaParser();
+        List<PtocaTextRun> runs = parser.parseBytes(concat(scfl, trn), Map.of(7, "T1BOGUS9"));
+        assertEquals(1, runs.size());
+        assertEquals("OK", runs.get(0).text());
+    }
+
+    private static byte[] prefixTrn(byte[] text) {
+        byte[] trn = new byte[2 + text.length];
+        trn[0] = (byte) (2 + text.length);
+        trn[1] = (byte) 0xDA;
+        System.arraycopy(text, 0, trn, 2, text.length);
+        return trn;
     }
 
     private static byte[] concat(byte[]... parts) {

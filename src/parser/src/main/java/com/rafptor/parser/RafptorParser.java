@@ -134,6 +134,9 @@ public final class RafptorParser {
                     document.addResource(new AfpResource(name, AfpResource.ResourceType.CODED_FONT));
                     if (currentPage != null) {
                         currentPage.putFontAssignment(e.localId(), name);
+                        if (e.codePageName() != null && !e.codePageName().isEmpty()) {
+                            currentPage.putCodePageAssignment(e.localId(), e.codePageName());
+                        }
                     }
                 }
             } else if (sf instanceof IncludePageOverlay ipo) {
@@ -154,7 +157,8 @@ public final class RafptorParser {
                 }
             } else if (sf instanceof PresentationTextData ptx) {
                 if (currentPage != null) {
-                    ptocaParser.parse(ptx).forEach(currentPage::addTextRun);
+                    ptocaParser.parse(ptx, currentPage.codePageAssignments())
+                            .forEach(currentPage::addTextRun);
                 }
             } else if (sf instanceof PageDescriptor pgd) {
                 if (currentPage != null) {

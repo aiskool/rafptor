@@ -102,7 +102,7 @@ public record MapCodedFont(StructuredFieldId id, List<Entry> entries) implements
             if (name.isEmpty()) {
                 name = ModcaUtil.decodeName(data, pos + 2, Math.min(8, rgLength - 2));
             }
-            entries.add(new Entry(localId, name));
+            entries.add(new Entry(localId, name, codepageName));
             pos += rgLength;
         }
     }
@@ -114,7 +114,7 @@ public record MapCodedFont(StructuredFieldId id, List<Entry> entries) implements
             if (rgLength < 2 || pos + rgLength > data.length) break;
             int localId = data[pos + 1] & 0xFF;
             String name = ModcaUtil.decodeName(data, pos + 2, Math.min(8, rgLength - 2));
-            entries.add(new Entry(localId, name));
+            entries.add(new Entry(localId, name, ""));
             pos += rgLength;
         }
     }
@@ -125,7 +125,7 @@ public record MapCodedFont(StructuredFieldId id, List<Entry> entries) implements
         while (pos + entrySize <= data.length) {
             int localId = data[pos] & 0xFF;
             String name = ModcaUtil.decodeName(data, pos + 2, 8);
-            entries.add(new Entry(localId, name));
+            entries.add(new Entry(localId, name, ""));
             pos += entrySize;
         }
     }
@@ -154,22 +154,25 @@ public record MapCodedFont(StructuredFieldId id, List<Entry> entries) implements
             int rgLength = data[pos + 1] & 0xFF;
             if (rgLength < 6 || pos + rgLength > data.length) break;
             int localId = data[pos + 5] & 0xFF;
-            String name = extractNameFromTriplets(data, pos + 6, pos + rgLength);
-            if (name.isEmpty()) {
-                name = ModcaUtil.decodeName(data, pos + 6,
+            ExtractedNames names = extractNamesFromTriplets(data, pos + 6, pos + rgLength);
+            String resolved = names.resolved();
+            if (resolved.isEmpty()) {
+                resolved = ModcaUtil.decodeName(data, pos + 6,
                         Math.max(0, Math.min(8, rgLength - 6)));
             }
-            entries.add(new Entry(localId, name));
+            entries.add(new Entry(localId, resolved, names.codepage()));
             pos += rgLength;
         }
     }
 
     /**
-     * Walk the triplets inside a repeating group and prefer the character-set
-     * name. Triplet X'02' (Fully Qualified Name) carries a sub-type at byte+2
-     * where X'86' = Character Set, X'85' = Coded Font, X'84' = Code Page.
+     * Walk the triplets inside a repeating group and return both the preferred
+     * name (character-set → coded-font → code-page) and the code-page name
+     * separately so callers can wire the right EBCDIC decoder.
+     * Triplet X'02' (Fully Qualified Name) carries a sub-type at byte+2 where
+     * X'86' = Character Set, X'85' = Coded Font, X'84' = Code Page.
      */
-    private static String extractNameFromTriplets(byte[] data, int from, int to) {
+    private static ExtractedNames extractNamesFromTriplets(byte[] data, int from, int to) {
         String charset = "";
         String codedFont = "";
         String codepage = "";
@@ -195,11 +198,15 @@ public record MapCodedFont(StructuredFieldId id, List<Entry> entries) implements
             }
             p += tLen;
         }
-        // Prefer character-set name (starts with C0…) since it encodes the
-        // typographic family we can map. Fall back to coded-font then code-page.
-        if (!charset.isEmpty()) return charset;
-        if (!codedFont.isEmpty()) return codedFont;
-        return codepage;
+        return new ExtractedNames(charset, codedFont, codepage);
+    }
+
+    private record ExtractedNames(String charset, String codedFont, String codepage) {
+        String resolved() {
+            if (!charset.isEmpty()) return charset;
+            if (!codedFont.isEmpty()) return codedFont;
+            return codepage;
+        }
     }
 
     private static boolean looksLikeCharset(String s) {
@@ -211,7 +218,7 @@ public record MapCodedFont(StructuredFieldId id, List<Entry> entries) implements
         return (a == 'C' || a == 'X' || a == 'T') && Character.isLetterOrDigit(b);
     }
 
-    public record Entry(int localId, String codedFontName) {
+    public record Entry(int localId, String codedFontName, String codePageName) {
         public Entry {
             if ((localId & ~0xFF) != 0) {
                 throw new IllegalArgumentException("localId must be a byte");
@@ -219,6 +226,14 @@ public record MapCodedFont(StructuredFieldId id, List<Entry> entries) implements
             if (codedFontName == null) {
                 codedFontName = "";
             }
+            if (codePageName == null) {
+                codePageName = "";
+            }
+        }
+
+        /** Back-compat constructor for call sites that don't carry a code-page name. */
+        public Entry(int localId, String codedFontName) {
+            this(localId, codedFontName, "");
         }
     }
 }

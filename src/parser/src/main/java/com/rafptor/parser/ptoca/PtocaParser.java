@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Parses a PTOCA control-sequence stream.
@@ -54,17 +56,38 @@ public final class PtocaParser {
         if (ptx == null) {
             throw new IllegalArgumentException("ptx must not be null");
         }
-        return parseBytes(ptx.payload());
+        return parseBytes(ptx.payload(), Map.of());
+    }
+
+    /**
+     * Parse a PTOCA payload with per-local-id code-page hints from the MCF.
+     * When a SCFL sequence selects a font id that has an associated AFP
+     * code-page name in {@code codePageByLocalId}, subsequent TRN sequences
+     * are decoded with the matching JVM EBCDIC charset; otherwise the parser
+     * falls back to its default decoder (IBM500).
+     */
+    public List<PtocaTextRun> parse(PresentationTextData ptx, Map<Integer, String> codePageByLocalId) {
+        if (ptx == null) {
+            throw new IllegalArgumentException("ptx must not be null");
+        }
+        return parseBytes(ptx.payload(), codePageByLocalId);
     }
 
     public List<PtocaTextRun> parseBytes(byte[] data) {
+        return parseBytes(data, Map.of());
+    }
+
+    public List<PtocaTextRun> parseBytes(byte[] data, Map<Integer, String> codePageByLocalId) {
         if (data == null) {
             throw new IllegalArgumentException("data must not be null");
         }
+        Map<Integer, String> codePages = codePageByLocalId == null ? Map.of() : codePageByLocalId;
+        Map<Integer, EbcdicDecoder> decoderCache = new HashMap<>();
         List<PtocaTextRun> runs = new ArrayList<>();
         int localFontId = 0;
         int baseline = 0;
         int inline = 0;
+        EbcdicDecoder currentDecoder = resolveDecoder(localFontId, codePages, decoderCache);
 
         int pos = 0;
         int sequenceCount = 0;
@@ -111,6 +134,7 @@ public final class PtocaParser {
                 case PtocaControlCode.SET_CODED_FONT_LOCAL -> {
                     if (payloadOffset < sequenceEnd) {
                         localFontId = data[payloadOffset] & 0xFF;
+                        currentDecoder = resolveDecoder(localFontId, codePages, decoderCache);
                     }
                 }
                 case PtocaControlCode.ABSOLUTE_MOVE_BASELINE -> baseline = readUnsignedShort(data, payloadOffset, sequenceEnd);
@@ -119,7 +143,7 @@ public final class PtocaParser {
                 case PtocaControlCode.TRANSPARENT_DATA -> {
                     int textLen = sequenceEnd - payloadOffset;
                     if (textLen > 0) {
-                        String text = decoder.decode(data, payloadOffset, textLen);
+                        String text = decodeTrn(data, payloadOffset, textLen, currentDecoder);
                         runs.add(new PtocaTextRun(localFontId, baseline, inline, text));
                     }
                 }
@@ -148,5 +172,61 @@ public final class PtocaParser {
             return 0;
         }
         return ((data[offset] & 0xFF) << 8) | (data[offset + 1] & 0xFF);
+    }
+
+    /**
+     * Decode a TRN payload. Recent MO:DCA/P5 producers emit Unicode code points
+     * (UTF-16BE) inside the TRN bytes when the coded font is a TrueType/OpenType
+     * resource. We auto-detect that case by looking at the payload shape — an
+     * even length with a strong zero-high-byte signal is a reliable tell.
+     * Fallback: the EBCDIC decoder configured from the MCF code page.
+     */
+    private static String decodeTrn(byte[] data, int offset, int length, EbcdicDecoder ebcdic) {
+        if (length >= 2 && (length % 2) == 0 && looksLikeUtf16BE(data, offset, length)) {
+            return new String(data, offset, length, java.nio.charset.StandardCharsets.UTF_16BE);
+        }
+        return ebcdic.decode(data, offset, length);
+    }
+
+    /**
+     * Heuristic: Latin-script UTF-16BE text has a high byte of 0x00 for every
+     * code point in the ASCII/Latin-1 range. We sample at least 4 code units
+     * and require >=75% of high bytes to be 0x00 to commit to UTF-16BE.
+     */
+    private static boolean looksLikeUtf16BE(byte[] data, int offset, int length) {
+        if (length < 4) {
+            return false;
+        }
+        int codeUnits = length / 2;
+        int zeroHigh = 0;
+        for (int i = 0; i < codeUnits; i++) {
+            if ((data[offset + 2 * i] & 0xFF) == 0x00) {
+                zeroHigh++;
+            }
+        }
+        return zeroHigh * 4 >= codeUnits * 3;
+    }
+
+    private EbcdicDecoder resolveDecoder(int localFontId,
+                                         Map<Integer, String> codePages,
+                                         Map<Integer, EbcdicDecoder> cache) {
+        EbcdicDecoder cached = cache.get(localFontId);
+        if (cached != null) {
+            return cached;
+        }
+        String afpName = codePages.get(localFontId);
+        if (afpName == null || afpName.isBlank()) {
+            cache.put(localFontId, decoder);
+            return decoder;
+        }
+        String jdkName = AfpCodePageMapper.resolve(afpName);
+        EbcdicDecoder resolved;
+        try {
+            resolved = new EbcdicDecoder(jdkName);
+        } catch (RuntimeException e) {
+            resolved = decoder;
+        }
+        cache.put(localFontId, resolved);
+        return resolved;
     }
 }

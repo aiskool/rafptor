@@ -20,6 +20,7 @@ public final class AfpPage {
     private final List<AfpImageObject> images;
     private final List<AfpGraphicObject> graphics;
     private final Map<Integer, String> fontAssignments;
+    private final Map<Integer, String> codePageAssignments;
     private PageGeometry geometry;
 
     public AfpPage(String name) {
@@ -30,6 +31,7 @@ public final class AfpPage {
         this.images = new ArrayList<>();
         this.graphics = new ArrayList<>();
         this.fontAssignments = new HashMap<>();
+        this.codePageAssignments = new HashMap<>();
     }
 
     public String name() {
@@ -106,5 +108,17 @@ public final class AfpPage {
 
     public void putFontAssignment(int localId, String codedFontName) {
         fontAssignments.put(localId, codedFontName == null ? "" : codedFontName);
+    }
+
+    /** Local font id → AFP code-page resource name declared by the MCF. */
+    public Map<Integer, String> codePageAssignments() {
+        return Collections.unmodifiableMap(codePageAssignments);
+    }
+
+    public void putCodePageAssignment(int localId, String codePageName) {
+        if (codePageName == null || codePageName.isEmpty()) {
+            return;
+        }
+        codePageAssignments.put(localId, codePageName);
     }
 }
