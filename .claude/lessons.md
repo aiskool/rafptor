@@ -22,6 +22,73 @@ Format per entry:
 
 ---
 
+## 2026-04-19 — Raw SSIM can dip while visual fidelity improves dramatically
+
+### Problem
+Iteration 4 (MDR font-size + bold rendering) was the single most visible improvement in the AFPWorld blind-test: the 27pt teal title materialised, bold labels appeared, the body font got proportional metrics. The montage went from "obvious clone gone wrong" to "near-parity with the reference". Yet the raw grayscale SSIM **dropped** from 0.7126 to 0.7084.
+
+### Cause
+SSIM is a pixel-local structural metric: it compares 7×7 windows' means / variances / covariances. When glyphs get dramatically bigger (10pt → 27pt) and bolder, the anti-aliased glyph pixels get thicker edges, so Liberation Sans Bold vs the reference's Arial Fett produces **more pixel-level variance** per window — even when every word is in the right place, the right size, and the right colour. A monospace-ish mis-render (iter 0–3) hugged the pixel grid more closely and looked "more similar" to SSIM than a bold Arial-clone rendering.
+
+### Solution
+Stop optimising for SSIM in isolation. Iteration 4 shipped because **keyword-extraction jumped 9 → 14** and **the montage is visibly near-parity**, even though SSIM nudged down 0.004. Documented both metrics and the montage in `docs/blind-test-afpworld.md` so the dip is contextualised rather than hidden.
+
+### Rule
+- **Never treat a single SSIM number as the fidelity ground truth for layout/type changes.** Pair it with: (a) human-eye side-by-side montage, (b) text-layer keyword extraction, (c) E2E composite score on simulated scenarios (regression guard).
+- **Iterate in this order**: 1) text extraction ratio, 2) keyword coverage, 3) montage eyeball, 4) SSIM, 5) validator composite. If 1–3 improve and 4 wobbles by <0.01, ship it.
+- **Don't chase SSIM by softening glyphs.** Accept the pixel-diff cost of rendering at the correct weight/size. The alternative (too-thin fonts, wrong size) is worse for every downstream consumer.
+
+**Why:** SSIM rewards pixel-local similarity. A faithful rendering with different-but-close-metric fonts will always trail a "same-shape-of-gray" mis-rendering under SSIM. Other metrics (DSSIM on text regions only, OCR diff, keyword extraction) capture fidelity better for document conversion.
+
+**How to apply:** when reporting SSIM, always cite the montage alongside. When SSIM drops <0.01 on a change that clearly improves visual parity, ship anyway and note the mechanical explanation in the commit message.
+
+---
+
+## 2026-04-19 — MDR font-name triplets use UTF-16BE, not UTF-16LE
+
+### Problem
+Extracting font names from the AFPWorld sample's Map Data Resource repeating groups returned 0x4100 0x7200 0x6900... codepoints — Chinese ideographs instead of "Ari...". First attempt assumed UTF-16LE because Windows-facing tools store font names as LE.
+
+### Cause
+MO:DCA/P5 triplet 0x02 subtype 0xDE encodes font names as **UTF-16 big-endian** (consistent with the rest of MO:DCA being big-endian). The bytes `00 41 00 72 00 69` decode as "Ari" in BE and as 䄀爀椀 (U+4100 U+7200 U+6900) in LE. The mistake is silent — UTF-16LE decoding of BE bytes produces valid Unicode, just in the CJK Unified Ideographs block.
+
+### Solution
+Switch to `StandardCharsets.UTF_16BE`. Test lifted the real RG#1 bytes (77 bytes) verbatim from the AFPWorld stream, so endianness bugs show up immediately.
+
+### Rule
+**In MO:DCA / AFP wire formats, default to big-endian for every multi-byte field**, including embedded text strings. The exception is when a structured field is explicitly flagged LE (rare). When in doubt: check whether the high byte of an ASCII range character is `0x00` (→ BE) or its low byte is `0x00` (→ LE).
+
+**Why:** MO:DCA is a mainframe-descended format; big-endian is the norm. The only reason LE sneaks in is via Windows-origin font names copied verbatim into 0x02/0xDE triplets — and even there, the bytes get rewritten to BE in the AFP emission.
+
+**How to apply:** for any new AFP triplet parser that handles a text field, start with UTF_16BE. Validate against a known-name fixture (e.g. a font named "Arial"), not against "✓ characters decoded without exception".
+
+---
+
+## 2026-04-19 — Hand-written hex fixtures are error-prone; lift bytes verbatim
+
+### Problem
+Building a test fixture for `MapDataResourceTest` by concatenating hex strings ("RG header" + "triplet 1" + "triplet 2" + ...) produced three rounds of off-by-one / wrong-length failures. Manually counting hex chars vs declared triplet lengths is bug-prone: "108B00..." starts with 0x10 (length 16) but the Java string has 18 bytes because I appended a trailing pair by mistake.
+
+### Cause
+Two failure modes compounding:
+1. Hex-string length in chars ≠ bytes (every count has to be divided by 2).
+2. Declared triplet length byte must match the actual byte count. Easy to get wrong when writing bytes by hand.
+
+### Solution
+Pulled the 77-byte RG directly from the AFPWorld AFP file with a one-line Python extract and pasted it into the test as a single `HexFormat.of().parseHex(...)` call. No declared-length arithmetic needed — the bytes are correct by construction.
+
+### Rule
+For binary-format tests that mirror real wire behaviour:
+1. **Extract the bytes from a real file** (or a known-good producer) and commit them as a single opaque hex string.
+2. Comment the logical layout above the string, but **never compute lengths manually** in the test source.
+3. If the format needs a synthesis (because no real sample exists), use a small byte-builder helper with assertions on the final length.
+
+**Why:** hand-assembling binary fixtures wastes cycles on length arithmetic. Lifting verbatim bytes costs 30 seconds and eliminates a whole class of error.
+
+**How to apply:** for every future MO:DCA / GOCA / IOCA / PTOCA structured-field test, write a tiny Python extractor first, paste the bytes, write the assertions. The cost is one grep-and-run; the benefit is zero byte-counting bugs.
+
+---
+
 ## 2026-04-19 — AFP PTOCA Unicode path ≠ EBCDIC path
 
 ### Problem
