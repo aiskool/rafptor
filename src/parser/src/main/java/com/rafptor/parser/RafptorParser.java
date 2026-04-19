@@ -13,9 +13,13 @@ import com.rafptor.parser.modca.EndPage;
 import com.rafptor.parser.modca.IncludeObject;
 import com.rafptor.parser.modca.IncludePageOverlay;
 import com.rafptor.parser.modca.IncludePageSegment;
+import com.rafptor.parser.modca.BeginGraphicsObject;
 import com.rafptor.parser.modca.BeginImageObject;
+import com.rafptor.parser.modca.EndGraphicsObject;
 import com.rafptor.parser.modca.EndImageObject;
+import com.rafptor.parser.modca.GraphicsData;
 import com.rafptor.parser.modca.ImageRasterData;
+import com.rafptor.parser.model.AfpGraphicObject;
 import com.rafptor.parser.modca.MapCodedFont;
 import com.rafptor.parser.modca.PageDescriptor;
 import com.rafptor.parser.modca.PresentationTextData;
@@ -95,6 +99,8 @@ public final class RafptorParser {
         int depth = 0;
         String currentImageName = null;
         ByteArrayOutputStream currentImageRaw = null;
+        String currentGraphicName = null;
+        ByteArrayOutputStream currentGraphicRaw = null;
 
         while (reader.hasNext()) {
             RawStructuredField raw = reader.next();
@@ -176,6 +182,24 @@ public final class RafptorParser {
                 }
                 currentImageName = null;
                 currentImageRaw = null;
+            } else if (sf instanceof BeginGraphicsObject bgr) {
+                currentGraphicName = bgr.name();
+                currentGraphicRaw = new ByteArrayOutputStream();
+            } else if (sf instanceof GraphicsData gad) {
+                if (currentGraphicRaw != null) {
+                    byte[] d = gad.data();
+                    currentGraphicRaw.write(d, 0, d.length);
+                }
+            } else if (sf instanceof EndGraphicsObject egr) {
+                if (currentPage != null && currentGraphicRaw != null) {
+                    byte[] raw2 = currentGraphicRaw.toByteArray();
+                    currentPage.addGraphic(new AfpGraphicObject(
+                            currentGraphicName != null ? currentGraphicName
+                                    : defaultNameIfBlank(egr.name(), "GRAPHIC"),
+                            0, 0, 0, 0, raw2));
+                }
+                currentGraphicName = null;
+                currentGraphicRaw = null;
             }
 
             if (currentPage != null) {
@@ -194,7 +218,8 @@ public final class RafptorParser {
                 || sf instanceof BeginPage
                 || sf instanceof com.rafptor.parser.modca.BeginActiveEnvironmentGroup
                 || sf instanceof com.rafptor.parser.modca.BeginResourceGroup
-                || sf instanceof com.rafptor.parser.modca.BeginObjectEnvironmentGroup;
+                || sf instanceof com.rafptor.parser.modca.BeginObjectEnvironmentGroup
+                || sf instanceof BeginGraphicsObject;
     }
 
     private static boolean isEnd(AfpStructuredField sf) {
@@ -202,7 +227,8 @@ public final class RafptorParser {
                 || sf instanceof EndPage
                 || sf instanceof com.rafptor.parser.modca.EndActiveEnvironmentGroup
                 || sf instanceof com.rafptor.parser.modca.EndResourceGroup
-                || sf instanceof com.rafptor.parser.modca.EndObjectEnvironmentGroup;
+                || sf instanceof com.rafptor.parser.modca.EndObjectEnvironmentGroup
+                || sf instanceof EndGraphicsObject;
     }
 
     private static void addResource(AfpDocument document, AfpPage currentPage, AfpResource resource) {

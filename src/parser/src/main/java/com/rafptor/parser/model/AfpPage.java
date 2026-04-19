@@ -18,6 +18,7 @@ public final class AfpPage {
     private final List<AfpResource> resourceReferences;
     private final List<AfpStructuredField> structuredFields;
     private final List<AfpImageObject> images;
+    private final List<AfpGraphicObject> graphics;
     private final Map<Integer, String> fontAssignments;
     private PageGeometry geometry;
 
@@ -27,6 +28,7 @@ public final class AfpPage {
         this.resourceReferences = new ArrayList<>();
         this.structuredFields = new ArrayList<>();
         this.images = new ArrayList<>();
+        this.graphics = new ArrayList<>();
         this.fontAssignments = new HashMap<>();
     }
 
@@ -84,6 +86,17 @@ public final class AfpPage {
             throw new IllegalArgumentException("image must not be null");
         }
         images.add(image);
+    }
+
+    public List<AfpGraphicObject> graphics() {
+        return Collections.unmodifiableList(graphics);
+    }
+
+    public void addGraphic(AfpGraphicObject graphic) {
+        if (graphic == null) {
+            throw new IllegalArgumentException("graphic must not be null");
+        }
+        graphics.add(graphic);
     }
 
     /** Local font id → coded-font resource name, as declared by MCF on this page. */
