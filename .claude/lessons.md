@@ -22,6 +22,57 @@ Format per entry:
 
 ---
 
+## 2026-04-19 — PTOCA opcode misclassification can hide half the visible content
+
+### Problem
+Three separate sessions confidently reported "0 DIR, 0 DBR in the AFPWorld stream" and "the table borders are not in the AFP — they are synthesised by the reference renderer". All three were wrong. The stream contained **51 rule-drawing control sequences** (blue header bars, gray row separators, black bullet squares, footer underline) that the parser was silently dropping because the opcode constants for DIR and DBR were swapped and the 5-byte rule payloads were being read as SBI and SCFL-alt.
+
+### Cause
+PTOCA documentation varies by version and the Rafptor opcode table mixed canonical IBM MO:DCA values with values used by other specs. Specifically `DRAW_I_AXIS_RULE` was registered as 0xE6 (actually DBR) and `DRAW_B_AXIS_RULE` as 0xE4 (actually DIR). The switch case *did* dispatch those opcodes — to a no-op comment "geometry primitive, not modelled in this release". Meanwhile the 0xE4 opcodes in the stream were being read into a histogram bucket called SBI and the 0xE6 opcodes into SCFL-alt. Both classifications were wrong, but plausible enough that every diagnostic script reported "no rules".
+
+What finally broke the illusion: the "SCFL-alt" bucket claimed 20 events with 5-byte payloads. Real SCFL has a 1-byte payload (the local font id). A strong signal-mismatch like that is the tell.
+
+### Solution
+- Rebuild the opcode table from the byte-level observations, not from memory of the spec.
+- When an opcode is present with a payload length that doesn't match any known function class, treat it as a decoding bug first, not as an exotic producer variant.
+- Cross-check by tracing consecutive events: SEC(#2196F3) → DIR(length, thickness) → AMI → SEC(#FFFFFF) → TRN("Options") reads like real intent; SEC → SCFL-alt(len=5) reads like nonsense.
+
+### Rule
+**When an AFP byte inventory says "X is missing from the stream", verify it by searching for X's typical payload shape, not by checking whether the parser emits an X event.** The parser only emits what its opcode table knows how to dispatch; missing opcodes show up as UnknownStructuredField or as misclassified handled types. For any producer-claimed feature of an AFP, grep the raw bytes for the opcode's *observed* payload shape (length, typical byte patterns) across several real streams before concluding it's absent.
+
+**Why:** three sessions and two commits publicly claimed "the table borders are not in the AFP". That claim was wrong, entrenched in a documented report, and would have stayed wrong indefinitely without the user pushing back. The inventory was literally looking in the wrong place because the opcode table was wrong.
+
+**How to apply:** for every AFP investigation of "is this element encoded in the stream", produce two artefacts:
+1. A histogram of raw opcodes (fn & 0xFE) with their payload lengths.
+2. A second histogram keyed by (payload length, opcode) + 2-3 sample payloads each.
+Only trust a "not present" conclusion when a feature's typical payload shape is absent across both views.
+
+---
+
+## 2026-04-19 — UTF-16BE / EBCDIC ambiguity at 2 bytes: 'a' silently becomes '/'
+
+### Problem
+For months, AFPWorld PDFs rendered "for a tax credit" as "for / tax credit", "or a transplant" as "or / transplant", "speak with a licensed" as "speak with / licensed". Every occurrence of a lowercase 'a' isolated in its own PTOCA run became '/'. No warnings, no crashes — just silently wrong text everywhere.
+
+### Cause
+`PtocaParser.looksLikeUtf16BE` required `length >= 4 bytes` (2 code units) to commit to UTF-16BE decoding. A 2-byte TRN therefore fell through to the EBCDIC fallback decoder. In IBM500 the byte 0x61 decodes to '/' (it's 'a' only in ASCII/Unicode). AFP composers that emit single-character runs — extremely common when they wrap an indefinite article "a" or a pronoun "I" as its own kerning unit — would always hit this fallback.
+
+### Solution
+For a 2-byte TRN specifically, commit to UTF-16BE decoding when the high byte is 0x00 *and* the low byte is a printable ASCII character (0x20..0x7E). That narrow rule protects against the reverse mistake (a real single-byte EBCDIC run misread as Unicode) while catching every single-character Unicode word / punctuation / digit.
+
+### Rule
+Auto-detection heuristics on short payloads are dangerous — there isn't enough signal to disambiguate reliably. Either:
+1. Pick the heuristic to be **strict** in the short-payload regime (my fix).
+2. Or **thread explicit state**: once the stream has committed to one decoder, stay on that decoder for subsequent TRNs from the same page / same local font id. Don't re-detect per run.
+
+For any future short-payload decoder decision, handle the one-unit case separately with an explicit rule documented in the source.
+
+**Why:** a single 'a' silently becoming '/' is one of the most pernicious bugs — humans reading the PDF won't immediately see the error because '/' is visually plausible where 'a' was. The fix is one conditional; the discovery path took three sessions.
+
+**How to apply:** whenever a decoder/parser uses a length-based heuristic to pick its mode, write a test for `length == 2` (and `length == 1` if supported) using a known-ambiguous byte sequence. Document in the heuristic's comment what the ambiguity is and how the short-payload case is disambiguated.
+
+---
+
 ## 2026-04-19 — Raw SSIM can dip while visual fidelity improves dramatically
 
 ### Problem
