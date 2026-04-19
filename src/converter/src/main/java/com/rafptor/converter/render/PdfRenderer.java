@@ -101,7 +101,10 @@ public final class PdfRenderer {
         cs.beginText();
         cs.setNonStrokingColor(color);
         cs.setFont(font, (float) text.fontSize());
-        cs.newLineAtOffset((float) text.x(), (float) (pdfY - text.fontSize()));
+        // PTOCA AMB sets the *baseline*, so the IR y is already the baseline.
+        // PDFBox's showText places text with its baseline at the newLineAtOffset
+        // coordinate, so we pass pdfY directly (no fontSize subtraction).
+        cs.newLineAtOffset((float) text.x(), (float) pdfY);
         if (text.charSpacing() != 0) {
             cs.setCharacterSpacing((float) text.charSpacing());
         }
