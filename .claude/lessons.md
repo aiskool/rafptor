@@ -485,3 +485,28 @@ Never conclude "not in the AFP" without a six-step proof. Publish the counts (SF
 **How to apply:** whenever an AFP conversion diverges from a reference and the suspected cause is "missing source data", run the six-step audit before touching code. The audit itself often reveals where the element actually lives (nested envelope, odd-parity opcode, triplet we skip).
 
 ---
+
+## 2026-04-19 — Do not overfit the renderer to a single reference document
+
+### Problem
+After proving a reference-engine cosmetic (grey row separators) was not in the AFP stream, I was asked to synthesise them anyway via a heuristic `TableCosmeticsEnhancer`. I built it: detect 3 saturated rects on the same Y = header; text blocks under them = rows; emit #DDDDDD 0.75pt separators between row groups. Tested on the target document. Measured: SSIM went **down** (0.9145 → 0.9136), MSE up, PSNR down, LPIPS up. Even on the document it was designed for, the heuristic misfired — separators landed 0.3–3.5pt off, extra ones crept in, round bullets attached to titles they shouldn't. The user correctly asked: "tes changements valent-ils pour tout document, ou juste celui-ci ?" The honest answer was no — every threshold (font-size multipliers, Y tolerance, "table end" cutoff, indent trigger) was tuned to one file.
+
+### Cause
+I conflated "making the reference match" with "improving conversion fidelity". Fidelity means faithfully rendering what the source encodes; reference-matching means imitating a specific third-party renderer's stylistic choices. On a corpus of arbitrary AFPs, the heuristic would produce false positives wherever the layout does not match the assumed pattern — colored section banners mistaken for table headers, indented footers decorated with fake bullets, row separators painted across free-form column layouts.
+
+### Solution
+Revert the enhancer entirely. Keep Rafptor's output strictly faithful to the MO:DCA stream. Document in the blind-test report that SSIM ≥ 0.91 is the honest ceiling for this document without inventing data.
+
+### Rule
+Do not introduce rendering heuristics whose behaviour depends on thresholds tuned to a single reference document. Any cosmetic synthesis (separator lines, bullets, table frames, shadows) must satisfy two tests before landing:
+
+1. **Universal applicability**: run on a corpus of ≥ 5 distinct AFP documents (different producers, different layouts) and show no regressions on any of them.
+2. **Source-ground truth**: every pixel drawn must trace back to a structured field, control sequence, or triplet in the source stream — never to "this is what the reference renderer does".
+
+If both tests pass, the feature is a legitimate generalisation. If either fails, it is overfitting and must be rejected even if it improves one specific score.
+
+**Why:** a converter is judged on the distribution of documents it will process in production, not on a single showcase file. Overfitting makes the showcase look better while silently degrading everything else, and the degradation is invisible until a user complains.
+
+**How to apply:** when a user asks "improve SSIM on document X", resist the urge to tune-to-X. Instead: (a) find the root cause in the stream, fix universally, or (b) decline the change with a written explanation of why it would hurt generality. Never commit a `THRESHOLD = 3.0` chosen to make one document pass.
+
+---
