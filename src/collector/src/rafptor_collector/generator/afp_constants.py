@@ -30,6 +30,16 @@ SF_MCF = bytes([0xD3, 0xAB, 0x8A])   # Map Coded Font
 SF_IPO = bytes([0xD3, 0xAF, 0xD8])   # Include Page Overlay
 SF_IPS = bytes([0xD3, 0xAF, 0x5F])   # Include Page Segment
 
+# IOCA envelope + data
+SF_BII = bytes([0xD3, 0xA8, 0xFB])   # Begin IOCA Image Object
+SF_EII = bytes([0xD3, 0xA9, 0xFB])   # End IOCA Image Object
+SF_IPD = bytes([0xD3, 0xEE, 0xFB])   # Image Picture Data
+
+# GOCA envelope + data
+SF_BGR = bytes([0xD3, 0xA8, 0xBB])   # Begin Graphics Object
+SF_EGR = bytes([0xD3, 0xA9, 0xBB])   # End Graphics Object
+SF_GAD = bytes([0xD3, 0xEE, 0xBB])   # Graphics Data
+
 # Metadata
 SF_TLE = bytes([0xD3, 0xA0, 0x90])   # Tag Logical Element
 SF_NOP = bytes([0xD3, 0xEE, 0xEE])   # No Operation

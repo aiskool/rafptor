@@ -18,7 +18,7 @@ def main(argv: list[str] | None = None) -> int:
     p_sim = sub.add_parser("simulate", help="Generate a test bundle")
     p_sim.add_argument(
         "--scenario",
-        choices=["simple", "medium", "complex", "stress"],
+        choices=["simple", "medium", "complex", "stress", "banking"],
         default="simple",
     )
     p_sim.add_argument("--output", type=Path, required=True)
@@ -43,7 +43,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _cmd_simulate(args: argparse.Namespace) -> int:
-    from .scenarios import complex as complex_mod
+    from .scenarios import banking, complex as complex_mod
     from .scenarios import medium, simple, stress
 
     if args.scenario == "simple":
@@ -56,6 +56,9 @@ def _cmd_simulate(args: argparse.Namespace) -> int:
     elif args.scenario == "stress":
         count = args.count or 500
         manifest = stress.run(args.output, client_id=args.client_id, count=count)
+    elif args.scenario == "banking":
+        count = args.count or 3
+        manifest = banking.run(args.output, client_id=args.client_id, count=count)
     else:
         print(f"unknown scenario: {args.scenario}", file=sys.stderr)
         return 2

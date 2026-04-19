@@ -123,6 +123,155 @@ class AfpStreamGenerator:
             out.extend(self._make_mcf(local_id, charset, codepage_name))
         return bytes(out)
 
+    # ── GOCA drawing orders ───────────────────────────────────────────
+    #
+    # Helpers produce raw drawing-order sequences that match the GocaDecoder
+    # in the converter. Each helper returns the bytes that belong inside a
+    # Graphics Data (GAD) structured field; callers concatenate them and
+    # wrap with :meth:`_write_goca_object`.
+
+    @staticmethod
+    def _goca_set_position(x: int, y: int) -> bytes:
+        # GSPS short-form: 21 XX XX YY YY
+        return struct.pack(">Bhh", 0x21, x, y)
+
+    @staticmethod
+    def _goca_set_line_width(width: int) -> bytes:
+        # GSLW short-form: 19 WW (1-byte unsigned)
+        return struct.pack(">BB", 0x19, width & 0xFF)
+
+    @staticmethod
+    def _goca_set_color(color_idx: int) -> bytes:
+        # GSCOL short-form: 0A CC (1-byte palette index)
+        return struct.pack(">BB", 0x0A, color_idx & 0xFF)
+
+    @staticmethod
+    def _goca_line_to(x: int, y: int) -> bytes:
+        # GLINE long-form: 81 04 XX XX YY YY (one destination point)
+        return struct.pack(">BBhh", 0x81, 0x04, x, y)
+
+    @staticmethod
+    def _goca_box_to(x: int, y: int) -> bytes:
+        # GBOX long-form: C0 04 XX XX YY YY (opposite corner)
+        return struct.pack(">BBhh", 0xC0, 0x04, x, y)
+
+    def _make_goca_rect(
+        self,
+        x1: int,
+        y1: int,
+        x2: int,
+        y2: int,
+        line_width: int = 3,
+        color_idx: int = 0,
+    ) -> bytes:
+        """Drawing orders for a single rectangle frame."""
+        return (
+            self._goca_set_color(color_idx)
+            + self._goca_set_line_width(line_width)
+            + self._goca_set_position(x1, y1)
+            + self._goca_box_to(x2, y2)
+        )
+
+    def _make_goca_line(
+        self,
+        x1: int,
+        y1: int,
+        x2: int,
+        y2: int,
+        line_width: int = 2,
+        color_idx: int = 0,
+    ) -> bytes:
+        return (
+            self._goca_set_color(color_idx)
+            + self._goca_set_line_width(line_width)
+            + self._goca_set_position(x1, y1)
+            + self._goca_line_to(x2, y2)
+        )
+
+    def _write_goca_object(
+        self,
+        name: str,
+        drawing_orders: bytes,
+    ) -> None:
+        """Emit BGR / one or more GAD / EGR around ``drawing_orders``."""
+        name_b = self._encode_text(name[:8].ljust(8))
+        self._write_sf(c.SF_BGR, name_b)
+        # Chunk the payload into GAD fields of at most 8000 bytes to respect
+        # the 16-bit structured-field length limit with margin for the SF
+        # introducer.
+        step = 8000
+        pos = 0
+        if not drawing_orders:
+            self._write_sf(c.SF_GAD, b"")
+        else:
+            while pos < len(drawing_orders):
+                chunk = drawing_orders[pos : pos + step]
+                self._write_sf(c.SF_GAD, chunk)
+                pos += step
+        self._write_sf(c.SF_EGR, name_b)
+
+    # ── IOCA minimal black-box image ──────────────────────────────────
+
+    def _make_ioca_black_box(
+        self,
+        width_px: int,
+        height_px: int,
+    ) -> bytes:
+        """Build a minimal IOCA FS45 payload encoding an all-ink rectangle.
+
+        Compression 0x01 (uncompressed), 1 bit per pixel, bit ``1`` = ink.
+        Matches the self-describing field layout understood by the
+        ``IocaDecoder`` in the converter.
+        """
+        if width_px <= 0 or height_px <= 0:
+            raise ValueError("dimensions must be > 0")
+        row_bytes = (width_px + 7) // 8
+        raster = bytes([0xFF] * (row_bytes * height_px))
+
+        def short(id_byte: int, body: bytes) -> bytes:
+            return bytes([id_byte, len(body)]) + body
+
+        def long_data(body: bytes) -> bytes:
+            # 0xFE sub-type 0x92 length(2B BE)
+            return bytes([0xFE, 0x92]) + struct.pack(">H", len(body)) + body
+
+        parts = bytearray()
+        parts += short(0x70, b"")                                   # Begin Segment
+        parts += short(0x91, bytes([0xFF]))                         # Begin Image Content
+        parts += short(
+            0x94,
+            bytes(
+                [
+                    0x00,
+                    0x00, 0x78,                                     # h-reso 120
+                    0x00, 0x78,                                     # v-reso 120
+                    (width_px >> 8) & 0xFF, width_px & 0xFF,
+                    (height_px >> 8) & 0xFF, height_px & 0xFF,
+                ]
+            ),
+        )
+        parts += short(0x95, bytes([0x01, 0x03, 0x01]))             # uncompressed
+        parts += short(0x96, bytes([0x01]))                         # 1 bpp
+        parts += long_data(raster)                                  # Image Data
+        parts += short(0x93, b"")                                   # End Image Content
+        parts += short(0x71, b"")                                   # End Segment
+        return bytes(parts)
+
+    def _write_ioca_image(self, name: str, payload: bytes) -> None:
+        name_b = self._encode_text(name[:8].ljust(8))
+        self._write_sf(c.SF_BII, name_b)
+        # Same chunking rationale as GOCA.
+        step = 8000
+        pos = 0
+        if not payload:
+            self._write_sf(c.SF_IPD, b"")
+        else:
+            while pos < len(payload):
+                chunk = payload[pos : pos + step]
+                self._write_sf(c.SF_IPD, chunk)
+                pos += step
+        self._write_sf(c.SF_EII, name_b)
+
     def generate_document(
         self,
         doc_name: str = "TESTDOC",
@@ -166,6 +315,100 @@ class AfpStreamGenerator:
 
         self._write_sf(c.SF_EDT, self._encode_text(doc_name[:8].ljust(8)))
         return bytes(self._buffer)
+
+    def generate_banking_document(
+        self,
+        doc_name: str = "BANKSTMT",
+        tle_metadata: dict[str, str] | None = None,
+        bank_name: str = "BANQUE DEMO",
+    ) -> bytes:
+        """Mixed-content AFP that exercises PTOCA, IOCA and GOCA together.
+
+        Layout (L-units at 240 dpi):
+          * 20-50 pt top margin
+          * GOCA rectangle frame around a Serif-rendered bank name
+          * 100 x 100 px black IOCA logo placeholder below the header
+          * Two horizontal GOCA separators delimiting a table-like region
+          * Multi-font PTOCA: Serif title row, Sans labels, Mono amounts
+        """
+        self._buffer = bytearray()
+        self._write_sf(c.SF_BDT, self._encode_text(doc_name[:8].ljust(8)))
+
+        if tle_metadata:
+            for key, value in tle_metadata.items():
+                self._write_sf(c.SF_TLE, self._make_tle(key, value))
+
+        mcf_entries = [
+            (1, "C0H20000"),  # Mono (amounts)
+            (2, "C0N20000"),  # Sans (labels)
+            (3, "C0S20000"),  # Serif (titles)
+        ]
+        self._write_sf(c.SF_BPG)
+        self._write_sf(c.SF_BAG)
+        self._write_sf(c.SF_MCF, self._make_mcf_multi(mcf_entries))
+        self._write_sf(c.SF_EAG)
+
+        # Header frame + bank name (centred-ish). Coordinates in L-units at
+        # 240 dpi: A4 page ≈ 2024 x 2816.
+        header_orders = self._make_goca_rect(
+            x1=240, y1=200, x2=1800, y2=420, line_width=4, color_idx=0
+        )
+        separator1 = self._make_goca_line(240, 900, 1800, 900, line_width=2)
+        separator2 = self._make_goca_line(240, 1900, 1800, 1900, line_width=2)
+        self._write_goca_object("GRHEADER", header_orders + separator1 + separator2)
+
+        # Logo placeholder: small filled IOCA black rectangle.
+        self._write_ioca_image("LOGO0001", self._make_ioca_black_box(100, 100))
+
+        # Mixed-font PTOCA lines.
+        title_text = bank_name
+        lines_with_fonts: list[tuple[int, int, int, str]] = [
+            # (local_font_id, x, y, text)
+            (3, 780, 330, title_text),                            # Serif centred-ish title
+            (3, 260, 600, "Releve de compte"),                    # Serif subtitle
+            (2, 260, 1000, "Solde precedent"),                    # Sans label
+            (1, 1500, 1000, "  1,234.56"),                        # Mono amount
+            (2, 260, 1100, "Virements recus"),
+            (1, 1500, 1100, "  2,500.00"),
+            (2, 260, 1200, "Prelevements"),
+            (1, 1500, 1200, "   -945.12"),
+            (2, 260, 1300, "Frais bancaires"),
+            (1, 1500, 1300, "    -12.00"),
+            (2, 260, 1400, "Interets crediteurs"),
+            (1, 1500, 1400, "     +4.75"),
+            (3, 260, 1700, "Nouveau solde"),                      # Serif total row
+            (1, 1500, 1700, "  2,782.19"),
+            (2, 260, 2000, "IBAN FR76 3004 0001 2345 6789 0"),
+            (2, 260, 2100, "BIC BNPAFRPP"),
+            (3, 260, 2400, "Merci de votre confiance"),
+        ]
+        self._write_sf(
+            c.SF_PTX, self._make_multi_font_ptoca(lines_with_fonts)
+        )
+        self._write_sf(c.SF_EPG)
+        self._write_sf(c.SF_EDT, self._encode_text(doc_name[:8].ljust(8)))
+        return bytes(self._buffer)
+
+    def _make_multi_font_ptoca(
+        self,
+        lines: list[tuple[int, int, int, str]],
+    ) -> bytes:
+        """PTOCA stream where each line carries its own font local id."""
+        ptoca = bytearray()
+        current_id: int | None = None
+        for font_id, x, y, text in lines:
+            if font_id != current_id:
+                ptoca.extend(bytes([0x03, c.PTOCA_SCFL, font_id & 0xFF]))
+                current_id = font_id
+            ptoca.extend(struct.pack(">BBH", 0x04, c.PTOCA_AMB, y & 0xFFFF))
+            ptoca.extend(struct.pack(">BBH", 0x04, c.PTOCA_AMI, x & 0xFFFF))
+            encoded = self._encode_text(text)
+            if len(encoded) > 253:
+                encoded = encoded[:253]
+            ptoca.append(len(encoded) + 2)
+            ptoca.append(c.PTOCA_TRN)
+            ptoca.extend(encoded)
+        return bytes(ptoca)
 
     def generate_batch(
         self,
