@@ -1,0 +1,21 @@
+{
+  "composite_score": 0.5265131136327609,
+  "decision": {
+    "action": "flag_for_reconversion",
+    "composite_score": 0.5265131136327609,
+    "document_id": "01_Health_Coverage",
+    "pdf_path": "/tmp/afpworld-blind-test/01_Health_Coverage.pdf",
+    "reason": "Score 52.65% below review threshold \u2014 reconversion required (text match=1.0, pages match=True).",
+    "timestamp": "2026-04-19T11:08:20.151835+00:00",
+    "verdict": "rejected"
+  },
+  "document_id": "01_Health_Coverage",
+  "duration_ms": 273,
+  "metadata_score": 1.0,
+  "page_count": 1,
+  "structural_score": 1.0,
+  "visual_score": 0.05302622726552187,
+  "warnings": [
+    "No AFP text provided \u2014 text validation skipped."
+  ]
+}

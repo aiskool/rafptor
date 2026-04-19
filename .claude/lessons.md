@@ -22,6 +22,31 @@ Format per entry:
 
 ---
 
+## 2026-04-19 — AFP PTOCA Unicode path ≠ EBCDIC path
+
+### Problem
+The fix for "EBCDIC bytes leak into the PDF" was planned as a code-page mapping job (MCF triplet 0x85 → JVM charset). It shipped correctly for that case, but the failing blind-test file didn't exercise that path at all: 0 MCFs in the stream, 0 code-page assignments, 306 TRN runs, and the PDF was still unreadable after the first fix. The EBCDIC mapper code path was never executed on this file.
+
+### Cause
+Modern MO:DCA/P5 producers (DOC1, Adobe Output, Compart, several insurance-sector tools) emit Unicode code points *inside* TRN (Transparent Data 0xDA) when the coded font is a TrueType/OpenType resource referenced through MDR (Map Data Resource, D3 AB C3) — the font name is UTF-16LE inside the MDR triplets. The TRN payload bytes are UTF-16BE directly, *not* EBCDIC. An EBCDIC decoder applied to UTF-16BE bytes produces the 0xC1/0xCA/0xD1 pattern ≡ raw EBCDIC fingerprint in the PDF, which was the exact symptom that triggered the task in the first place.
+
+### Solution
+Two orthogonal fixes in the same commit:
+1. The planned MCF → code-page → JVM charset mapping, for legacy EBCDIC streams.
+2. A UTF-16BE auto-detection in `PtocaParser.decodeTrn`: even length *and* ≥75% of high bytes are 0x00 → decode as UTF-16BE; otherwise use the EBCDIC decoder. Threshold is deliberately high to avoid false positives on short EBCDIC runs.
+
+### Rule
+**Before assuming a text-encoding bug is an EBCDIC code-page bug, dump the raw TRN payload bytes** and classify:
+- Bytes all in `0x00`..`0xFF`, high-byte dense → EBCDIC (resolve via MCF code page).
+- Every second byte is `0x00`, ASCII on odd positions → UTF-16BE (MO:DCA/P5 Unicode).
+- No MCF in the stream + MDR with UTF-16LE font names → almost certainly Unicode TRN.
+
+**Why:** the two paths require different fixes. Fixing only the EBCDIC path leaves Unicode-bearing streams broken, and the failing test looks identical at the "PDF is garbage" level.
+
+**How to apply:** for any future AFP text-encoding issue, start with a raw-stream histogram (`SF class/type/category` tally), an MCF-presence check, and a TRN-payload hex dump before editing the decoder. Never display the raw bytes as text in the terminal — classify them numerically (code-point buckets, even-index-zero ratio).
+
+---
+
 ## 2026-04-17 — `git add -A` ramasse des fichiers personnels au root
 
 ### Problem
