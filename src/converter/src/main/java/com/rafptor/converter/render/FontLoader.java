@@ -39,9 +39,42 @@ public final class FontLoader {
     }
 
     private PDFont tryLoadTrueType(PDDocument document, String name) {
-        String base = name.replace(" ", "");
-        // Try common filename variants: "Name.ttf", "Name-Regular.ttf", "NameRegular.ttf".
-        String[] candidates = { base + ".ttf", base + "-Regular.ttf", base + "Regular.ttf" };
+        // "Liberation Sans Bold" → base "LiberationSans", suffix "Bold".
+        // "Liberation Sans"      → base "LiberationSans", suffix "".
+        // Try multiple conventional filename shapes; the Liberation TTFs ship
+        // as "LiberationSans-Bold.ttf", "LiberationSerif-Bold.ttf", etc.
+        String[] tokens = name.trim().split("\\s+");
+        String baseNoSpaces = name.replace(" ", "");
+        String family;
+        StringBuilder suffix = new StringBuilder();
+        if (tokens.length >= 2) {
+            // Heuristic: first two tokens are family, remainder is the weight
+            // or style ("Bold", "Italic", "Bold Italic").
+            family = tokens[0] + tokens[1];
+            for (int i = 2; i < tokens.length; i++) {
+                suffix.append(tokens[i]);
+            }
+        } else {
+            family = baseNoSpaces;
+        }
+        String suf = suffix.toString();
+        String[] candidates;
+        if (suf.isEmpty()) {
+            candidates = new String[]{
+                    baseNoSpaces + ".ttf",
+                    baseNoSpaces + "-Regular.ttf",
+                    baseNoSpaces + "Regular.ttf",
+                    family + "-Regular.ttf",
+                    family + ".ttf"
+            };
+        } else {
+            candidates = new String[]{
+                    family + "-" + suf + ".ttf",
+                    family + suf + ".ttf",
+                    baseNoSpaces + ".ttf",
+                    baseNoSpaces + "-Regular.ttf"
+            };
+        }
         for (String fileName : candidates) {
             InputStream in = FontLoader.class.getResourceAsStream("/fonts/" + fileName);
             if (in != null) {
@@ -67,12 +100,25 @@ public final class FontLoader {
 
     private PDFont fallback(String name) {
         String lower = name.toLowerCase();
+        boolean bold = lower.contains("bold") || lower.contains("black")
+                || lower.contains("heavy") || lower.contains("fett");
+        boolean italic = lower.contains("italic") || lower.contains("oblique")
+                || lower.contains("kursiv");
         if (lower.contains("mono") || lower.contains("courier")) {
+            if (bold && italic) return new PDType1Font(Standard14Fonts.FontName.COURIER_BOLD_OBLIQUE);
+            if (bold) return new PDType1Font(Standard14Fonts.FontName.COURIER_BOLD);
+            if (italic) return new PDType1Font(Standard14Fonts.FontName.COURIER_OBLIQUE);
             return new PDType1Font(Standard14Fonts.FontName.COURIER);
         }
-        if (lower.contains("serif") || lower.contains("times")) {
+        if (lower.contains("serif") || lower.contains("times") || lower.contains("roman")) {
+            if (bold && italic) return new PDType1Font(Standard14Fonts.FontName.TIMES_BOLD_ITALIC);
+            if (bold) return new PDType1Font(Standard14Fonts.FontName.TIMES_BOLD);
+            if (italic) return new PDType1Font(Standard14Fonts.FontName.TIMES_ITALIC);
             return new PDType1Font(Standard14Fonts.FontName.TIMES_ROMAN);
         }
+        if (bold && italic) return new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD_OBLIQUE);
+        if (bold) return new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+        if (italic) return new PDType1Font(Standard14Fonts.FontName.HELVETICA_OBLIQUE);
         return new PDType1Font(Standard14Fonts.FontName.HELVETICA);
     }
 }

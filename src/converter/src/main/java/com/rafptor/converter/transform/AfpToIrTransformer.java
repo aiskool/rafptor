@@ -71,7 +71,7 @@ public final class AfpToIrTransformer {
             if (yResolution <= 0) yResolution = config.afpResolution();
             IrPage irPage = new IrPage(page.name(), widthPt, heightPt, xResolution, yResolution);
             for (IrTextBlock block : textTransformer.transform(
-                    page.textRuns(), irPage, page.fontAssignments())) {
+                    page.textRuns(), irPage, page.fontAssignments(), page.fontPointSizes())) {
                 irPage.add(block);
             }
             imageTransformer.transform(page.images(), irPage).forEach(irPage::add);

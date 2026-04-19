@@ -21,6 +21,7 @@ import com.rafptor.parser.modca.GraphicsData;
 import com.rafptor.parser.modca.ImageRasterData;
 import com.rafptor.parser.model.AfpGraphicObject;
 import com.rafptor.parser.modca.MapCodedFont;
+import com.rafptor.parser.modca.MapDataResource;
 import com.rafptor.parser.modca.PageDescriptor;
 import com.rafptor.parser.modca.PresentationTextData;
 import com.rafptor.parser.modca.PresentationTextDescriptor;
@@ -137,6 +138,22 @@ public final class RafptorParser {
                         if (e.codePageName() != null && !e.codePageName().isEmpty()) {
                             currentPage.putCodePageAssignment(e.localId(), e.codePageName());
                         }
+                    }
+                }
+            } else if (sf instanceof MapDataResource mdr) {
+                // MO:DCA/P5 streams bind fonts via MDR repeating groups
+                // instead of MCF. Each FontEntry carries the SCFL local id,
+                // the TrueType font name, and the declared point size.
+                for (MapDataResource.FontEntry e : mdr.fontEntries()) {
+                    if (!e.fontName().isEmpty()) {
+                        document.addResource(new AfpResource(e.fontName(),
+                                AfpResource.ResourceType.CODED_FONT));
+                        if (currentPage != null) {
+                            currentPage.putFontAssignment(e.localId(), e.fontName());
+                        }
+                    }
+                    if (currentPage != null && e.pointSize() > 0) {
+                        currentPage.putFontPointSize(e.localId(), e.pointSize());
                     }
                 }
             } else if (sf instanceof IncludePageOverlay ipo) {

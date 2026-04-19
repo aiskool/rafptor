@@ -21,6 +21,7 @@ public final class AfpPage {
     private final List<AfpGraphicObject> graphics;
     private final Map<Integer, String> fontAssignments;
     private final Map<Integer, String> codePageAssignments;
+    private final Map<Integer, Double> fontPointSizes;
     private PageGeometry geometry;
 
     public AfpPage(String name) {
@@ -32,6 +33,7 @@ public final class AfpPage {
         this.graphics = new ArrayList<>();
         this.fontAssignments = new HashMap<>();
         this.codePageAssignments = new HashMap<>();
+        this.fontPointSizes = new HashMap<>();
     }
 
     public String name() {
@@ -120,5 +122,17 @@ public final class AfpPage {
             return;
         }
         codePageAssignments.put(localId, codePageName);
+    }
+
+    /** Local font id → point size declared by MDR (0 if the MDR did not carry one). */
+    public Map<Integer, Double> fontPointSizes() {
+        return Collections.unmodifiableMap(fontPointSizes);
+    }
+
+    public void putFontPointSize(int localId, double pointSize) {
+        if (pointSize <= 0) {
+            return;
+        }
+        fontPointSizes.put(localId, pointSize);
     }
 }

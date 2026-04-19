@@ -41,11 +41,25 @@ public final class TextTransformer {
      * Used by existing unit tests.
      */
     public List<IrTextBlock> transform(List<PtocaTextRun> runs, IrPage page) {
-        return transform(runs, page, Map.of());
+        return transform(runs, page, Map.of(), Map.of());
     }
 
+    /** Back-compat overload without MDR-declared font sizes. */
     public List<IrTextBlock> transform(List<PtocaTextRun> runs, IrPage page,
                                        Map<Integer, String> fontAssignments) {
+        return transform(runs, page, fontAssignments, Map.of());
+    }
+
+    /**
+     * Transform PTOCA runs, honouring the font-name assignments (from MCF or
+     * MDR) and per-local-id point sizes (from MDR triplet 0x8B). Font names
+     * coming from an MDR are free-form ("Arial Bold", "Segoe UI") rather than
+     * IBM coded-font prefixes ("C0H200", "C0N200") — we route them through
+     * {@link #resolveMdrName} before falling back to the charset-prefix map.
+     */
+    public List<IrTextBlock> transform(List<PtocaTextRun> runs, IrPage page,
+                                       Map<Integer, String> fontAssignments,
+                                       Map<Integer, Double> fontPointSizes) {
         if (runs == null || page == null) {
             return List.of();
         }
@@ -60,9 +74,23 @@ public final class TextTransformer {
                     ? fontAssignments.getOrDefault(run.localFontId(), "")
                     : "";
             FontMapping m = resolveMapping(resourceName, defaultMapping);
+            String trueTypeFont = m.trueTypeFont();
+            // MDR names (free-form) take precedence when they clearly match
+            // a known family; they also tell us whether to render bold.
+            String mdrMapped = resolveMdrName(resourceName);
+            if (mdrMapped != null) {
+                trueTypeFont = mdrMapped;
+            }
             double x = page.toPointsX(run.inlinePosition());
             double y = page.toPointsY(run.baselinePosition());
             double fontSize = m.defaultPointSize() * m.scaleFactor();
+            // MDR-declared size overrides the legacy mapping size.
+            if (fontPointSizes != null) {
+                Double declared = fontPointSizes.get(run.localFontId());
+                if (declared != null && declared > 0) {
+                    fontSize = declared;
+                }
+            }
             String color = run.colorHex() == null || run.colorHex().isBlank()
                     ? "#000000" : run.colorHex();
             String text = run.text();
@@ -79,7 +107,7 @@ public final class TextTransformer {
             out.add(new IrTextBlock(
                     x, y, 0,
                     text,
-                    m.trueTypeFont(),
+                    trueTypeFont,
                     fontSize,
                     0.0,
                     color));
@@ -144,6 +172,40 @@ public final class TextTransformer {
      * </ul>
      * Unrecognised prefixes fall back to the default mapping.
      */
+    /**
+     * Map a free-form MDR font name (e.g. "Arial Bold", "Segoe UI", "Times
+     * New Roman") to a bundled Liberation face that matches its family and
+     * weight. Returns {@code null} when the name is empty or doesn't look
+     * like a readable font label (coded-font names such as "C0H200" fall
+     * through to the charset-prefix mapper).
+     */
+    private String resolveMdrName(String name) {
+        if (name == null || name.isEmpty()) return null;
+        String upper = name.toUpperCase();
+        // Coded-font resource names start with C0/X0/T1 — leave those to
+        // resolveMapping.
+        if (upper.length() >= 2 && (upper.startsWith("C0") || upper.startsWith("X0") || upper.startsWith("T1"))) {
+            return null;
+        }
+        boolean bold = upper.contains("BOLD") || upper.contains("BLACK")
+                || upper.contains("HEAVY") || upper.contains("FETT");
+        boolean italic = upper.contains("ITALIC") || upper.contains("OBLIQUE")
+                || upper.contains("KURSIV");
+        boolean serif = upper.contains("SERIF") || upper.contains("TIMES")
+                || upper.contains("ROMAN") || upper.contains("GEORGIA")
+                || upper.contains("GARAMOND");
+        boolean mono = upper.contains("COURIER") || upper.contains("MONO")
+                || upper.contains("CONSOLAS");
+        String family;
+        if (mono) family = "Liberation Mono";
+        else if (serif) family = "Liberation Serif";
+        else family = "Liberation Sans";
+        if (bold && italic) return family + " Bold Italic";
+        if (bold) return family + " Bold";
+        if (italic) return family + " Italic";
+        return family;
+    }
+
     private FontMapping resolveMapping(String resourceName, FontMapping fallback) {
         if (resourceName == null || resourceName.length() < 4) {
             return fallback;
