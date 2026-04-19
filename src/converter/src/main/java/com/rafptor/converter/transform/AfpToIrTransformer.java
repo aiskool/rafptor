@@ -56,16 +56,20 @@ public final class AfpToIrTransformer {
             PageGeometry geom = page.geometry();
             double widthPt = geom != null ? geom.widthPt() : config.defaultPageWidthPt();
             double heightPt = geom != null ? geom.heightPt() : config.defaultPageHeightPt();
-            int resolution = geom != null
-                    ? geom.effectivePtxResolution()
+            int xResolution = geom != null
+                    ? geom.effectivePtxXResolution()
+                    : config.afpResolution();
+            int yResolution = geom != null
+                    ? geom.effectivePtxYResolution()
                     : config.afpResolution();
             // Guard against degenerate or absent geometry values — some test
             // fixtures do not carry a PGD, and the Liberation-only PDF must
             // still stay in the printable-area ballpark.
             if (widthPt <= 1 || widthPt > 10_000) widthPt = config.defaultPageWidthPt();
             if (heightPt <= 1 || heightPt > 10_000) heightPt = config.defaultPageHeightPt();
-            if (resolution <= 0) resolution = config.afpResolution();
-            IrPage irPage = new IrPage(page.name(), widthPt, heightPt, resolution);
+            if (xResolution <= 0) xResolution = config.afpResolution();
+            if (yResolution <= 0) yResolution = config.afpResolution();
+            IrPage irPage = new IrPage(page.name(), widthPt, heightPt, xResolution, yResolution);
             for (IrTextBlock block : textTransformer.transform(
                     page.textRuns(), irPage, page.fontAssignments())) {
                 irPage.add(block);

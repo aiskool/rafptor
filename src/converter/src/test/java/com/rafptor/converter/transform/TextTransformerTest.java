@@ -27,6 +27,21 @@ class TextTransformerTest {
     }
 
     @Test
+    void honoursSeparateAxisResolutionsForAmiAmb() {
+        // Simulated IBM composer page: inline axis at 1440, baseline at 240.
+        IrPage page = new IrPage("p", 595, 842, 1440, 240);
+        PtocaTextRun run = new PtocaTextRun(1, 240, 1440, "PREF");
+        List<IrTextBlock> blocks = new TextTransformer(new StandardFontMapper())
+                .transform(List.of(run), page);
+        assertEquals(1, blocks.size());
+        IrTextBlock b = blocks.get(0);
+        // 1440 L-units / 1440 dpi = 1 inch = 72 pt (inline → X)
+        assertEquals(72.0, b.x(), 1e-6);
+        // 240 L-units / 240 dpi = 1 inch = 72 pt (baseline → Y)
+        assertEquals(72.0, b.y(), 1e-6);
+    }
+
+    @Test
     void skipsEmptyRuns() {
         IrPage page = new IrPage("p", 595, 842, 240);
         List<IrTextBlock> blocks = new TextTransformer(new StandardFontMapper())

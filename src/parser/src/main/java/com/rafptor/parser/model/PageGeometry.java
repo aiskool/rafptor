@@ -44,8 +44,18 @@ public record PageGeometry(
         return (double) heightLUnits * 72.0 / (double) yResolution;
     }
 
-    /** Effective resolution to convert PTOCA coordinates to points. */
+    /** Effective X resolution to convert PTOCA inline coordinates to points. */
     public int effectivePtxResolution() {
+        return effectivePtxXResolution();
+    }
+
+    /** Effective X resolution (PTD if declared, otherwise PGD). */
+    public int effectivePtxXResolution() {
         return ptxXResolution > 0 ? ptxXResolution : xResolution;
+    }
+
+    /** Effective Y resolution (PTD if declared, otherwise PGD). */
+    public int effectivePtxYResolution() {
+        return ptxYResolution > 0 ? ptxYResolution : yResolution;
     }
 }

@@ -59,8 +59,8 @@ public final class TextTransformer {
                     ? fontAssignments.getOrDefault(run.localFontId(), "")
                     : "";
             FontMapping m = resolveMapping(resourceName, defaultMapping);
-            double x = page.toPoints(run.inlinePosition());
-            double y = page.toPoints(run.baselinePosition());
+            double x = page.toPointsX(run.inlinePosition());
+            double y = page.toPointsY(run.baselinePosition());
             out.add(new IrTextBlock(
                     x, y, 0,
                     run.text(),
