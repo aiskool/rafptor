@@ -4,11 +4,14 @@ import com.rafptor.converter.ConversionConfig;
 import com.rafptor.converter.font.FontMapper;
 import com.rafptor.converter.font.StandardFontMapper;
 import com.rafptor.converter.ir.IrDocument;
+import com.rafptor.converter.ir.IrImage;
 import com.rafptor.converter.ir.IrPage;
 import com.rafptor.converter.ir.IrTextBlock;
 import com.rafptor.parser.model.AfpDocument;
 import com.rafptor.parser.model.AfpPage;
+import com.rafptor.parser.model.AfpStructuredField;
 import com.rafptor.parser.model.PageGeometry;
+import com.rafptor.parser.modca.IncludeObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,6 +79,18 @@ public final class AfpToIrTransformer {
             }
             imageTransformer.transform(page.images(), irPage).forEach(irPage::add);
             warnings.addAll(imageTransformer.warnings());
+            // Resolve any Include Object references that point at an embedded
+            // image (JPEG/PNG) carried at document level. This covers the
+            // AFPWorld / MO:DCA-P5 pattern where a logo sits inside a BRS /
+            // BFN envelope and is placed on the page via IOB.
+            for (AfpStructuredField sf : page.structuredFields()) {
+                if (sf instanceof IncludeObject iob) {
+                    IrImage img = buildIrImageFromEmbedded(afp, iob, irPage);
+                    if (img != null) {
+                        irPage.add(img);
+                    }
+                }
+            }
             graphicTransformer.transform(page.graphics(), irPage).forEach(irPage::add);
             // Graphic / barcode transformers are stubs today — see warnings.
             page.resourceReferences().stream()
@@ -110,5 +125,76 @@ public final class AfpToIrTransformer {
 
     public List<String> warnings() {
         return Collections.unmodifiableList(warnings);
+    }
+
+    /**
+     * Build an IrImage from an IOB that references an embedded JPEG / PNG
+     * the parser captured at document level. Origin and size come from the
+     * IOB wire layout (XoaOset, YoaOset, XocaOset, YocaOset in L-units).
+     * When a size is absent (0), fall back to the image's natural pixel
+     * dimensions mapped at 96 DPI.
+     */
+    private IrImage buildIrImageFromEmbedded(AfpDocument afp, IncludeObject iob, IrPage page) {
+        byte[] data = afp.embeddedObject(iob.objectName());
+        if (data == null || data.length == 0) {
+            return null;
+        }
+        String kind = afp.embeddedObjectKind(iob.objectName()).toLowerCase();
+        String format = kind.equals("jpeg") ? "jpeg"
+                : kind.equals("png") ? "png"
+                : kind;
+        double x = iob.xOriginLUnits() > 0 ? page.toPointsX(iob.xOriginLUnits()) : 0;
+        double y = iob.yOriginLUnits() > 0 ? page.toPointsY(iob.yOriginLUnits()) : 0;
+        double width = iob.xSizeLUnits() > 0 ? page.toPointsX(iob.xSizeLUnits()) : 0;
+        double height = iob.ySizeLUnits() > 0 ? page.toPointsY(iob.ySizeLUnits()) : 0;
+        // Fall back to the image's native pixel size at 96 dpi when the IOB
+        // did not declare an explicit size.
+        if (width <= 0 || height <= 0) {
+            int[] dims = readImageDimensions(data, format);
+            if (dims != null) {
+                double nativeWPt = dims[0] * 72.0 / 96.0;
+                double nativeHPt = dims[1] * 72.0 / 96.0;
+                if (width <= 0) width = nativeWPt;
+                if (height <= 0) height = nativeHPt;
+            } else {
+                // Final defensive fallback — a modest square.
+                if (width <= 0) width = 60;
+                if (height <= 0) height = 20;
+            }
+        }
+        return new IrImage(x, y, 0, data, format, width, height, 96);
+    }
+
+    /**
+     * Best-effort pixel-size probe for a JPEG or PNG blob without pulling in
+     * an ImageIO dependency. Returns {@code null} on anything but the common
+     * SOF0/SOF2 JPEG or IHDR PNG marker.
+     */
+    private static int[] readImageDimensions(byte[] data, String format) {
+        if ("png".equals(format) && data.length >= 24
+                && data[0] == (byte) 0x89 && data[1] == 'P' && data[2] == 'N' && data[3] == 'G') {
+            int w = ((data[16] & 0xFF) << 24) | ((data[17] & 0xFF) << 16)
+                    | ((data[18] & 0xFF) << 8) | (data[19] & 0xFF);
+            int h = ((data[20] & 0xFF) << 24) | ((data[21] & 0xFF) << 16)
+                    | ((data[22] & 0xFF) << 8) | (data[23] & 0xFF);
+            return new int[]{w, h};
+        }
+        if ("jpeg".equals(format)) {
+            int p = 2;
+            while (p + 8 < data.length) {
+                if ((data[p] & 0xFF) != 0xFF) { p++; continue; }
+                int marker = data[p + 1] & 0xFF;
+                if (marker == 0xD8 || marker == 0xD9) { p += 2; continue; }
+                if (marker == 0xDA) break;
+                int segLen = ((data[p + 2] & 0xFF) << 8) | (data[p + 3] & 0xFF);
+                if (marker >= 0xC0 && marker <= 0xCF && marker != 0xC4 && marker != 0xC8 && marker != 0xCC) {
+                    int h = ((data[p + 5] & 0xFF) << 8) | (data[p + 6] & 0xFF);
+                    int w = ((data[p + 7] & 0xFF) << 8) | (data[p + 8] & 0xFF);
+                    return new int[]{w, h};
+                }
+                p += 2 + segLen;
+            }
+        }
+        return null;
     }
 }

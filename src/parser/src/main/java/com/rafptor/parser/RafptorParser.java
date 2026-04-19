@@ -20,6 +20,8 @@ import com.rafptor.parser.modca.EndImageObject;
 import com.rafptor.parser.modca.GraphicsData;
 import com.rafptor.parser.modca.ImageRasterData;
 import com.rafptor.parser.model.AfpGraphicObject;
+import com.rafptor.parser.modca.BeginNamedResource;
+import com.rafptor.parser.modca.EmbeddedObjectData;
 import com.rafptor.parser.modca.MapCodedFont;
 import com.rafptor.parser.modca.MapDataResource;
 import com.rafptor.parser.modca.PageDescriptor;
@@ -102,6 +104,11 @@ public final class RafptorParser {
         ByteArrayOutputStream currentImageRaw = null;
         String currentGraphicName = null;
         ByteArrayOutputStream currentGraphicRaw = null;
+        // Most-recently-opened named-resource envelope (BRS / BFN / BDG).
+        // When an EmbeddedObjectData arrives inside such an envelope, the
+        // raw bytes are stored at the document level under this name so
+        // subsequent IncludeObject references can resolve them.
+        String currentNamedResource = null;
 
         while (reader.hasNext()) {
             RawStructuredField raw = reader.next();
@@ -117,7 +124,18 @@ public final class RafptorParser {
             }
 
             if (sf instanceof BeginDocument bdt) {
+                // Some MO:DCA/P5 streams prefix BDT with a BRS / BFN envelope
+                // that carries resources (embedded JPEGs, fonts). Those are
+                // already captured on the throwaway document — copy them
+                // forward into the new named document instead of discarding.
+                AfpDocument prior = document;
                 document = new AfpDocument(defaultNameIfBlank(bdt.documentName(), "UNNAMED"));
+                if (prior != null) {
+                    for (var e : prior.embeddedObjects().entrySet()) {
+                        document.putEmbeddedObject(e.getKey(), e.getValue(),
+                                prior.embeddedObjectKind(e.getKey()));
+                    }
+                }
             } else if (sf instanceof EndDocument edt) {
                 LOG.debug("end document name={}", edt.documentName());
             } else if (sf instanceof BeginPage bpg) {
@@ -139,6 +157,18 @@ public final class RafptorParser {
                             currentPage.putCodePageAssignment(e.localId(), e.codePageName());
                         }
                     }
+                }
+            } else if (sf instanceof BeginNamedResource bnr) {
+                // Track the most specific (non-empty) resource name so a
+                // subsequent EmbeddedObjectData can be keyed by it.
+                if (!bnr.resourceName().isEmpty()) {
+                    currentNamedResource = bnr.resourceName();
+                }
+            } else if (sf instanceof EmbeddedObjectData eod) {
+                if (currentNamedResource != null && eod.payload().length > 0
+                        && eod.kind() != EmbeddedObjectData.Kind.UNKNOWN) {
+                    document.putEmbeddedObject(currentNamedResource,
+                            eod.payload(), eod.kind().name());
                 }
             } else if (sf instanceof MapDataResource mdr) {
                 // MO:DCA/P5 streams bind fonts via MDR repeating groups

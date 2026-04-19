@@ -16,6 +16,8 @@ public final class AfpDocument {
     private final List<AfpResource> resourceReferences;
     private final Map<String, String> tags;
     private final List<AfpStructuredField> structuredFields;
+    private final Map<String, byte[]> embeddedObjects;
+    private final Map<String, String> embeddedObjectKinds;
 
     public AfpDocument(String name) {
         this.name = name;
@@ -23,6 +25,8 @@ public final class AfpDocument {
         this.resourceReferences = new ArrayList<>();
         this.tags = new HashMap<>();
         this.structuredFields = new ArrayList<>();
+        this.embeddedObjects = new HashMap<>();
+        this.embeddedObjectKinds = new HashMap<>();
     }
 
     public String name() {
@@ -71,5 +75,36 @@ public final class AfpDocument {
             throw new IllegalArgumentException("sf must not be null");
         }
         structuredFields.add(sf);
+    }
+
+    /**
+     * Register an embedded object resource (typically a JPEG/PNG logo that the
+     * MO:DCA composer stored inside a BRS / BFN / BDG envelope). The same
+     * resource name can later be referenced by an Include Object to place the
+     * image on a page.
+     */
+    public void putEmbeddedObject(String name, byte[] data, String kind) {
+        if (name == null || name.isEmpty() || data == null) {
+            return;
+        }
+        embeddedObjects.put(name, data.clone());
+        embeddedObjectKinds.put(name, kind == null ? "UNKNOWN" : kind);
+    }
+
+    public byte[] embeddedObject(String name) {
+        byte[] data = embeddedObjects.get(name);
+        return data == null ? null : data.clone();
+    }
+
+    public String embeddedObjectKind(String name) {
+        return embeddedObjectKinds.getOrDefault(name, "UNKNOWN");
+    }
+
+    public Map<String, byte[]> embeddedObjects() {
+        HashMap<String, byte[]> copy = new HashMap<>(embeddedObjects.size());
+        for (Map.Entry<String, byte[]> e : embeddedObjects.entrySet()) {
+            copy.put(e.getKey(), e.getValue().clone());
+        }
+        return Collections.unmodifiableMap(copy);
     }
 }

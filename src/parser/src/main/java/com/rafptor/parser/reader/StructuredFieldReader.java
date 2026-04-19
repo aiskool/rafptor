@@ -5,9 +5,11 @@ import com.rafptor.parser.model.RawStructuredField;
 import com.rafptor.parser.model.StructuredFieldId;
 import com.rafptor.parser.modca.BeginActiveEnvironmentGroup;
 import com.rafptor.parser.modca.BeginDocument;
+import com.rafptor.parser.modca.BeginNamedResource;
 import com.rafptor.parser.modca.BeginObjectEnvironmentGroup;
 import com.rafptor.parser.modca.BeginPage;
 import com.rafptor.parser.modca.BeginResourceGroup;
+import com.rafptor.parser.modca.EmbeddedObjectData;
 import com.rafptor.parser.modca.EndActiveEnvironmentGroup;
 import com.rafptor.parser.modca.EndDocument;
 import com.rafptor.parser.modca.EndObjectEnvironmentGroup;
@@ -69,7 +71,13 @@ public final class StructuredFieldReader {
             Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0xFB).toInt(), ImageRasterData::parse),
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xBB).toInt(), BeginGraphicsObject::parse),
             Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xBB).toInt(), EndGraphicsObject::parse),
-            Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0xBB).toInt(), GraphicsData::parse)
+            Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0xBB).toInt(), GraphicsData::parse),
+            // Named-resource wrappers used by MO:DCA/P5 composers to embed
+            // JPEG/PNG logos and other object containers inside the stream.
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xA5).toInt(), BeginNamedResource::parse), // BRS
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xCE).toInt(), BeginNamedResource::parse), // BFN
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x92).toInt(), BeginNamedResource::parse), // BDG
+            Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0x92).toInt(), EmbeddedObjectData::parse)  // raw object bytes
     );
 
     private StructuredFieldReader() {
