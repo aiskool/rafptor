@@ -52,6 +52,18 @@ public final class PtocaParser {
         this.decoder = decoder;
     }
 
+    /**
+     * Grouping record returned by {@link #parseWithRules} — text runs and
+     * drawn rules share the same PTOCA stream but consumer code typically
+     * handles them through different IR elements.
+     */
+    public record Result(List<PtocaTextRun> runs, List<PtocaRule> rules) {
+        public Result {
+            runs = List.copyOf(runs);
+            rules = List.copyOf(rules);
+        }
+    }
+
     public List<PtocaTextRun> parse(PresentationTextData ptx) {
         if (ptx == null) {
             throw new IllegalArgumentException("ptx must not be null");
@@ -73,17 +85,30 @@ public final class PtocaParser {
         return parseBytes(ptx.payload(), codePageByLocalId);
     }
 
+    /** Full parse returning both text runs and rules drawn via DIR/DBR. */
+    public Result parseWithRules(PresentationTextData ptx, Map<Integer, String> codePageByLocalId) {
+        if (ptx == null) {
+            throw new IllegalArgumentException("ptx must not be null");
+        }
+        return parseBytesWithRules(ptx.payload(), codePageByLocalId);
+    }
+
     public List<PtocaTextRun> parseBytes(byte[] data) {
         return parseBytes(data, Map.of());
     }
 
     public List<PtocaTextRun> parseBytes(byte[] data, Map<Integer, String> codePageByLocalId) {
+        return parseBytesWithRules(data, codePageByLocalId).runs();
+    }
+
+    public Result parseBytesWithRules(byte[] data, Map<Integer, String> codePageByLocalId) {
         if (data == null) {
             throw new IllegalArgumentException("data must not be null");
         }
         Map<Integer, String> codePages = codePageByLocalId == null ? Map.of() : codePageByLocalId;
         Map<Integer, EbcdicDecoder> decoderCache = new HashMap<>();
         List<PtocaTextRun> runs = new ArrayList<>();
+        List<PtocaRule> rules = new ArrayList<>();
         int localFontId = 0;
         int baseline = 0;
         int inline = 0;
@@ -154,8 +179,15 @@ public final class PtocaParser {
                         currentColor = parsed;
                     }
                 }
-                case PtocaControlCode.DRAW_I_AXIS_RULE, PtocaControlCode.DRAW_B_AXIS_RULE -> {
-                    // geometry primitive, not modelled in this release
+                case PtocaControlCode.DRAW_I_AXIS_RULE -> {
+                    PtocaRule rule = parseRule(data, payloadOffset, sequenceEnd,
+                            baseline, inline, PtocaRule.Direction.I_AXIS, currentColor);
+                    if (rule != null) rules.add(rule);
+                }
+                case PtocaControlCode.DRAW_B_AXIS_RULE -> {
+                    PtocaRule rule = parseRule(data, payloadOffset, sequenceEnd,
+                            baseline, inline, PtocaRule.Direction.B_AXIS, currentColor);
+                    if (rule != null) rules.add(rule);
                 }
                 default -> {
                     // tolerant skip
@@ -169,9 +201,41 @@ public final class PtocaParser {
             pos = sequenceEnd;
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("ptoca sequences={} runs={}", sequenceCount, runs.size());
+            LOG.debug("ptoca sequences={} runs={} rules={}", sequenceCount, runs.size(), rules.size());
         }
-        return runs;
+        return new Result(runs, rules);
+    }
+
+    /**
+     * Parse a DIR / DBR rule payload. MO:DCA/P5 producers emit a 5-byte
+     * payload where the rule width (thickness) is a <b>2-byte</b> big-endian
+     * value at offset 2..3 — not a 1-byte field at offset 3. Wire layout:
+     * <pre>
+     *   [0..1]  rule length in L-units   (big-endian, max 65535)
+     *   [2..3]  rule width in L-units    (big-endian)
+     *   [4]     flags / pad (observed 0x00)
+     * </pre>
+     * Legacy 4-byte payloads use a single byte thickness at offset 3; when
+     * the payload is shorter, thickness defaults to 15 L-units (≈ 0.75 pt).
+     */
+    private static PtocaRule parseRule(byte[] data, int offset, int end,
+                                       int baseline, int inline,
+                                       PtocaRule.Direction direction,
+                                       String color) {
+        int len = end - offset;
+        if (len < 2) return null;
+        int length = readUnsignedShort(data, offset, end);
+        int thickness;
+        if (len >= 5) {
+            thickness = readUnsignedShort(data, offset + 2, end);
+        } else if (len >= 4) {
+            thickness = data[offset + 3] & 0xFF;
+        } else {
+            thickness = 15;
+        }
+        if (length <= 0) return null;
+        if (thickness <= 0) thickness = 15;
+        return new PtocaRule(baseline, inline, length, thickness, direction, color);
     }
 
     private static int readUnsignedShort(byte[] data, int offset, int end) {

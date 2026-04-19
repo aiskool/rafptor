@@ -189,7 +189,15 @@ public final class PdfRenderer {
                 float y = (float) (pdfY - g.height());
                 cs.addRect(x, y, (float) g.width(), (float) g.height());
                 if (g.fillColor() != null) {
-                    cs.fillAndStroke();
+                    // A zero line-width signals a pure fill (PTOCA rules, blue
+                    // header bars, gray separators, bullet squares). PDFBox
+                    // would otherwise emit a 1-device-pixel outline around the
+                    // fill, which turns thin horizontal bars into muddy stripes.
+                    if (g.lineWidth() > 0) {
+                        cs.fillAndStroke();
+                    } else {
+                        cs.fill();
+                    }
                 } else {
                     cs.stroke();
                 }

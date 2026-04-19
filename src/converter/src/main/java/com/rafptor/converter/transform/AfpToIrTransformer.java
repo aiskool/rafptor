@@ -4,6 +4,7 @@ import com.rafptor.converter.ConversionConfig;
 import com.rafptor.converter.font.FontMapper;
 import com.rafptor.converter.font.StandardFontMapper;
 import com.rafptor.converter.ir.IrDocument;
+import com.rafptor.converter.ir.IrGraphic;
 import com.rafptor.converter.ir.IrImage;
 import com.rafptor.converter.ir.IrPage;
 import com.rafptor.converter.ir.IrTextBlock;
@@ -12,6 +13,7 @@ import com.rafptor.parser.model.AfpPage;
 import com.rafptor.parser.model.AfpStructuredField;
 import com.rafptor.parser.model.PageGeometry;
 import com.rafptor.parser.modca.IncludeObject;
+import com.rafptor.parser.ptoca.PtocaRule;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,6 +75,12 @@ public final class AfpToIrTransformer {
             if (xResolution <= 0) xResolution = config.afpResolution();
             if (yResolution <= 0) yResolution = config.afpResolution();
             IrPage irPage = new IrPage(page.name(), widthPt, heightPt, xResolution, yResolution);
+            // Emit PTOCA rules (DIR / DBR) FIRST so they sit behind any text
+            // that overlaps them — coloured header bars behind white text,
+            // gray separators behind body text.
+            for (PtocaRule rule : page.rules()) {
+                irPage.add(buildIrGraphicFromRule(rule, irPage));
+            }
             for (IrTextBlock block : textTransformer.transform(
                     page.textRuns(), irPage, page.fontAssignments(), page.fontPointSizes())) {
                 irPage.add(block);
@@ -125,6 +133,52 @@ public final class AfpToIrTransformer {
 
     public List<String> warnings() {
         return Collections.unmodifiableList(warnings);
+    }
+
+    /**
+     * Translate one PTOCA rule into an {@link IrGraphic} {@code RECT} element.
+     *
+     * <p>Rule geometry (MO:DCA/P5 convention observed in AFPWorld, DOC1,
+     * Adobe Output): the rule starts at the current baseline cursor and
+     * extends <em>upward</em> from the baseline by {@code thickness} L-units
+     * for an I-axis rule, or <em>rightward</em> from the inline cursor by
+     * {@code thickness} L-units for a B-axis rule. That anchor convention is
+     * why filled header bars appear just above the text baseline in the
+     * reference output.
+     */
+    private IrGraphic buildIrGraphicFromRule(PtocaRule rule, IrPage page) {
+        double x = page.toPointsX(rule.inlinePosition());
+        double yBaseline = page.toPointsY(rule.baselinePosition());
+        double length = rule.direction() == PtocaRule.Direction.I_AXIS
+                ? page.toPointsX(rule.lengthLUnits())
+                : page.toPointsY(rule.lengthLUnits());
+        double thickness = page.toPointsY(rule.thicknessLUnits());
+        if (thickness <= 0) thickness = 0.5;
+        double rectX, rectY, rectW, rectH;
+        if (rule.direction() == PtocaRule.Direction.I_AXIS) {
+            rectX = x;
+            // PTOCA rule's anchor is the baseline cursor; the rule extends
+            // DOWNWARD by `thickness`. Composers position their header bars
+            // so that the baseline is the top of the bar and the white
+            // text runs sit inside.
+            rectY = yBaseline;
+            rectW = length;
+            rectH = thickness;
+        } else {
+            rectX = x;
+            rectY = yBaseline;
+            rectW = thickness;
+            rectH = length;
+        }
+        return new IrGraphic(
+                rectX, rectY, 0, IrGraphic.Shape.RECT,
+                rectX + rectW, rectY + rectH,
+                rectW, rectH,
+                0.0,                             // corner radius — sharp rect
+                0.0,                             // line width — pure fill
+                rule.colorHex(),                 // stroke color (unused)
+                rule.colorHex(),                 // fill color
+                IrGraphic.StrokePattern.SOLID);
     }
 
     /**

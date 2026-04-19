@@ -106,6 +106,41 @@ class PtocaParserTest {
     }
 
     @Test
+    void draw_i_axis_rule_captured_with_color_and_thickness() {
+        // Set a red colour (RGB FF 00 00), then emit a DIR rule 500 LU long
+        // with thickness 0xE0 (= 224 LU).
+        byte[] sec = {
+                0x0F, (byte) 0x81,
+                0x00, 0x01,
+                0x00, 0x00, 0x00, 0x00,
+                0x08, 0x08, 0x08, 0x00,
+                (byte) 0xFF, 0x00, 0x00
+        };
+        // 5-byte payload: length 0x01F4 = 500 L-units, thickness 0x00E0 = 224 L-units
+        byte[] dir = {0x07, (byte) 0xE4, 0x01, (byte) 0xF4, 0x00, (byte) 0xE0, 0x00};
+        PtocaParser parser = new PtocaParser();
+        PtocaParser.Result res = parser.parseBytesWithRules(concat(sec, dir), Map.of());
+        assertEquals(1, res.rules().size());
+        com.rafptor.parser.ptoca.PtocaRule r = res.rules().get(0);
+        assertEquals(500, r.lengthLUnits());
+        assertEquals(0xE0, r.thicknessLUnits());
+        assertEquals("#FF0000", r.colorHex());
+        assertEquals(com.rafptor.parser.ptoca.PtocaRule.Direction.I_AXIS, r.direction());
+    }
+
+    @Test
+    void draw_b_axis_rule_captured() {
+        byte[] dbr = {0x07, (byte) 0xE6, 0x00, 0x64, 0x00, 0x0F, 0x00};
+        PtocaParser parser = new PtocaParser();
+        PtocaParser.Result res = parser.parseBytesWithRules(dbr, Map.of());
+        assertEquals(1, res.rules().size());
+        assertEquals(com.rafptor.parser.ptoca.PtocaRule.Direction.B_AXIS, res.rules().get(0).direction());
+        assertEquals(100, res.rules().get(0).lengthLUnits());
+        // 2-byte thickness at offset 2..3 = 0x000F
+        assertEquals(15, res.rules().get(0).thicknessLUnits());
+    }
+
+    @Test
     void set_extended_color_lifts_runs() {
         // SEC CS: 0x0F, 0x81, <13 bytes RGB mode 0x01>, pick bright blue.
         byte[] sec = {

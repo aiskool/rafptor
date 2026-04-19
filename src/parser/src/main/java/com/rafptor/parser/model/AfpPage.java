@@ -1,5 +1,6 @@
 package com.rafptor.parser.model;
 
+import com.rafptor.parser.ptoca.PtocaRule;
 import com.rafptor.parser.ptoca.PtocaTextRun;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public final class AfpPage {
 
     private final String name;
     private final List<PtocaTextRun> textRuns;
+    private final List<PtocaRule> rules;
     private final List<AfpResource> resourceReferences;
     private final List<AfpStructuredField> structuredFields;
     private final List<AfpImageObject> images;
@@ -27,6 +29,7 @@ public final class AfpPage {
     public AfpPage(String name) {
         this.name = name;
         this.textRuns = new ArrayList<>();
+        this.rules = new ArrayList<>();
         this.resourceReferences = new ArrayList<>();
         this.structuredFields = new ArrayList<>();
         this.images = new ArrayList<>();
@@ -65,6 +68,18 @@ public final class AfpPage {
             throw new IllegalArgumentException("run must not be null");
         }
         textRuns.add(run);
+    }
+
+    /** PTOCA rules (DIR / DBR) drawn on this page in stream order. */
+    public List<PtocaRule> rules() {
+        return Collections.unmodifiableList(rules);
+    }
+
+    public void addRule(PtocaRule rule) {
+        if (rule == null) {
+            throw new IllegalArgumentException("rule must not be null");
+        }
+        rules.add(rule);
     }
 
     public void addResource(AfpResource resource) {

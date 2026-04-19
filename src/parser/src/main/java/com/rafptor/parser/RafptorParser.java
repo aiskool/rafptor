@@ -204,8 +204,10 @@ public final class RafptorParser {
                 }
             } else if (sf instanceof PresentationTextData ptx) {
                 if (currentPage != null) {
-                    ptocaParser.parse(ptx, currentPage.codePageAssignments())
-                            .forEach(currentPage::addTextRun);
+                    com.rafptor.parser.ptoca.PtocaParser.Result result =
+                            ptocaParser.parseWithRules(ptx, currentPage.codePageAssignments());
+                    result.runs().forEach(currentPage::addTextRun);
+                    result.rules().forEach(currentPage::addRule);
                 }
             } else if (sf instanceof PageDescriptor pgd) {
                 if (currentPage != null) {
