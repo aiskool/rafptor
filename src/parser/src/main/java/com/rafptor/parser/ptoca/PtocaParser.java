@@ -87,6 +87,7 @@ public final class PtocaParser {
         int localFontId = 0;
         int baseline = 0;
         int inline = 0;
+        String currentColor = "#000000";
         EbcdicDecoder currentDecoder = resolveDecoder(localFontId, codePages, decoderCache);
 
         int pos = 0;
@@ -144,7 +145,13 @@ public final class PtocaParser {
                     int textLen = sequenceEnd - payloadOffset;
                     if (textLen > 0) {
                         String text = decodeTrn(data, payloadOffset, textLen, currentDecoder);
-                        runs.add(new PtocaTextRun(localFontId, baseline, inline, text));
+                        runs.add(new PtocaTextRun(localFontId, baseline, inline, text, currentColor));
+                    }
+                }
+                case PtocaControlCode.SET_EXTENDED_COLOR -> {
+                    String parsed = parseExtendedColor(data, payloadOffset, sequenceEnd);
+                    if (parsed != null) {
+                        currentColor = parsed;
                     }
                 }
                 case PtocaControlCode.DRAW_I_AXIS_RULE, PtocaControlCode.DRAW_B_AXIS_RULE -> {
@@ -205,6 +212,42 @@ public final class PtocaParser {
             }
         }
         return zeroHigh * 4 >= codeUnits * 3;
+    }
+
+    /**
+     * Parse a PTOCA Set Extended Color (SEC) payload. We support the
+     * 13-byte RGB variant (color space 0x01) that IBM, Doc1, Adobe Output
+     * and Compart all emit for foreground color changes. Wire layout
+     * (after the 2-byte CS header):
+     * <pre>
+     *   [0]     reserved (0x00)
+     *   [1]     color space (0x01 = RGB)
+     *   [2..5]  reserved
+     *   [6]     bits per R  (typically 0x08)
+     *   [7]     bits per G  (typically 0x08)
+     *   [8]     bits per B  (typically 0x08)
+     *   [9]     bits per reserved component
+     *   [10]    R (0..255)
+     *   [11]    G (0..255)
+     *   [12]    B (0..255)
+     * </pre>
+     * Returns {@code null} (leaves caller's color untouched) if the payload
+     * is not the 13-byte RGB variant — named-color tables and CMYK are not
+     * yet modelled.
+     */
+    private static String parseExtendedColor(byte[] data, int offset, int end) {
+        int len = end - offset;
+        if (len < 13) {
+            return null;
+        }
+        int colorSpace = data[offset + 1] & 0xFF;
+        if (colorSpace != 0x01) {
+            return null;
+        }
+        int r = data[offset + 10] & 0xFF;
+        int g = data[offset + 11] & 0xFF;
+        int b = data[offset + 12] & 0xFF;
+        return String.format("#%02X%02X%02X", r, g, b);
     }
 
     private EbcdicDecoder resolveDecoder(int localFontId,

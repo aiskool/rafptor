@@ -106,6 +106,31 @@ class PtocaParserTest {
     }
 
     @Test
+    void set_extended_color_lifts_runs() {
+        // SEC CS: 0x0F, 0x81, <13 bytes RGB mode 0x01>, pick bright blue.
+        byte[] sec = {
+                0x0F, (byte) 0x81,
+                0x00, 0x01,              // reserved, color-space=RGB
+                0x00, 0x00, 0x00, 0x00,  // reserved
+                0x08, 0x08, 0x08, 0x00,  // bits per component
+                0x21, (byte) 0x96, (byte) 0xF3  // RGB (0x21, 0x96, 0xF3)
+        };
+        byte[] trn = {0x04, (byte) 0xDA, (byte) 0xC8, (byte) 0xC9};
+        byte[] data = concat(sec, trn);
+        PtocaParser parser = new PtocaParser();
+        List<PtocaTextRun> runs = parser.parseBytes(data);
+        assertEquals(1, runs.size());
+        assertEquals("HI", runs.get(0).text());
+        assertEquals("#2196F3", runs.get(0).colorHex());
+    }
+
+    @Test
+    void default_color_is_black() {
+        List<PtocaTextRun> runs = new PtocaParser().parseBytes(AfpTestFileGenerator.ptocaPayload("Z"));
+        assertEquals("#000000", runs.get(0).colorHex());
+    }
+
+    @Test
     void detects_utf16_be_trn_payload() {
         // MO:DCA/P5 streams produced by DOC1 / Adobe Output / Compart emit
         // Unicode code points inside TRN when the coded font is a TrueType

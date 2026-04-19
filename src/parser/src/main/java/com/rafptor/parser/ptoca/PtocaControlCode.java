@@ -17,6 +17,11 @@ public final class PtocaControlCode {
     public static final int TRANSPARENT_DATA = 0xDA;
     public static final int DRAW_I_AXIS_RULE = 0xE6;
     public static final int DRAW_B_AXIS_RULE = 0xE4;
+    /**
+     * PTOCA Set Extended Color (SEC) — 13-byte payload in RGB color space
+     * (mode 0x01). Lifts the current foreground color for subsequent TRN runs.
+     */
+    public static final int SET_EXTENDED_COLOR = 0x80;
 
     private PtocaControlCode() {
     }

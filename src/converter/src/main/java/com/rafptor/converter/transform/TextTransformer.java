@@ -61,13 +61,15 @@ public final class TextTransformer {
             FontMapping m = resolveMapping(resourceName, defaultMapping);
             double x = page.toPointsX(run.inlinePosition());
             double y = page.toPointsY(run.baselinePosition());
+            String color = run.colorHex() == null || run.colorHex().isBlank()
+                    ? "#000000" : run.colorHex();
             out.add(new IrTextBlock(
                     x, y, 0,
                     run.text(),
                     m.trueTypeFont(),
                     m.defaultPointSize() * m.scaleFactor(),
                     0.0,
-                    "#000000"));
+                    color));
         }
         return out;
     }
