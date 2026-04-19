@@ -166,6 +166,18 @@ class PtocaParserTest {
     }
 
     @Test
+    void single_char_utf16_trn_not_misread_as_ebcdic() {
+        // Regression: a 2-byte TRN "a" (0x00 0x61 = U+0061) used to fall
+        // back to EBCDIC decoding, where 0x61 in IBM500 is '/'. The result
+        // was "for a tax credit" rendering as "for / tax credit".
+        byte[] trn = {0x04, (byte) 0xDA, 0x00, 0x61};
+        PtocaParser parser = new PtocaParser();
+        List<PtocaTextRun> runs = parser.parseBytes(trn);
+        assertEquals(1, runs.size());
+        assertEquals("a", runs.get(0).text());
+    }
+
+    @Test
     void detects_utf16_be_trn_payload() {
         // MO:DCA/P5 streams produced by DOC1 / Adobe Output / Compart emit
         // Unicode code points inside TRN when the coded font is a TrueType

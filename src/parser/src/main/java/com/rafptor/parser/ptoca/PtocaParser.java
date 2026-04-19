@@ -261,10 +261,23 @@ public final class PtocaParser {
 
     /**
      * Heuristic: Latin-script UTF-16BE text has a high byte of 0x00 for every
-     * code point in the ASCII/Latin-1 range. We sample at least 4 code units
-     * and require >=75% of high bytes to be 0x00 to commit to UTF-16BE.
+     * code point in the ASCII/Latin-1 range. We sample code units and require
+     * {@code zeroHigh * 4 >= codeUnits * 3} to commit to UTF-16BE.
+     *
+     * <p>For 2-byte TRNs (single UTF-16 code unit — very common when composers
+     * emit one-character words like "a" or "I"), we apply a stricter rule:
+     * the high byte must be 0x00 and the low byte must be a printable ASCII
+     * character. That rule prevents EBCDIC single-char TRNs from being
+     * mis-detected as Unicode — and, more importantly, prevents the reverse
+     * mistake where a Unicode single-char "a" (0x00 0x61) falls through to
+     * EBCDIC and renders as "/" (IBM500 code point 0x61 = '/').
      */
     private static boolean looksLikeUtf16BE(byte[] data, int offset, int length) {
+        if (length == 2) {
+            int high = data[offset] & 0xFF;
+            int low = data[offset + 1] & 0xFF;
+            return high == 0x00 && low >= 0x20 && low < 0x7F;
+        }
         if (length < 4) {
             return false;
         }
