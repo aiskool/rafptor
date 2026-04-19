@@ -5,7 +5,7 @@
 
 ---
 
-## TL;DR — 7 itérations, tout le contenu rendu
+## TL;DR — 8 itérations, tout le contenu rendu
 
 | It. | Fix | SSIM gray | Keywords | Visible |
 |---|---|---|---|---|
@@ -16,9 +16,10 @@
 | 4 | MDR font names + sizes + bold | 0.7084 | 14 | titre 27pt, labels gras |
 | 5 | Embedded JPEG logo | 0.7139 | 14 | **logo présent** |
 | 6 | IOB triplet 0x4C size | 0.7139 | 14 | taille logo exacte |
-| **7** | **PTOCA DIR/DBR rules + "a"→"/" fix** | **0.7223** | **20+** | **barres tableau, séparateurs, puces, "a" correct** |
+| 7 | PTOCA DIR/DBR rules + "a"→"/" fix | 0.7223 | 20+ | barres tableau, séparateurs, puces |
+| **8** | **PTOCA AMB = baseline (supprime `- fontSize`)** | **0.9145** | **20+** | **texte aligné au pixel** |
 
-**Résultat final**: SSIM gray **0.7223** / RGB **0.7245**. Tout le contenu du stream AFP est maintenant rendu :
+**Résultat final**: SSIM gray **0.9145** / RGB **0.9141**. Tout le contenu du stream AFP est maintenant rendu :
 - ✅ Texte (3 tailles de police, gras/regular, Liberation Sans vs Arial-clone)
 - ✅ Couleurs (titre teal, accents cyan, blanc sur bleu)
 - ✅ **Logo JPEG** embarqué (Timitoo Systems, 159×48, position exacte)
@@ -43,6 +44,21 @@
 
 ## Découvertes techniques majeures
 
+### Iter 8 — PTOCA AMB ancre la baseline, pas le haut du glyphe
+
+Symptôme visuel : tout le texte translaté d'environ 7,8pt vers le bas par rapport à la référence. Le titre du bandeau bleu (27pt) débordait de 3,5pt sous la barre ; les bullets étaient désalignés avec leur texte ; l'underline de l'URL flottait trop bas.
+
+**Cause** : `PdfRenderer` appliquait `pdfY - text.fontSize()` à l'appel `newLineAtOffset`, comme si la coordonnée PTOCA AMB pointait vers le *haut* du glyphe. En réalité, AMB définit la **baseline**. PDFBox `showText` place lui-même la baseline à l'offset fourni — la soustraction la décalait donc d'une hauteur de police entière.
+
+**Fix** (1 ligne dans `PdfRenderer.renderText`) :
+
+```java
+// AVANT: cs.newLineAtOffset(text.x(), pdfY - text.fontSize())
+// APRÈS: cs.newLineAtOffset(text.x(), pdfY)
+```
+
+Impact SSIM : **0.7223 → 0.9145** (+0.192). Cascade de résolutions : squares alignés, underline sous l'URL, titre centré dans le bandeau, puces face à leur texte.
+
 ### Iter 7A — PTOCA DIR/DBR
 
 Le parser ignorait silencieusement **51 control sequences** de dessin dans le flux PTOCA parce que les opcodes 0xE4 (DIR, Draw I-axis Rule) et 0xE6 (DBR, Draw B-axis Rule) étaient mal classifiés en SBI et SCFL-alt. Ces 51 opérations dessinent :
@@ -64,18 +80,16 @@ Symptôme : "for **a** tax credit" rendu comme "for **/** tax credit", "or **a**
 
 **Fix** : pour un TRN de 2 bytes, s'engager en UTF-16BE ssi la high byte = 0x00 et la low byte est un ASCII imprimable (0x20..0x7E). Préserve le filet de sécurité contre un vrai EBCDIC single-byte tout en capturant les singletons Unicode 'a', 'I', ponctuation.
 
-## Gap résiduel (∼0.28)
+## Gap résiduel (∼0.09)
 
-Analysé honnêtement :
+Analysé honnêtement, après la correction de la baseline :
 
 | Source | Contribution SSIM |
 |---|---|
-| Arial TTF vs Liberation Sans métriques (antialiasing, kerning) | −0.12 |
-| Segoe UI 27pt vs Liberation Sans 27pt (le corps d'en-tête) | −0.06 |
-| Légère différence de saturation du bleu (#2196F3 vs rendu) | −0.03 |
-| Bordures subtiles + ombres du tableau non présentes dans l'AFP (le référence en ajoute) | −0.04 |
-| Anti-aliasing micro-différences | −0.03 |
-| **Total** | **−0.28** |
+| Arial TTF vs Liberation Sans métriques (antialiasing, kerning) | −0.04 |
+| Bordures subtiles + ombres du tableau que le moteur de référence synthétise mais qui ne sont pas dans le stream AFP | −0.03 |
+| Anti-aliasing micro-différences (rasterizer PDFBox vs poppler) | −0.02 |
+| **Total** | **−0.09** |
 
 ## E2E regression
 
@@ -89,6 +103,7 @@ Les scénarios simulés restent **verts** :
 ## Commits de la série
 
 ```
+7241917 fix(converter): anchor text at PTOCA baseline, not top — SSIM 0.72→0.91
 b7a9a01 fix(parser): single-char UTF-16BE TRN was mis-decoded as EBCDIC → 'a' became '/'
 5aa834d feat(parser,converter): render PTOCA DIR/DBR rules — table bars + separators + bullets
 bc7e365 fix(parser): read IOB object-area size from triplet 0x4C

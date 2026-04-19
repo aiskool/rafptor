@@ -428,3 +428,32 @@ Controllers that need the tenant id must **accept `Authentication auth` as a par
 **How to apply:** for any new `@RestController` endpoint that reads tenant, add `Authentication auth` to the signature. Keep `TenantContext.get()` as a fallback only.
 
 ---
+
+## 2026-04-19 — PTOCA AMB sets the baseline, not the top of the glyph
+
+### Problem
+All text in the rendered PDF was shifted ~7.8pt down relative to the AFPWorld reference. The 27pt title overflowed its blue bar by 3.5pt; bullet squares were no longer aligned with their adjacent text; the URL underline floated below the text. Visually a composite SSIM plateaued around 0.72.
+
+### Cause
+`PdfRenderer.renderText` called `cs.newLineAtOffset(text.x(), pdfY - text.fontSize())`, on the belief that AMB (Absolute Move Baseline) pointed at the top of the glyph box. AMB in PTOCA actually defines the **baseline** directly. PDFBox's `showText` already positions the baseline at the `newLineAtOffset` coordinate — the extra `- fontSize()` subtraction dropped every run by one font height.
+
+### Solution
+Remove the subtraction:
+
+```java
+// WRONG
+cs.newLineAtOffset((float) text.x(), (float) (pdfY - text.fontSize()));
+// RIGHT
+cs.newLineAtOffset((float) text.x(), (float) pdfY);
+```
+
+SSIM jumped from 0.7223 → 0.9145 gray with no other change, and Problems 2/3/4/6 (square alignment, URL underline, title centering, bullet alignment) all auto-resolved.
+
+### Rule
+Treat AFP AMB / PTOCA baseline coordinates as **baselines**, not top-of-box. When emitting to PDF/PDFBox use them verbatim at `newLineAtOffset`. **Never** shift by the font size unless you have a measured reason — doing so double-accounts for the metrics PDFBox already applies.
+
+**Why:** AFP and PDF share the baseline-centric text model. A "helpful" shift turns a pixel-perfect alignment into a one-font-height systematic offset that masquerades as a font-metrics gap and is very hard to locate without a reference.
+
+**How to apply:** when plumbing any vertical coordinate from an AFP text control to a PDF drawing call, document explicitly whether it is baseline or top. Default to baseline, and add a test fixture that renders a run at a known baseline Y against an expected pixel position.
+
+---
