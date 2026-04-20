@@ -1,10 +1,10 @@
-{"ts":"2026-04-20T10:28:34.728+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=79 bytes=19278 pages=6 coverage=100,00%"}
-{"ts":"2026-04-20T10:28:34.730+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 1466 unknown bytes across 5 SF(s)"}
-{"ts":"2026-04-20T10:28:34.730+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=110 len=293"}
-{"ts":"2026-04-20T10:28:34.730+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=5444 len=293"}
-{"ts":"2026-04-20T10:28:34.730+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=10301 len=293"}
-{"ts":"2026-04-20T10:28:34.730+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=13863 len=181"}
-{"ts":"2026-04-20T10:28:34.730+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=18102 len=125"}
+{"ts":"2026-04-20T11:08:16.171+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=79 bytes=19278 pages=6 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:16.172+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 1466 unknown bytes across 5 SF(s)"}
+{"ts":"2026-04-20T11:08:16.173+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=110 len=293"}
+{"ts":"2026-04-20T11:08:16.173+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=5444 len=293"}
+{"ts":"2026-04-20T11:08:16.173+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=10301 len=293"}
+{"ts":"2026-04-20T11:08:16.173+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=13863 len=181"}
+{"ts":"2026-04-20T11:08:16.173+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=18102 len=125"}
 ========================================
   RAFPTOR AFP AUDIT  ibm_arsdemo.afp
 ========================================

@@ -1,16 +1,16 @@
-{"ts":"2026-04-20T10:28:24.487+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=10 bytes=207 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:05.961+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=10 bytes=207 pages=0 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_asciiAndEbcdicComment.afp",
   "size_bytes": 207,
   "byte_coverage": 100.0000,
-  "used_bytes": 113,
+  "used_bytes": 181,
   "envelope_bytes": 26,
-  "ignored_bytes": 68,
+  "ignored_bytes": 0,
   "unknown_bytes": 0,
   "partial_bytes": 0,
   "pages": 0,
   "sf_records": 10,
-  "opaque_sfs": 6,
+  "opaque_sfs": 0,
   "ptx_blocks": 0,
   "embedded_objects": 0
 }

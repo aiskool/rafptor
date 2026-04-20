@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T10:28:28.304+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=25 bytes=12784 pages=1 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:09.740+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=25 bytes=12784 pages=1 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afpworld_01_Health_Coverage.afp
 ========================================

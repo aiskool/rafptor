@@ -1,6 +1,6 @@
-{"ts":"2026-04-20T10:28:28.126+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=1 bytes=359 pages=0 coverage=100,00%"}
-{"ts":"2026-04-20T10:28:28.128+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 359 unknown bytes across 1 SF(s)"}
-{"ts":"2026-04-20T10:28:28.128+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A7CA (CAT) offset=0 len=359"}
+{"ts":"2026-04-20T11:08:09.560+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=1 bytes=359 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:09.561+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 359 unknown bytes across 1 SF(s)"}
+{"ts":"2026-04-20T11:08:09.562+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A7CA (CAT) offset=0 len=359"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_unknownSF.afp",
   "size_bytes": 359,

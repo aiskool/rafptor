@@ -1,10 +1,10 @@
-{"ts":"2026-04-20T10:28:34.547+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=190 bytes=28208 pages=16 coverage=100,00%"}
-{"ts":"2026-04-20T10:28:34.548+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 3592 unknown bytes across 15 SF(s)"}
-{"ts":"2026-04-20T10:28:34.549+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=631 len=125"}
-{"ts":"2026-04-20T10:28:34.549+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=1105 len=209"}
-{"ts":"2026-04-20T10:28:34.549+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=2843 len=125"}
-{"ts":"2026-04-20T10:28:34.549+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=3315 len=237"}
-{"ts":"2026-04-20T10:28:34.549+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=4845 len=125"}
+{"ts":"2026-04-20T11:08:15.990+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=190 bytes=28208 pages=16 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:15.991+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 3592 unknown bytes across 15 SF(s)"}
+{"ts":"2026-04-20T11:08:15.992+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=631 len=125"}
+{"ts":"2026-04-20T11:08:15.992+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=1105 len=209"}
+{"ts":"2026-04-20T11:08:15.992+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=2843 len=125"}
+{"ts":"2026-04-20T11:08:15.992+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=3315 len=237"}
+{"ts":"2026-04-20T11:08:15.992+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=4845 len=125"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/ibm_afpanlyz.afp",
   "size_bytes": 28208,

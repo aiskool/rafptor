@@ -1,16 +1,16 @@
-{"ts":"2026-04-20T10:28:27.488+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=12 bytes=369 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:08.907+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=12 bytes=369 pages=0 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_repeatingGroupVariableLength.afp",
   "size_bytes": 369,
   "byte_coverage": 100.0000,
-  "used_bytes": 274,
+  "used_bytes": 308,
   "envelope_bytes": 36,
-  "ignored_bytes": 59,
+  "ignored_bytes": 25,
   "unknown_bytes": 0,
   "partial_bytes": 0,
   "pages": 0,
   "sf_records": 12,
-  "opaque_sfs": 4,
+  "opaque_sfs": 1,
   "ptx_blocks": 0,
   "embedded_objects": 0
 }

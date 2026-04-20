@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T10:28:32.425+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=21511 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:13.891+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=21511 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  fop_expected_resource.afp
 ========================================
@@ -26,7 +26,6 @@ Opaque (preserved) SFs:
   D3AC6B (OBP3) count=1  bytes=24
   D3A66B (OBD3) count=1  bytes=20
   D3A6FB (IDD) count=1  bytes=13
-  D3A9CE (EFN) count=1  bytes=8
   D3ABFB (IID) count=1  bytes=5
 
 Pages:

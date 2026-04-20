@@ -1,25 +1,20 @@
-{"ts":"2026-04-20T10:28:24.344+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=10 bytes=207 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:05.821+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=10 bytes=207 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_asciiAndEbcdicComment.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_asciiAndEbcdicComment.afp
 Size:           207 bytes
-Byte coverage:  100,00%  (used=113 env=26 ignored=68 unknown=0 partial=0)
+Byte coverage:  100,00%  (used=181 env=26 ignored=0 unknown=0 partial=0)
 Pages:          0
 Records:        10
 
 Structured fields:
   BFN (D3A8CE) [PARSED_USED]                         count=   2  bytes=        95
-  BPS (D3A85F) [PARSED_IGNORED]                      count=   2  bytes=        50
-  EPS (D3A95F) [PARSED_IGNORED]                      count=   2  bytes=        18
+  BPS (D3A85F) [PARSED_USED]                         count=   2  bytes=        50
   EFN (D3A9CE) [PARSED_USED]                         count=   2  bytes=        18
+  EPS (D3A95F) [PARSED_USED]                         count=   2  bytes=        18
   BRG (D3A8C6) [ENVELOPE_ONLY]                       count=   1  bytes=        17
   ERG (D3A9C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
-
-Opaque (preserved) SFs:
-  D3A85F (BPS) count=2  bytes=32
-  D3A95F (EPS) count=2  bytes=0
-  D3A9CE (EFN) count=2  bytes=0
 
 Pages:
 

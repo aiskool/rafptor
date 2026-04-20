@@ -1,10 +1,10 @@
-{"ts":"2026-04-20T10:28:34.041+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=15611 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:15.495+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=15611 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  fop_resource_no_end_name.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/fop_resource_no_end_name.afp
 Size:           15 611 bytes
-Byte coverage:  100,00%  (used=15 479 env=18 ignored=114 unknown=0 partial=0)
+Byte coverage:  100,00%  (used=15 507 env=18 ignored=86 unknown=0 partial=0)
 Pages:          0
 Records:        14
 
@@ -14,9 +14,9 @@ Structured fields:
   OBP3 (D3AC6B) [PARSED_IGNORED]                     count=   1  bytes=        33
   OBD3 (D3A66B) [PARSED_IGNORED]                     count=   1  bytes=        29
   IDD (D3A6FB) [PARSED_IGNORED]                      count=   1  bytes=        24
-  BPS (D3A85F) [PARSED_IGNORED]                      count=   1  bytes=        17
+  BPS (D3A85F) [PARSED_USED]                         count=   1  bytes=        17
   BIM (D3A8FB) [PARSED_USED]                         count=   1  bytes=        17
-  EPS (D3A95F) [PARSED_IGNORED]                      count=   1  bytes=        11
+  EPS (D3A95F) [PARSED_USED]                         count=   1  bytes=        11
   BOG (D3A8C7) [ENVELOPE_ONLY]                       count=   1  bytes=         9
   EIM (D3A9FB) [PARSED_USED]                         count=   1  bytes=         9
   EOG (D3A9C7) [ENVELOPE_ONLY]                       count=   1  bytes=         9
@@ -25,8 +25,6 @@ Opaque (preserved) SFs:
   D3AC6B (OBP3) count=1  bytes=24
   D3A66B (OBD3) count=1  bytes=20
   D3A6FB (IDD) count=1  bytes=15
-  D3A85F (BPS) count=1  bytes=8
-  D3A95F (EPS) count=1  bytes=2
 
 Pages:
 

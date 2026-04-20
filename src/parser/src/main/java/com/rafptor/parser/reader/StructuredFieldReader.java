@@ -13,6 +13,7 @@ import com.rafptor.parser.modca.EndPresentationText;
 import com.rafptor.parser.modca.BeginPage;
 import com.rafptor.parser.modca.BeginResourceGroup;
 import com.rafptor.parser.modca.EmbeddedObjectData;
+import com.rafptor.parser.modca.GenericEnvelope;
 import com.rafptor.parser.modca.EndActiveEnvironmentGroup;
 import com.rafptor.parser.modca.EndDocument;
 import com.rafptor.parser.modca.EndObjectEnvironmentGroup;
@@ -79,7 +80,9 @@ public final class StructuredFieldReader {
             // JPEG/PNG logos and other object containers inside the stream.
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xA5).toInt(), BeginNamedResource::parse), // BRS
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xCE).toInt(), BeginNamedResource::parse), // BFN
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xCE).toInt(), GenericEnvelope::parse),    // EFN
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x92).toInt(), BeginNamedResource::parse), // BDG
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x92).toInt(), GenericEnvelope::parse),    // EDG
             Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0x92).toInt(), EmbeddedObjectData::parse), // raw object bytes
             // Presentation Text envelope + End-Resource — BPT / EPT / ERS are
             // emitted by every MO:DCA-P5 producer but were previously falling
@@ -87,8 +90,52 @@ public final class StructuredFieldReader {
             // dispatch coverage caught by the byte-accounting audit.
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x9B).toInt(), BeginPresentationText::parse), // BPT
             Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x9B).toInt(), EndPresentationText::parse),   // EPT
-            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xA5).toInt(), EndNamedResource::parse)       // ERS
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xA5).toInt(), EndNamedResource::parse),      // ERS
+            // ---- Phase 1: every remaining envelope Begin/End pair that the
+            // MO:DCA spec defines is wired to GenericEnvelope so the byte
+            // accountant can classify them as ENVELOPE_ONLY rather than
+            // UNKNOWN. Each entry is a 3-byte SF identifier; the paired
+            // End/Begin lives at the symmetrical (0xA9 vs 0xA8) value.
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xAD).toInt(), GenericEnvelope::parse), // BNG Begin Named Page Group
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xAD).toInt(), GenericEnvelope::parse), // ENG
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xDF).toInt(), GenericEnvelope::parse), // BMO Begin Medium Overlay
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xDF).toInt(), GenericEnvelope::parse), // EMO
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x5F).toInt(), GenericEnvelope::parse), // BPS Begin Page Segment
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x5F).toInt(), GenericEnvelope::parse), // EPS
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x6B).toInt(), GenericEnvelope::parse), // BOC Begin Object Container (alt)
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x6B).toInt(), GenericEnvelope::parse), // EOC
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xEB).toInt(), GenericEnvelope::parse), // BBC Begin Barcode Object
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xEB).toInt(), GenericEnvelope::parse), // EBC
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x8A).toInt(), GenericEnvelope::parse), // BCF Begin Coded Font
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x8A).toInt(), GenericEnvelope::parse), // ECF
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x87).toInt(), GenericEnvelope::parse), // BCP Begin Code Page
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x87).toInt(), GenericEnvelope::parse), // ECP
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xCD).toInt(), GenericEnvelope::parse), // BFM Begin Form Map (FormDef)
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xCD).toInt(), GenericEnvelope::parse), // EFM
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xBA).toInt(), GenericEnvelope::parse), // BPF Begin Page Map (PageDef)
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xBA).toInt(), GenericEnvelope::parse), // EPF
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xDD).toInt(), GenericEnvelope::parse), // BMM Begin Medium Map
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xDD).toInt(), GenericEnvelope::parse), // EMM
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x9A).toInt(), GenericEnvelope::parse), // BSG Begin Resource Environment Group
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x9A).toInt(), GenericEnvelope::parse), // ESG
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x8D).toInt(), GenericEnvelope::parse), // BDM Begin Data Map
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x8D).toInt(), GenericEnvelope::parse), // EDM
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x7B).toInt(), GenericEnvelope::parse), // BII Begin IM Image (legacy)
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x7B).toInt(), GenericEnvelope::parse), // EII
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x77).toInt(), GenericEnvelope::parse), // BAA Begin Attribute Area
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x77).toInt(), GenericEnvelope::parse)  // EAA
     );
+
+    /** True if the dispatcher has an entry for this SF id — used by tests. */
+    public static boolean isDispatchable(int idInt) {
+        return DISPATCH.containsKey(idInt);
+    }
+
+    public static boolean isDispatchable(String idHex) {
+        if (idHex == null || idHex.length() < 6) return false;
+        int v = Integer.parseInt(idHex.substring(0, 6), 16);
+        return DISPATCH.containsKey(v);
+    }
 
     private StructuredFieldReader() {
     }

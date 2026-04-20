@@ -1,6 +1,6 @@
-{"ts":"2026-04-20T10:28:27.986+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=1 bytes=359 pages=0 coverage=100,00%"}
-{"ts":"2026-04-20T10:28:27.987+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 359 unknown bytes across 1 SF(s)"}
-{"ts":"2026-04-20T10:28:27.988+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A7CA (CAT) offset=0 len=359"}
+{"ts":"2026-04-20T11:08:09.420+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=1 bytes=359 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:09.422+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 359 unknown bytes across 1 SF(s)"}
+{"ts":"2026-04-20T11:08:09.422+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A7CA (CAT) offset=0 len=359"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_unknownSF.afp
 ========================================

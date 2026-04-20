@@ -35,8 +35,8 @@ public final class SfRegistry {
         m.put("D3A6A8", new SfInfo("DXD", "Document Environment Descriptor", DESCRIPTOR, false));
 
         // ---- Page Group ----
-        m.put("D3A8AD", new SfInfo("BNG", "Begin Named Page Group", PAGE_GROUP, false));
-        m.put("D3A9AD", new SfInfo("ENG", "End Named Page Group", PAGE_GROUP, false));
+        m.put("D3A8AD", new SfInfo("BNG", "Begin Named Page Group", PAGE_GROUP, true));
+        m.put("D3A9AD", new SfInfo("ENG", "End Named Page Group", PAGE_GROUP, true));
 
         // ---- Page ----
         m.put("D3A8AF", new SfInfo("BPG", "Begin Page", PAGE, true));
@@ -133,16 +133,16 @@ public final class SfRegistry {
         m.put("D3B088", new SfInfo("MMD", "Medium Map Descriptor", DESCRIPTOR, false));
 
         // ---- Overlay ----
-        m.put("D3A8DF", new SfInfo("BMO", "Begin Medium Overlay", OVERLAY, false));
-        m.put("D3A9DF", new SfInfo("EMO", "End Medium Overlay", OVERLAY, false));
+        m.put("D3A8DF", new SfInfo("BMO", "Begin Medium Overlay", OVERLAY, true));
+        m.put("D3A9DF", new SfInfo("EMO", "End Medium Overlay", OVERLAY, true));
         m.put("D3B1DF", new SfInfo("OVD", "Overlay Descriptor", DESCRIPTOR, false));
         m.put("D3AFD8", new SfInfo("IPO", "Include Page Overlay", INCLUDE, true));
         m.put("D3ABD8", new SfInfo("MPO", "Map Page Overlay", MAP, false));
         m.put("D3ACD8", new SfInfo("MMO2", "Map Medium Overlay (alt)", MAP, false));
 
         // ---- Page Segment ----
-        m.put("D3A85F", new SfInfo("BPS", "Begin Page Segment", PAGE_SEGMENT, false));
-        m.put("D3A95F", new SfInfo("EPS", "End Page Segment", PAGE_SEGMENT, false));
+        m.put("D3A85F", new SfInfo("BPS", "Begin Page Segment", PAGE_SEGMENT, true));
+        m.put("D3A95F", new SfInfo("EPS", "End Page Segment", PAGE_SEGMENT, true));
         m.put("D3AF5F", new SfInfo("IPS", "Include Page Segment", INCLUDE, true));
         m.put("D3B15F", new SfInfo("PSD", "Page Segment Descriptor", DESCRIPTOR, false));
         m.put("D3AC5F", new SfInfo("MPS", "Map Page Segment", MAP, false));
@@ -170,6 +170,30 @@ public final class SfRegistry {
         // ---- Optional / rarely observed ----
         m.put("D3B2C9", new SfInfo("PEC", "Presentation Environment Control", ENV_CONTROL, false));
         m.put("D3ABA9", new SfInfo("MPG", "Map Page", MAP, false));
+
+        // ---- Phase 1: additional envelope pairs wired via GenericEnvelope ----
+        m.put("D3A86B", new SfInfo("BOC", "Begin Object Container (alt)", CONTAINER, true));
+        m.put("D3A96B", new SfInfo("EOC", "End Object Container (alt)", CONTAINER, true));
+        m.put("D3A8EB", new SfInfo("BBC", "Begin Barcode Object", BARCODE, true));
+        m.put("D3A9EB", new SfInfo("EBC", "End Barcode Object", BARCODE, true));
+        m.put("D3A88A", new SfInfo("BCF", "Begin Coded Font", FONT, true));
+        m.put("D3A98A", new SfInfo("ECF", "End Coded Font", FONT, true));
+        m.put("D3A887", new SfInfo("BCP", "Begin Code Page", FONT, true));
+        m.put("D3A987", new SfInfo("ECP", "End Code Page", FONT, true));
+        m.put("D3A8CD", new SfInfo("BFM", "Begin Form Map (FormDef)", ENV_CONTROL, true));
+        m.put("D3A9CD", new SfInfo("EFM", "End Form Map", ENV_CONTROL, true));
+        m.put("D3A8BA", new SfInfo("BPF", "Begin Page Map (PageDef)", ENV_CONTROL, true));
+        m.put("D3A9BA", new SfInfo("EPF", "End Page Map", ENV_CONTROL, true));
+        m.put("D3A8DD", new SfInfo("BMM", "Begin Medium Map", ENV_CONTROL, true));
+        m.put("D3A9DD", new SfInfo("EMM", "End Medium Map", ENV_CONTROL, true));
+        m.put("D3A89A", new SfInfo("BSG", "Begin Resource Environment Group", RESOURCE, true));
+        m.put("D3A99A", new SfInfo("ESG", "End Resource Environment Group", RESOURCE, true));
+        m.put("D3A88D", new SfInfo("BDM", "Begin Data Map", ENV_CONTROL, true));
+        m.put("D3A98D", new SfInfo("EDM", "End Data Map", ENV_CONTROL, true));
+        m.put("D3A87B", new SfInfo("BII", "Begin IM Image (legacy)", IMAGE, true));
+        m.put("D3A97B", new SfInfo("EII", "End IM Image (legacy)", IMAGE, true));
+        m.put("D3A877", new SfInfo("BAA", "Begin Attribute Area", ENV_CONTROL, true));
+        m.put("D3A977", new SfInfo("EAA", "End Attribute Area", ENV_CONTROL, true));
 
         REGISTRY = Collections.unmodifiableMap(m);
     }

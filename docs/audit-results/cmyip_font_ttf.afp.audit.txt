@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T10:28:29.339+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=98 bytes=1703687 pages=2 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:10.778+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=98 bytes=1703687 pages=2 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  cmyip_font_ttf.afp
 ========================================
@@ -31,10 +31,6 @@ Structured fields:
   EDT (D3A9A8) [ENVELOPE_ONLY]                       count=   1  bytes=        17
   ERG (D3A9C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
   BRG (D3A8C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
-
-Opaque (preserved) SFs:
-  D3A8AD (BNG) count=1  bytes=20
-  D3A9AD (ENG) count=1  bytes=8
 
 PTOCA opcode coverage:
   PTX blocks: 2   total bytes: 1 438   coverage: 100,00%

@@ -1,10 +1,10 @@
-{"ts":"2026-04-20T10:28:27.339+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=12 bytes=369 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T11:08:08.763+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=12 bytes=369 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_repeatingGroupVariableLength.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_repeatingGroupVariableLength.afp
 Size:           369 bytes
-Byte coverage:  100,00%  (used=274 env=36 ignored=59 unknown=0 partial=0)
+Byte coverage:  100,00%  (used=308 env=36 ignored=25 unknown=0 partial=0)
 Pages:          0
 Records:        12
 
@@ -14,9 +14,9 @@ Structured fields:
   PSD (D3B15F) [PARSED_IGNORED]                      count=   1  bytes=        25
   PGD (D3A6AF) [PARSED_USED]                         count=   1  bytes=        24
   PTD (D3B19B) [PARSED_USED]                         count=   1  bytes=        23
-  EMO (D3A9DF) [PARSED_IGNORED]                      count=   1  bytes=        17
+  BMO (D3A8DF) [PARSED_USED]                         count=   1  bytes=        17
   EFN (D3A9CE) [PARSED_USED]                         count=   1  bytes=        17
-  BMO (D3A8DF) [PARSED_IGNORED]                      count=   1  bytes=        17
+  EMO (D3A9DF) [PARSED_USED]                         count=   1  bytes=        17
   BAG (D3A8C9) [ENVELOPE_ONLY]                       count=   1  bytes=         9
   BRG (D3A8C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
   ERG (D3A9C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
@@ -24,9 +24,6 @@ Structured fields:
 
 Opaque (preserved) SFs:
   D3B15F (PSD) count=1  bytes=16
-  D3A8DF (BMO) count=1  bytes=8
-  D3A9CE (EFN) count=1  bytes=8
-  D3A9DF (EMO) count=1  bytes=8
 
 Pages:
 
