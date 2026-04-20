@@ -5,7 +5,7 @@ RUN npm install --no-audit --no-fund
 COPY . .
 RUN npm run build
 
-FROM nginx:1.27-alpine
+FROM nginx:1.29-alpine
 LABEL org.opencontainers.image.source="https://github.com/aiskool/rafptor"
 LABEL org.opencontainers.image.licenses="Proprietary"
 LABEL org.opencontainers.image.vendor="Rafptor"
