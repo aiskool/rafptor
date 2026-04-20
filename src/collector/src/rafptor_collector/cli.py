@@ -43,8 +43,8 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _cmd_simulate(args: argparse.Namespace) -> int:
-    from .scenarios import banking, complex as complex_mod
-    from .scenarios import medium, simple, stress
+    from .scenarios import banking, medium, simple, stress
+    from .scenarios import complex as complex_mod
 
     if args.scenario == "simple":
         manifest = simple.run(args.output, client_id=args.client_id)
