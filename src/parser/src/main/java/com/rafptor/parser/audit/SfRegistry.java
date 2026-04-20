@@ -1,0 +1,187 @@
+package com.rafptor.parser.audit;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.rafptor.parser.audit.SfInfo.Category.*;
+
+/**
+ * Exhaustive registry of MO:DCA / IOCA / GOCA / BCOCA / FOCA / PTOCA structured
+ * fields. Built from the AFP Consortium specifications (MO:DCA AFPC-0004,
+ * IOCA AFPC-0009, GOCA AFPC-0008, BCOCA AFPC-0003, FOCA AFPC-0006) and from
+ * the structured fields observed across the Rafptor test corpus.
+ *
+ * <p>Each entry is keyed by its 6-character hex SF identifier (upper-case,
+ * no separators). The {@link SfInfo#implemented()} flag indicates whether
+ * Rafptor currently produces IR content from the SF (vs. just recognising
+ * it and moving on).
+ *
+ * <p>Adding a new implementation to Rafptor: flip the {@code implemented}
+ * flag to {@code true} in this registry at the same time as wiring the
+ * dispatcher — the audit CLI will then report improved coverage.
+ */
+public final class SfRegistry {
+
+    private static final Map<String, SfInfo> REGISTRY;
+
+    static {
+        LinkedHashMap<String, SfInfo> m = new LinkedHashMap<>();
+
+        // ---- Document / Envelope ----
+        m.put("D3A8A8", new SfInfo("BDT", "Begin Document", DOCUMENT, true));
+        m.put("D3A9A8", new SfInfo("EDT", "End Document", DOCUMENT, true));
+        m.put("D3A6A8", new SfInfo("DXD", "Document Environment Descriptor", DESCRIPTOR, false));
+
+        // ---- Page Group ----
+        m.put("D3A8AD", new SfInfo("BNG", "Begin Named Page Group", PAGE_GROUP, false));
+        m.put("D3A9AD", new SfInfo("ENG", "End Named Page Group", PAGE_GROUP, false));
+
+        // ---- Page ----
+        m.put("D3A8AF", new SfInfo("BPG", "Begin Page", PAGE, true));
+        m.put("D3A9AF", new SfInfo("EPG", "End Page", PAGE, true));
+        m.put("D3A6AF", new SfInfo("PGD", "Page Descriptor", DESCRIPTOR, true));
+        m.put("D3B1AF", new SfInfo("PGP", "Page Position", DESCRIPTOR, false));
+
+        // ---- Active Environment Group (AEG) ----
+        m.put("D3A8C9", new SfInfo("BAG", "Begin Active Environment Group", OBJECT_ENV, true));
+        m.put("D3A9C9", new SfInfo("EAG", "End Active Environment Group", OBJECT_ENV, true));
+
+        // ---- Object Environment Group (OEG) ----
+        m.put("D3A8C7", new SfInfo("BOG", "Begin Object Environment Group", OBJECT_ENV, true));
+        m.put("D3A9C7", new SfInfo("EOG", "End Object Environment Group", OBJECT_ENV, true));
+        m.put("D3A7C7", new SfInfo("OBD", "Object Area Descriptor", DESCRIPTOR, false));
+        m.put("D3AC7C", new SfInfo("OBP", "Object Area Position", DESCRIPTOR, false));
+
+        // ---- Resource Group ----
+        m.put("D3A8C6", new SfInfo("BRG", "Begin Resource Group", RESOURCE, true));
+        m.put("D3A9C6", new SfInfo("ERG", "End Resource Group", RESOURCE, true));
+
+        // ---- Named Resource (BRS / ERS — a single resource inside a BRG) ----
+        m.put("D3A8A5", new SfInfo("BRS", "Begin Resource", RESOURCE, true));
+        m.put("D3A9A5", new SfInfo("ERS", "End Resource", RESOURCE, true));
+
+        // ---- Presentation Text Object ----
+        m.put("D3A89B", new SfInfo("BPT", "Begin Presentation Text Object", TEXT, true));
+        m.put("D3A99B", new SfInfo("EPT", "End Presentation Text Object", TEXT, true));
+        m.put("D3B19B", new SfInfo("PTD", "Presentation Text Data Descriptor", DESCRIPTOR, true));
+        m.put("D3EE9B", new SfInfo("PTX", "Presentation Text Data", TEXT, true));
+
+        // ---- Image Object ----
+        m.put("D3A8FB", new SfInfo("BIM", "Begin Image Object", IMAGE, true));
+        m.put("D3A9FB", new SfInfo("EIM", "End Image Object", IMAGE, true));
+        m.put("D3EEFB", new SfInfo("IRD", "Image Raster Data (IOCA self-defining data)", IMAGE, true));
+        m.put("D3AEFB", new SfInfo("MIO", "Map IO-Image", MAP, false));
+        m.put("D3A6FB", new SfInfo("IDD", "Image Data Descriptor", DESCRIPTOR, false));
+        m.put("D3ABFB", new SfInfo("IID", "Image Input Descriptor (IM-Image)", DESCRIPTOR, false));
+
+        // ---- Graphics Object (GOCA) ----
+        m.put("D3A8BB", new SfInfo("BGR", "Begin Graphics Object", GRAPHIC, true));
+        m.put("D3A9BB", new SfInfo("EGR", "End Graphics Object", GRAPHIC, true));
+        m.put("D3EEBB", new SfInfo("GAD", "Graphics Data", GRAPHIC, true));
+        m.put("D3A6BB", new SfInfo("GDD", "Graphics Data Descriptor", DESCRIPTOR, false));
+        m.put("D3ABBB", new SfInfo("MGO", "Map Graphics Object", MAP, false));
+
+        // ---- Barcode Object (BCOCA) ----
+        m.put("D3A8EB", new SfInfo("BBC", "Begin Barcode Object", BARCODE, false));
+        m.put("D3A9EB", new SfInfo("EBC", "End Barcode Object", BARCODE, false));
+        m.put("D3EEEB", new SfInfo("BDA", "Barcode Data", BARCODE, false));
+        m.put("D3A6EB", new SfInfo("BDD", "Barcode Data Descriptor", DESCRIPTOR, false));
+        m.put("D3ABEB", new SfInfo("MBC", "Map Barcode Object", MAP, false));
+
+        // ---- Object Container (generic — JPEG / PNG / PDF embeds) ----
+        m.put("D3A892", new SfInfo("BDG", "Begin Data Object / Document Group", CONTAINER, true));
+        m.put("D3A992", new SfInfo("EDG", "End Data Object / Document Group", CONTAINER, true));
+        m.put("D3EE92", new SfInfo("OCD", "Object Container Data (raw JPEG/PNG/TIFF)", CONTAINER, true));
+        m.put("D3A692", new SfInfo("OBD", "Object Container Descriptor", DESCRIPTOR, false));
+        m.put("D3A792", new SfInfo("OBC", "Object Container Control", DESCRIPTOR, false));
+        m.put("D3AC92", new SfInfo("MPO", "Map Page Overlay / Object", MAP, false));
+
+        // ---- Font Object (FOCA) ----
+        m.put("D3A8CE", new SfInfo("BFN", "Begin Font Object", FONT, true));
+        m.put("D3A9CE", new SfInfo("EFN", "End Font Object", FONT, true));
+        m.put("D3A689", new SfInfo("FND", "Font Descriptor", FONT, false));
+        m.put("D3A789", new SfInfo("FNC", "Font Control", FONT, false));
+        m.put("D38C89", new SfInfo("FNI", "Font Index", FONT, false));
+        m.put("D38E89", new SfInfo("FNP", "Font Patterns", FONT, false));
+        m.put("D3878A", new SfInfo("FNO", "Font Orientation", FONT, false));
+        m.put("D3AC8A", new SfInfo("CPC", "Code Page Control", FONT, false));
+        m.put("D38C8A", new SfInfo("CPI", "Code Page Index", FONT, false));
+        m.put("D3A68A", new SfInfo("CPD", "Code Page Descriptor", FONT, false));
+        m.put("D3AB8A", new SfInfo("MCF", "Map Coded Font (Format 1)", FONT, true));
+        m.put("D3B188", new SfInfo("MCF2", "Map Coded Font (Format 2)", FONT, false));
+
+        // ---- Map Data Resource ----
+        m.put("D3ABC3", new SfInfo("MCF_ALT", "Map Coded Font (AFPC alt encoding)", FONT, true));
+        m.put("D3AFC3", new SfInfo("MDR", "Map Data Resource", MAP, true));
+
+        // ---- Medium ----
+        m.put("D3A88A", new SfInfo("BMM", "Begin Medium Map", ENV_CONTROL, false));
+        m.put("D3A98A", new SfInfo("EMM", "End Medium Map", ENV_CONTROL, false));
+        m.put("D3A788", new SfInfo("MMC", "Medium Modification Control", ENV_CONTROL, false));
+        m.put("D3A688", new SfInfo("MDD", "Medium Descriptor", DESCRIPTOR, false));
+        m.put("D3B088", new SfInfo("MMD", "Medium Map Descriptor", DESCRIPTOR, false));
+
+        // ---- Overlay ----
+        m.put("D3A8DF", new SfInfo("BMO", "Begin Medium Overlay", OVERLAY, false));
+        m.put("D3A9DF", new SfInfo("EMO", "End Medium Overlay", OVERLAY, false));
+        m.put("D3B1DF", new SfInfo("OVD", "Overlay Descriptor", DESCRIPTOR, false));
+        m.put("D3AFD8", new SfInfo("IPO", "Include Page Overlay", INCLUDE, true));
+        m.put("D3ACD8", new SfInfo("MPO", "Map Page Overlay", MAP, false));
+
+        // ---- Page Segment ----
+        m.put("D3A85F", new SfInfo("BPS", "Begin Page Segment", PAGE_SEGMENT, false));
+        m.put("D3A95F", new SfInfo("EPS", "End Page Segment", PAGE_SEGMENT, false));
+        m.put("D3AF5F", new SfInfo("IPS", "Include Page Segment", INCLUDE, true));
+        m.put("D3B15F", new SfInfo("PSD", "Page Segment Descriptor", DESCRIPTOR, false));
+        m.put("D3AC5F", new SfInfo("MPS", "Map Page Segment", MAP, false));
+
+        // ---- Include Object ----
+        m.put("D3AFC5", new SfInfo("IOB", "Include Object", INCLUDE, true));
+        m.put("D3ACC5", new SfInfo("MMO", "Map Medium Overlay", MAP, false));
+
+        // ---- Index / metadata ----
+        m.put("D3A090", new SfInfo("TLE", "Tag Logical Element", INDEX, true));
+        m.put("D3A190", new SfInfo("IEL", "Index Element", INDEX, false));
+        m.put("D3B290", new SfInfo("IMM", "Invoke Medium Map", ENV_CONTROL, false));
+        m.put("D3A290", new SfInfo("BII", "Begin Index Index", INDEX, false));
+        m.put("D3A390", new SfInfo("EII", "End Index Index", INDEX, false));
+
+        // ---- Resource-group-level housekeeping ----
+        m.put("D3EEEE", new SfInfo("NOP", "No Operation", MISC, true));
+
+        // ---- Color / presentation management ----
+        m.put("D3B1C3", new SfInfo("CMT", "Color Management Table", DESCRIPTOR, false));
+
+        // ---- Optional / rarely observed ----
+        m.put("D3B2C9", new SfInfo("PEC", "Presentation Environment Control", ENV_CONTROL, false));
+        m.put("D3ABA9", new SfInfo("MPG", "Map Page", MAP, false));
+
+        REGISTRY = Collections.unmodifiableMap(m);
+    }
+
+    private SfRegistry() {
+    }
+
+    /** @return the SF info if registered, else empty. */
+    public static Optional<SfInfo> lookup(String idHex) {
+        if (idHex == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(REGISTRY.get(idHex.toUpperCase()));
+    }
+
+    public static boolean isImplemented(String idHex) {
+        return lookup(idHex).map(SfInfo::implemented).orElse(false);
+    }
+
+    public static int size() {
+        return REGISTRY.size();
+    }
+
+    /** Unmodifiable view — useful for audit reports that iterate the whole table. */
+    public static Map<String, SfInfo> entries() {
+        return REGISTRY;
+    }
+}
