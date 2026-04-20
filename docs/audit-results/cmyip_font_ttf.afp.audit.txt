@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T12:00:35.642+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=98 bytes=1703687 pages=2 coverage=100,00%"}
+{"ts":"2026-04-20T12:24:29.456+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=98 bytes=1703687 pages=2 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  cmyip_font_ttf.afp
 ========================================

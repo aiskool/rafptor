@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T12:00:35.817+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=98 bytes=1703687 pages=2 coverage=100,00%"}
+{"ts":"2026-04-20T12:24:29.628+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=98 bytes=1703687 pages=2 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/cmyip_font_ttf.afp",
   "size_bytes": 1703687,

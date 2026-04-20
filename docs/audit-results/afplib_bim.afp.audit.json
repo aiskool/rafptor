@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T12:00:31.172+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=21 bytes=260651 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T12:24:25.175+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=21 bytes=260651 pages=0 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_bim.afp",
   "size_bytes": 260651,

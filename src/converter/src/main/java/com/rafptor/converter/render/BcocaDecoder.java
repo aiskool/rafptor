@@ -79,14 +79,39 @@ public final class BcocaDecoder {
     }
 
     /**
-     * Render a barcode request to a 1-bit bitmap. Not yet implemented;
-     * returns {@code null} so the caller emits a placeholder rectangle
-     * and a warning rather than crashing.
+     * Render a barcode request to a 1-bit bitmap via ZXing. Returns
+     * {@code null} for {@link Symbology#UNKNOWN} or when ZXing cannot
+     * encode the payload for the requested symbology (checksum mismatch,
+     * invalid characters, etc.) — the caller is expected to fall back
+     * to a placeholder rectangle + audit warning.
      */
     public static java.awt.image.BufferedImage renderSymbol(Symbology symbology,
                                                             String payload,
                                                             int widthPx,
                                                             int heightPx) {
-        return null;
+        if (symbology == null || symbology == Symbology.UNKNOWN || payload == null) {
+            return null;
+        }
+        com.google.zxing.BarcodeFormat fmt = switch (symbology) {
+            case CODE_128            -> com.google.zxing.BarcodeFormat.CODE_128;
+            case CODE_39             -> com.google.zxing.BarcodeFormat.CODE_39;
+            case INTERLEAVED_2_OF_5  -> com.google.zxing.BarcodeFormat.ITF;
+            case EAN_13              -> com.google.zxing.BarcodeFormat.EAN_13;
+            case EAN_8               -> com.google.zxing.BarcodeFormat.EAN_8;
+            case UPC_A               -> com.google.zxing.BarcodeFormat.UPC_A;
+            case QR_CODE             -> com.google.zxing.BarcodeFormat.QR_CODE;
+            case DATA_MATRIX         -> com.google.zxing.BarcodeFormat.DATA_MATRIX;
+            case PDF417              -> com.google.zxing.BarcodeFormat.PDF_417;
+            case USPS_4STATE, UNKNOWN -> null;
+        };
+        if (fmt == null) return null;
+        try {
+            com.google.zxing.MultiFormatWriter writer = new com.google.zxing.MultiFormatWriter();
+            com.google.zxing.common.BitMatrix matrix = writer.encode(
+                    payload, fmt, Math.max(1, widthPx), Math.max(1, heightPx));
+            return com.google.zxing.client.j2se.MatrixToImageWriter.toBufferedImage(matrix);
+        } catch (com.google.zxing.WriterException e) {
+            return null;
+        }
     }
 }

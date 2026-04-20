@@ -1,0 +1,59 @@
+Rafptor — AFP → PDF converter
+Copyright (c) 2026 Rafptor contributors
+
+===============================================================================
+
+This product includes third-party software under the following licences.
+All listed dependencies are compatible with commercial use; the Apache 2.0
+licensed ones require this NOTICE file to be distributed alongside the
+product per section 4(d) of the Apache 2.0 licence.
+
+===============================================================================
+
+Apache License 2.0
+------------------
+  * Apache PDFBox (pdfbox, xmpbox, preflight, jbig2-imageio)
+    https://pdfbox.apache.org/
+    Copyright (c) 2008–2025 The Apache Software Foundation.
+
+  * ZXing ("Zebra Crossing") — 1-D / 2-D barcode image processing library
+    https://github.com/zxing/zxing
+    Copyright (c) 2007–2024 ZXing authors.
+
+  * Apache Commons Imaging — CCITT G3/G4 + TIFF decoder
+    https://commons.apache.org/proper/commons-imaging/
+    Copyright (c) 2007–2024 The Apache Software Foundation.
+
+  * SLF4J API — logging facade
+    https://www.slf4j.org/
+    Copyright (c) 2004–2024 QOS.ch.
+
+  * Logback Classic — SLF4J backend (runtime)
+    https://logback.qos.ch/
+    Copyright (c) 2004–2024 QOS.ch.
+
+BSD-3-Clause
+------------
+  * TwelveMonkeys ImageIO (imageio-tiff, imageio-core)
+    https://github.com/haraldk/TwelveMonkeys
+    Copyright (c) 2008–2024 TwelveMonkeys authors.
+
+Eclipse Public License 2.0
+--------------------------
+  * JUnit Jupiter (test-only)
+    https://junit.org/junit5/
+    Copyright (c) 2015–2024 The JUnit Team.
+
+Mozilla Public License 2.0
+--------------------------
+  * veraPDF validation-model (test-only, PDF/A conformance checks)
+    https://verapdf.org/
+    Copyright (c) 2015–2024 veraPDF Consortium.
+
+===============================================================================
+
+Full licence texts are available at the URLs listed above. When redistributing
+Rafptor binaries, include this NOTICE file verbatim and retain the Apache 2.0
+LICENSE file in the distribution. No source-code disclosure obligation applies
+(none of the dependencies above carry a copyleft clause applicable to
+aggregation).

@@ -1,15 +1,15 @@
-{"ts":"2026-04-20T12:00:37.766+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A687 len=53 offset=55 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T12:00:37.768+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A787 len=22 offset=108 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T12:00:37.768+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D38C87 len=2569 offset=130 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T12:00:37.768+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=17 offset=2762 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T12:00:37.769+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A289 len=433 offset=2905 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T12:00:37.770+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=66493 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T12:00:37.777+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=35 bytes=67347 pages=1 coverage=95,38%"}
-{"ts":"2026-04-20T12:00:37.777+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 95,38% — 64899 unknown bytes across 4 SF(s)"}
-{"ts":"2026-04-20T12:00:37.778+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C87 (UNKNOWN) offset=130 len=2569"}
-{"ts":"2026-04-20T12:00:37.778+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A289 (UNKNOWN) offset=2905 len=433"}
-{"ts":"2026-04-20T12:00:37.778+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=4897 len=32751"}
-{"ts":"2026-04-20T12:00:37.778+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=37648 len=28845"}
+{"ts":"2026-04-20T12:24:31.508+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A687 len=53 offset=55 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:24:31.509+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A787 len=22 offset=108 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:24:31.510+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D38C87 len=2569 offset=130 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:24:31.510+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=17 offset=2762 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:24:31.511+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A289 len=433 offset=2905 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:24:31.512+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=66493 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:24:31.519+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=35 bytes=67347 pages=1 coverage=95,38%"}
+{"ts":"2026-04-20T12:24:31.519+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 95,38% — 64899 unknown bytes across 4 SF(s)"}
+{"ts":"2026-04-20T12:24:31.520+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C87 (UNKNOWN) offset=130 len=2569"}
+{"ts":"2026-04-20T12:24:31.520+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A289 (UNKNOWN) offset=2905 len=433"}
+{"ts":"2026-04-20T12:24:31.520+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=4897 len=32751"}
+{"ts":"2026-04-20T12:24:31.520+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=37648 len=28845"}
 ========================================
   RAFPTOR AFP AUDIT  cmyip_x2.afp
 ========================================
