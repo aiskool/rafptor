@@ -67,3 +67,4 @@ src/dashboard/src/**/*.js
 src/mapper/data/ttf_catalog/universal/noto/cjk/
 src/mapper/data/ttf_catalog/universal/noto/indic-extra/
 xafp/
+.claude/worktrees/

@@ -65,6 +65,7 @@ public final class PdfRenderer {
                 }
             }
             metadataRenderer.apply(pdfDoc, ir.metadata(), config);
+            BookmarkRenderer.apply(pdfDoc, ir);
             if (config.isPdfA()) {
                 warnings.addAll(PdfACompliance.apply(pdfDoc, config));
             }
