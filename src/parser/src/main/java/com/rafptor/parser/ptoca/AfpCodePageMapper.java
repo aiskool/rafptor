@@ -44,7 +44,20 @@ public final class AfpCodePageMapper {
             Map.entry("T1V01148", "IBM1148"),
             Map.entry("T1V01149", "IBM1149"),
             Map.entry("T1000395", "IBM1047"),
-            Map.entry("T1D0BASE", "IBM500"));
+            Map.entry("T1D0BASE", "IBM500"),
+            // Phase 4 — broad single-byte coverage.
+            Map.entry("T1V10420", "IBM420"),    // Arabic
+            Map.entry("T1V10424", "IBM424"),    // Hebrew
+            Map.entry("T1V10875", "IBM875"),    // Greek
+            Map.entry("T1V11025", "IBM1025"),   // Cyrillic (Russian)
+            Map.entry("T1V10838", "IBM838"),    // Thai
+            Map.entry("T1V10870", "IBM870"),    // Latin-2 East European
+            // Double-byte character sets (CJK).
+            Map.entry("T1H00930", "IBM930"),    // Japanese (Katakana + Kanji)
+            Map.entry("T1H00939", "IBM939"),    // Japanese (Latin + Kanji)
+            Map.entry("T1H00933", "IBM933"),    // Korean
+            Map.entry("T1H00935", "IBM935"),    // Simplified Chinese
+            Map.entry("T1H00937", "IBM937"));  // Traditional Chinese
 
     private AfpCodePageMapper() { }
 
