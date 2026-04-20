@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T09:48:10.710+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=112 bytes=2007245 pages=2 coverage=100,00%"}
+{"ts":"2026-04-20T10:28:29.159+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=112 bytes=2007245 pages=2 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/cmyip_font_ttf_courier.afp",
   "size_bytes": 2007245,
@@ -10,7 +10,7 @@
   "partial_bytes": 0,
   "pages": 2,
   "sf_records": 112,
-  "opaque_sfs": 6,
+  "opaque_sfs": 2,
   "ptx_blocks": 2,
   "embedded_objects": 2
 }

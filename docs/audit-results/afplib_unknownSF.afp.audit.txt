@@ -1,24 +1,23 @@
-{"ts":"2026-04-20T09:48:09.486+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A7CA len=359 offset=0 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T09:48:09.493+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=1 bytes=359 pages=0 coverage=0,00%"}
-{"ts":"2026-04-20T09:48:09.493+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 0,00% — 359 unknown bytes across 1 SF(s)"}
-{"ts":"2026-04-20T09:48:09.494+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A7CA (UNKNOWN) offset=0 len=359"}
+{"ts":"2026-04-20T10:28:27.986+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=1 bytes=359 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T10:28:27.987+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 359 unknown bytes across 1 SF(s)"}
+{"ts":"2026-04-20T10:28:27.988+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A7CA (CAT) offset=0 len=359"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_unknownSF.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_unknownSF.afp
 Size:           359 bytes
-Byte coverage:  0,00%  (used=0 env=0 ignored=0 unknown=359 partial=0)
+Byte coverage:  100,00%  (used=0 env=0 ignored=359 unknown=0 partial=0)
 Pages:          0
 Records:        1
 
 Structured fields:
-  UNKNOWN (D3A7CA) [UNKNOWN]                         count=   1  bytes=       359
+  CAT (D3A7CA) [PARSED_IGNORED]                      count=   1  bytes=       359
 
 Opaque (preserved) SFs:
-  D3A7CA (UNKNOWN) count=1  bytes=350
+  D3A7CA (CAT) count=1  bytes=350
 
 Pages:
 
 Verdict:
-  ⚠ 0,00% byte coverage — 359 bytes unexplained.
+  100% byte coverage — all source bytes accounted for.
   ⚠ 1 SF(s) > 100 bytes ignored or unknown.

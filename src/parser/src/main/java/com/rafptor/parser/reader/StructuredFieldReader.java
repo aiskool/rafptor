@@ -7,6 +7,9 @@ import com.rafptor.parser.modca.BeginActiveEnvironmentGroup;
 import com.rafptor.parser.modca.BeginDocument;
 import com.rafptor.parser.modca.BeginNamedResource;
 import com.rafptor.parser.modca.BeginObjectEnvironmentGroup;
+import com.rafptor.parser.modca.BeginPresentationText;
+import com.rafptor.parser.modca.EndNamedResource;
+import com.rafptor.parser.modca.EndPresentationText;
 import com.rafptor.parser.modca.BeginPage;
 import com.rafptor.parser.modca.BeginResourceGroup;
 import com.rafptor.parser.modca.EmbeddedObjectData;
@@ -77,7 +80,14 @@ public final class StructuredFieldReader {
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xA5).toInt(), BeginNamedResource::parse), // BRS
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0xCE).toInt(), BeginNamedResource::parse), // BFN
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x92).toInt(), BeginNamedResource::parse), // BDG
-            Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0x92).toInt(), EmbeddedObjectData::parse)  // raw object bytes
+            Map.entry(StructuredFieldId.of(0xD3, 0xEE, 0x92).toInt(), EmbeddedObjectData::parse), // raw object bytes
+            // Presentation Text envelope + End-Resource — BPT / EPT / ERS are
+            // emitted by every MO:DCA-P5 producer but were previously falling
+            // through to UnknownStructuredField. Wiring them restores the
+            // dispatch coverage caught by the byte-accounting audit.
+            Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x9B).toInt(), BeginPresentationText::parse), // BPT
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x9B).toInt(), EndPresentationText::parse),   // EPT
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0xA5).toInt(), EndNamedResource::parse)       // ERS
     );
 
     private StructuredFieldReader() {

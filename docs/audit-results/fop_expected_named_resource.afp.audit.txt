@@ -1,21 +1,18 @@
-{"ts":"2026-04-20T09:48:14.043+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A66B len=29 offset=63 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T09:48:14.045+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AC6B len=33 offset=92 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T09:48:14.051+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=13 bytes=21494 pages=0 coverage=99,54%"}
-{"ts":"2026-04-20T09:48:14.051+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 99,54% — 98 unknown bytes across 0 SF(s)"}
+{"ts":"2026-04-20T10:28:32.111+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=13 bytes=21494 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  fop_expected_named_resource.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/fop_expected_named_resource.afp
 Size:           21 494 bytes
-Byte coverage:  99,54%  (used=21 362 env=34 ignored=36 unknown=62 partial=0)
+Byte coverage:  100,00%  (used=21 362 env=34 ignored=98 unknown=0 partial=0)
 Pages:          0
 Records:        13
 
 Structured fields:
   IRD (D3EEFB) [PARSED_USED]                         count=   3  bytes=    21 282
-  UNKNOWN (D3AC6B) [UNKNOWN]                         count=   1  bytes=        33
-  UNKNOWN (D3A66B) [UNKNOWN]                         count=   1  bytes=        29
+  OBP3 (D3AC6B) [PARSED_IGNORED]                     count=   1  bytes=        33
   BFN (D3A8CE) [PARSED_USED]                         count=   1  bytes=        29
+  OBD3 (D3A66B) [PARSED_IGNORED]                     count=   1  bytes=        29
   IDD (D3A6FB) [PARSED_IGNORED]                      count=   1  bytes=        22
   BOG (D3A8C7) [ENVELOPE_ONLY]                       count=   1  bytes=        17
   EIM (D3A9FB) [PARSED_USED]                         count=   1  bytes=        17
@@ -25,8 +22,8 @@ Structured fields:
   IID (D3ABFB) [PARSED_IGNORED]                      count=   1  bytes=        14
 
 Opaque (preserved) SFs:
-  D3AC6B (UNKNOWN) count=1  bytes=24
-  D3A66B (UNKNOWN) count=1  bytes=20
+  D3AC6B (OBP3) count=1  bytes=24
+  D3A66B (OBD3) count=1  bytes=20
   D3A6FB (IDD) count=1  bytes=13
   D3A9CE (EFN) count=1  bytes=8
   D3ABFB (IID) count=1  bytes=5
@@ -34,4 +31,4 @@ Opaque (preserved) SFs:
 Pages:
 
 Verdict:
-  ⚠ 99,54% byte coverage — 98 bytes unexplained.
+  100% byte coverage — all source bytes accounted for.

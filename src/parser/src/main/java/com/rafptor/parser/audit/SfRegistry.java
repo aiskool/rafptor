@@ -89,6 +89,10 @@ public final class SfRegistry {
         m.put("D3EEEB", new SfInfo("BDA", "Barcode Data", BARCODE, false));
         m.put("D3A6EB", new SfInfo("BDD", "Barcode Data Descriptor", DESCRIPTOR, false));
         m.put("D3ABEB", new SfInfo("MBC", "Map Barcode Object", MAP, false));
+        // Legacy 6B class observed in xafp corpus bank/letter samples —
+        // placement/descriptor records paired with GOCA map entries.
+        m.put("D3AC6B", new SfInfo("OBP3", "Object Area Position (legacy 6B class)", DESCRIPTOR, false));
+        m.put("D3A66B", new SfInfo("OBD3", "Object Area Descriptor (legacy 6B class)", DESCRIPTOR, false));
 
         // ---- Object Container (generic — JPEG / PNG / PDF embeds) ----
         m.put("D3A892", new SfInfo("BDG", "Begin Data Object / Document Group", CONTAINER, true));
@@ -105,10 +109,15 @@ public final class SfRegistry {
         m.put("D3A789", new SfInfo("FNC", "Font Control", FONT, false));
         m.put("D38C89", new SfInfo("FNI", "Font Index", FONT, false));
         m.put("D38E89", new SfInfo("FNP", "Font Patterns", FONT, false));
+        m.put("D3EE89", new SfInfo("FNG", "Font Pattern Data (raster glyph body)", FONT, false));
+        m.put("D3AB89", new SfInfo("MCF1", "Map Coded Font (Format 1 alt)", FONT, false));
+        m.put("D3AE89", new SfInfo("FNN", "Font Name Map", FONT, false));
+        m.put("D3AC89", new SfInfo("MFC", "Map Font Coordinate / FNC-alt", FONT, false));
         m.put("D3878A", new SfInfo("FNO", "Font Orientation", FONT, false));
         m.put("D3AC8A", new SfInfo("CPC", "Code Page Control", FONT, false));
         m.put("D38C8A", new SfInfo("CPI", "Code Page Index", FONT, false));
         m.put("D3A68A", new SfInfo("CPD", "Code Page Descriptor", FONT, false));
+        m.put("D3B18A", new SfInfo("CPT", "Code Page Text / Bitmap Data", FONT, false));
         m.put("D3AB8A", new SfInfo("MCF", "Map Coded Font (Format 1)", FONT, true));
         m.put("D3B188", new SfInfo("MCF2", "Map Coded Font (Format 2)", FONT, false));
 
@@ -128,7 +137,8 @@ public final class SfRegistry {
         m.put("D3A9DF", new SfInfo("EMO", "End Medium Overlay", OVERLAY, false));
         m.put("D3B1DF", new SfInfo("OVD", "Overlay Descriptor", DESCRIPTOR, false));
         m.put("D3AFD8", new SfInfo("IPO", "Include Page Overlay", INCLUDE, true));
-        m.put("D3ACD8", new SfInfo("MPO", "Map Page Overlay", MAP, false));
+        m.put("D3ABD8", new SfInfo("MPO", "Map Page Overlay", MAP, false));
+        m.put("D3ACD8", new SfInfo("MMO2", "Map Medium Overlay (alt)", MAP, false));
 
         // ---- Page Segment ----
         m.put("D3A85F", new SfInfo("BPS", "Begin Page Segment", PAGE_SEGMENT, false));
@@ -153,6 +163,9 @@ public final class SfRegistry {
 
         // ---- Color / presentation management ----
         m.put("D3B1C3", new SfInfo("CMT", "Color Management Table", DESCRIPTOR, false));
+        m.put("D3A7CA", new SfInfo("CAT", "Color Attribute Table", DESCRIPTOR, false));
+        m.put("D3A69B", new SfInfo("PTDX", "Presentation Text Descriptor Extension", DESCRIPTOR, false));
+        m.put("D3A79B", new SfInfo("PTC", "Presentation Text Control", ENV_CONTROL, false));
 
         // ---- Optional / rarely observed ----
         m.put("D3B2C9", new SfInfo("PEC", "Presentation Environment Control", ENV_CONTROL, false));

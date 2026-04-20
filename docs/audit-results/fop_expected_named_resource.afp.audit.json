@@ -1,15 +1,12 @@
-{"ts":"2026-04-20T09:48:14.203+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A66B len=29 offset=63 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T09:48:14.205+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AC6B len=33 offset=92 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T09:48:14.210+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=13 bytes=21494 pages=0 coverage=99,54%"}
-{"ts":"2026-04-20T09:48:14.210+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 99,54% — 98 unknown bytes across 0 SF(s)"}
+{"ts":"2026-04-20T10:28:32.252+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=13 bytes=21494 pages=0 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/fop_expected_named_resource.afp",
   "size_bytes": 21494,
-  "byte_coverage": 99.5441,
+  "byte_coverage": 100.0000,
   "used_bytes": 21362,
   "envelope_bytes": 34,
-  "ignored_bytes": 36,
-  "unknown_bytes": 62,
+  "ignored_bytes": 98,
+  "unknown_bytes": 0,
   "partial_bytes": 0,
   "pages": 0,
   "sf_records": 13,

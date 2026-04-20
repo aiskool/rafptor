@@ -1,11 +1,10 @@
-{"ts":"2026-04-20T09:48:05.503+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=10 bytes=207 pages=0 coverage=67,15%"}
-{"ts":"2026-04-20T09:48:05.505+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 67,15% — 68 unknown bytes across 0 SF(s)"}
+{"ts":"2026-04-20T10:28:24.344+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=10 bytes=207 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_asciiAndEbcdicComment.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_asciiAndEbcdicComment.afp
 Size:           207 bytes
-Byte coverage:  67,15%  (used=113 env=26 ignored=68 unknown=0 partial=0)
+Byte coverage:  100,00%  (used=113 env=26 ignored=68 unknown=0 partial=0)
 Pages:          0
 Records:        10
 
@@ -25,4 +24,4 @@ Opaque (preserved) SFs:
 Pages:
 
 Verdict:
-  ⚠ 67,15% byte coverage — 68 bytes unexplained.
+  100% byte coverage — all source bytes accounted for.

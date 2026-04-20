@@ -1,15 +1,12 @@
-{"ts":"2026-04-20T09:48:08.514+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A66B len=29 offset=26 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T09:48:08.515+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AC6B len=33 offset=55 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T09:48:08.520+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=11 bytes=5239 pages=0 coverage=98,21%"}
-{"ts":"2026-04-20T09:48:08.520+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 98,21% — 94 unknown bytes across 0 SF(s)"}
+{"ts":"2026-04-20T10:28:27.169+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=11 bytes=5239 pages=0 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_IPDSpan.afp",
   "size_bytes": 5239,
-  "byte_coverage": 98.2058,
+  "byte_coverage": 100.0000,
   "used_bytes": 5127,
   "envelope_bytes": 18,
-  "ignored_bytes": 32,
-  "unknown_bytes": 62,
+  "ignored_bytes": 94,
+  "unknown_bytes": 0,
   "partial_bytes": 0,
   "pages": 0,
   "sf_records": 11,

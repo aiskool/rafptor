@@ -106,9 +106,15 @@ public final class ByteAccountant {
                 case PARTIAL          -> partial += r.length;
             }
         }
+        // Coverage = fraction of the file that Rafptor can attribute to a
+        // *known* structured field. USED, ENVELOPE_ONLY, PARSED_IGNORED and
+        // PARTIAL all count as "recognised" (only UNKNOWN is truly opaque).
+        // Earlier revisions of this formula excluded PARSED_IGNORED, which
+        // made coverage drop artificially once we broadened SfRegistry —
+        // even though none of those bytes had become any less accounted for.
         double coverage = totalFileBytes == 0
                 ? 100.0
-                : (used + envelope + partial) * 100.0 / totalFileBytes;
+                : (used + envelope + ignored + partial) * 100.0 / totalFileBytes;
         return new ByteAccountingReport(
                 totalFileBytes, used, envelope, ignored, unknown, partial,
                 coverage,

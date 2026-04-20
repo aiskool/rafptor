@@ -1,11 +1,10 @@
-{"ts":"2026-04-20T09:48:08.704+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=12 bytes=369 pages=0 coverage=84,01%"}
-{"ts":"2026-04-20T09:48:08.706+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 84,01% — 59 unknown bytes across 0 SF(s)"}
+{"ts":"2026-04-20T10:28:27.339+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=12 bytes=369 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_repeatingGroupVariableLength.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_repeatingGroupVariableLength.afp
 Size:           369 bytes
-Byte coverage:  84,01%  (used=274 env=36 ignored=59 unknown=0 partial=0)
+Byte coverage:  100,00%  (used=274 env=36 ignored=59 unknown=0 partial=0)
 Pages:          0
 Records:        12
 
@@ -32,4 +31,4 @@ Opaque (preserved) SFs:
 Pages:
 
 Verdict:
-  ⚠ 84,01% byte coverage — 59 bytes unexplained.
+  100% byte coverage — all source bytes accounted for.

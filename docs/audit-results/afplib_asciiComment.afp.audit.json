@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T09:48:06.046+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=2 bytes=50 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T10:28:24.813+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=2 bytes=50 pages=0 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_asciiComment.afp",
   "size_bytes": 50,

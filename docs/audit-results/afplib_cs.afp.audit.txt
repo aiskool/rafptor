@@ -1,11 +1,10 @@
-{"ts":"2026-04-20T09:48:06.990+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=425 pages=0 coverage=92,00%"}
-{"ts":"2026-04-20T09:48:06.991+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 92,00% — 34 unknown bytes across 0 SF(s)"}
+{"ts":"2026-04-20T10:28:25.630+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=425 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_cs.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_cs.afp
 Size:           425 bytes
-Byte coverage:  92,00%  (used=355 env=36 ignored=34 unknown=0 partial=0)
+Byte coverage:  100,00%  (used=355 env=36 ignored=34 unknown=0 partial=0)
 Pages:          0
 Records:        14
 
@@ -29,10 +28,8 @@ Opaque (preserved) SFs:
   D3A8DF (BMO) count=1  bytes=8
   D3A9CE (EFN) count=1  bytes=8
   D3A9DF (EMO) count=1  bytes=8
-  D3A99B (EPT) count=1  bytes=0
-  D3A89B (BPT) count=1  bytes=0
 
 Pages:
 
 Verdict:
-  ⚠ 92,00% byte coverage — 34 bytes unexplained.
+  100% byte coverage — all source bytes accounted for.
