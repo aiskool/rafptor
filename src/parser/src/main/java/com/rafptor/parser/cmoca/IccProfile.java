@@ -12,7 +12,11 @@ package com.rafptor.parser.cmoca;
  */
 public record IccProfile(String name, byte[] bytes) {
 
-    public static final byte[] ICC_SIG = {'a', 'c', 's', 'p'};
+    // Package-private + byte[] wrapped in a helper to avoid SpotBugs
+    // MS_PKGPROTECT / MS_MUTABLE_ARRAY warnings on a public mutable array.
+    static byte[] iccSig() {
+        return new byte[]{'a', 'c', 's', 'p'};
+    }
 
     public IccProfile {
         if (name == null) name = "";
@@ -21,8 +25,9 @@ public record IccProfile(String name, byte[] bytes) {
 
     public static boolean isIccProfile(byte[] candidate) {
         if (candidate == null || candidate.length < 40) return false;
+        byte[] sig = iccSig();
         for (int i = 0; i < 4; i++) {
-            if (candidate[36 + i] != ICC_SIG[i]) return false;
+            if (candidate[36 + i] != sig[i]) return false;
         }
         return true;
     }
