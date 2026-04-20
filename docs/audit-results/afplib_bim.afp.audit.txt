@@ -1,0 +1,34 @@
+{"ts":"2026-04-20T09:48:06.262+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A66B len=29 offset=18 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.264+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AC6B len=33 offset=47 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.271+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=21 bytes=260651 pages=0 coverage=99,96%"}
+{"ts":"2026-04-20T09:48:06.271+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 99,96% — 94 unknown bytes across 0 SF(s)"}
+========================================
+  RAFPTOR AFP AUDIT  afplib_bim.afp
+========================================
+File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_bim.afp
+Size:           260 651 bytes
+Byte coverage:  99,96%  (used=260 539 env=18 ignored=32 unknown=62 partial=0)
+Pages:          0
+Records:        21
+
+Structured fields:
+  IRD (D3EEFB) [PARSED_USED]                         count=  13  bytes=   260 521
+  UNKNOWN (D3AC6B) [UNKNOWN]                         count=   1  bytes=        33
+  UNKNOWN (D3A66B) [UNKNOWN]                         count=   1  bytes=        29
+  IDD (D3A6FB) [PARSED_IGNORED]                      count=   1  bytes=        18
+  IID (D3ABFB) [PARSED_IGNORED]                      count=   1  bytes=        14
+  BOG (D3A8C7) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  EIM (D3A9FB) [PARSED_USED]                         count=   1  bytes=         9
+  EOG (D3A9C7) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  BIM (D3A8FB) [PARSED_USED]                         count=   1  bytes=         9
+
+Opaque (preserved) SFs:
+  D3AC6B (UNKNOWN) count=1  bytes=24
+  D3A66B (UNKNOWN) count=1  bytes=20
+  D3A6FB (IDD) count=1  bytes=9
+  D3ABFB (IID) count=1  bytes=5
+
+Pages:
+
+Verdict:
+  ⚠ 99,96% byte coverage — 94 bytes unexplained.

@@ -1,0 +1,63 @@
+{"ts":"2026-04-20T09:48:10.890+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=98 bytes=1703687 pages=2 coverage=100,00%"}
+========================================
+  RAFPTOR AFP AUDIT  cmyip_font_ttf.afp
+========================================
+File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/cmyip_font_ttf.afp
+Size:           1 703 687 bytes
+Byte coverage:  100,00%  (used=2 365 env=1 701 322 ignored=0 unknown=0 partial=0)
+Pages:          2
+Records:        98
+
+Structured fields:
+  OCD (D3EE92) [ENVELOPE_ONLY]                       count=  54  bytes= 1 700 792
+  PTX (D3EE9B) [PARSED_USED]                         count=   2  bytes=     1 456
+  BFN (D3A8CE) [PARSED_USED]                         count=   4  bytes=       268
+  MCF_ALT (D3ABC3) [PARSED_USED]                     count=   2  bytes=       251
+  BDG (D3A892) [ENVELOPE_ONLY]                       count=   4  bytes=       220
+  MDR (D3AFC3) [PARSED_USED]                         count=   2  bytes=       160
+  EDG (D3A992) [ENVELOPE_ONLY]                       count=   4  bytes=        68
+  EFN (D3A9CE) [PARSED_USED]                         count=   4  bytes=        68
+  PGD (D3A6AF) [PARSED_USED]                         count=   2  bytes=        48
+  PTD (D3B19B) [PARSED_USED]                         count=   2  bytes=        46
+  BPT (D3A89B) [PARSED_USED]                         count=   2  bytes=        34
+  EPG (D3A9AF) [ENVELOPE_ONLY]                       count=   2  bytes=        34
+  EPT (D3A99B) [PARSED_USED]                         count=   2  bytes=        34
+  BAG (D3A8C9) [ENVELOPE_ONLY]                       count=   2  bytes=        34
+  EAG (D3A9C9) [ENVELOPE_ONLY]                       count=   2  bytes=        34
+  BPG (D3A8AF) [ENVELOPE_ONLY]                       count=   2  bytes=        34
+  BNG (D3A8AD) [ENVELOPE_ONLY]                       count=   1  bytes=        29
+  BDT (D3A8A8) [ENVELOPE_ONLY]                       count=   1  bytes=        25
+  ENG (D3A9AD) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  EDT (D3A9A8) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  ERG (D3A9C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  BRG (D3A8C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+
+Opaque (preserved) SFs:
+  D3A8AD (BNG) count=1  bytes=20
+  D3A99B (EPT) count=2  bytes=16
+  D3A89B (BPT) count=2  bytes=16
+  D3A9AD (ENG) count=1  bytes=8
+
+PTOCA opcode coverage:
+  PTX blocks: 2   total bytes: 1 438   coverage: 100,00%
+  used=1 418  ignored=20  unknown=0
+  Opcodes:
+    0xD2 AMB    Absolute Move Baseline           count=18  impl=yes
+    0xC6 AMI    Absolute Move Inline             count=18  impl=yes
+    0xDA TRN    Transparent Data                 count=17  impl=yes
+    0x80 SEC    Set Extended Color               count=4  impl=yes
+    0xF0 SCFL   Set Coded Font Local             count=3  impl=yes
+    0xF6 STO    Set Text Orientation             count=2  impl=no
+    0xF8 BLN    Begin Line                       count=2  impl=no
+    0xE4 DIR    Draw I-axis Rule                 count=1  impl=yes
+
+Pages:
+  [0] name=00000001   runs=15 rules=1 images=0 graphics=0
+  [1] name=00000002   runs=2 rules=0 images=0 graphics=0
+
+Embedded objects:
+  GR000002 (JPEG) 32 700 bytes
+  GR000001 (JPEG) 32 700 bytes
+
+Verdict:
+  100% byte coverage — all source bytes accounted for.

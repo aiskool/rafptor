@@ -1,0 +1,87 @@
+{"ts":"2026-04-20T09:48:13.123+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A887 len=17 offset=38 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.125+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A687 len=53 offset=55 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.125+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A787 len=22 offset=108 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.125+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D38C87 len=2569 offset=130 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.125+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A987 len=17 offset=2699 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.126+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=17 offset=2762 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.126+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A289 len=433 offset=2905 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.126+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AE89 len=35 offset=3338 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.126+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AC89 len=31 offset=3373 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.127+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=32751 offset=4897 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.127+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=28845 offset=37648 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.127+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=66493 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:13.135+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=35 bytes=67347 pages=1 coverage=1,37%"}
+{"ts":"2026-04-20T09:48:13.136+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 1,37% — 66426 unknown bytes across 5 SF(s)"}
+{"ts":"2026-04-20T09:48:13.136+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C87 (UNKNOWN) offset=130 len=2569"}
+{"ts":"2026-04-20T09:48:13.136+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A289 (UNKNOWN) offset=2905 len=433"}
+{"ts":"2026-04-20T09:48:13.136+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=3404 len=1493"}
+{"ts":"2026-04-20T09:48:13.136+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (UNKNOWN) offset=4897 len=32751"}
+{"ts":"2026-04-20T09:48:13.136+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (UNKNOWN) offset=37648 len=28845"}
+========================================
+  RAFPTOR AFP AUDIT  cmyip_x2.afp
+========================================
+File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/cmyip_x2.afp
+Size:           67 347 bytes
+Byte coverage:  1,37%  (used=747 env=174 ignored=1 619 unknown=64 807 partial=0)
+Pages:          1
+Records:        35
+
+Structured fields:
+  UNKNOWN (D3EE89) [UNKNOWN]                         count=   2  bytes=    61 596
+  UNKNOWN (D38C87) [UNKNOWN]                         count=   1  bytes=     2 569
+  FNI (D38C89) [PARSED_IGNORED]                      count=   1  bytes=     1 493
+  PTX (D3EE9B) [PARSED_USED]                         count=   1  bytes=       515
+  UNKNOWN (D3A289) [UNKNOWN]                         count=   1  bytes=       433
+  FND (D3A689) [PARSED_IGNORED]                      count=   1  bytes=        89
+  MCF (D3AB8A) [PARSED_USED]                         count=   1  bytes=        59
+  BFN (D3A8CE) [PARSED_USED]                         count=   2  bytes=        58
+  UNKNOWN (D3A687) [UNKNOWN]                         count=   1  bytes=        53
+  FNC (D3A789) [PARSED_IGNORED]                      count=   1  bytes=        37
+  UNKNOWN (D3AE89) [UNKNOWN]                         count=   1  bytes=        35
+  EFN (D3A9CE) [PARSED_USED]                         count=   2  bytes=        34
+  UNKNOWN (D3AC89) [UNKNOWN]                         count=   1  bytes=        31
+  BNG (D3A8AD) [ENVELOPE_ONLY]                       count=   1  bytes=        29
+  BDT (D3A8A8) [ENVELOPE_ONLY]                       count=   1  bytes=        25
+  PGD (D3A6AF) [PARSED_USED]                         count=   1  bytes=        24
+  PTD (D3B19B) [PARSED_USED]                         count=   1  bytes=        23
+  UNKNOWN (D3A787) [UNKNOWN]                         count=   1  bytes=        22
+  EPG (D3A9AF) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  EPT (D3A99B) [PARSED_USED]                         count=   1  bytes=        17
+  ENG (D3A9AD) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  UNKNOWN (D3A887) [UNKNOWN]                         count=   1  bytes=        17
+  UNKNOWN (D3A889) [UNKNOWN]                         count=   1  bytes=        17
+  UNKNOWN (D3A989) [UNKNOWN]                         count=   1  bytes=        17
+  BAG (D3A8C9) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  BPG (D3A8AF) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  BPT (D3A89B) [PARSED_USED]                         count=   1  bytes=        17
+  EDT (D3A9A8) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  EAG (D3A9C9) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  UNKNOWN (D3A987) [UNKNOWN]                         count=   1  bytes=        17
+  ERG (D3A9C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  BRG (D3A8C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+
+Opaque (preserved) SFs:
+  D3A8AD (BNG) count=1  bytes=20
+  D3A99B (EPT) count=1  bytes=8
+  D3A89B (BPT) count=1  bytes=8
+  D3A9AD (ENG) count=1  bytes=8
+
+PTOCA opcode coverage:
+  PTX blocks: 1   total bytes: 506   coverage: 100,00%
+  used=496  ignored=10  unknown=0
+  Opcodes:
+    0xD2 AMB    Absolute Move Baseline           count=23  impl=yes
+    0xC6 AMI    Absolute Move Inline             count=23  impl=yes
+    0xE4 DIR    Draw I-axis Rule                 count=13  impl=yes
+    0xDA TRN    Transparent Data                 count=10  impl=yes
+    0x80 SEC    Set Extended Color               count=9  impl=yes
+    0xF0 SCFL   Set Coded Font Local             count=1  impl=yes
+    0xF6 STO    Set Text Orientation             count=1  impl=no
+    0xF8 BLN    Begin Line                       count=1  impl=no
+
+Pages:
+  [0] name=00000001   runs=10 rules=13 images=0 graphics=0
+
+Verdict:
+  ⚠ 1,37% byte coverage — 66 426 bytes unexplained.
+  ⚠ 5 SF(s) > 100 bytes ignored or unknown.

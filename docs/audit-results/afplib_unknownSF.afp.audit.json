@@ -1,0 +1,20 @@
+{"ts":"2026-04-20T09:48:09.640+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A7CA len=359 offset=0 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:09.646+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=1 bytes=359 pages=0 coverage=0,00%"}
+{"ts":"2026-04-20T09:48:09.646+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 0,00% — 359 unknown bytes across 1 SF(s)"}
+{"ts":"2026-04-20T09:48:09.647+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3A7CA (UNKNOWN) offset=0 len=359"}
+{
+  "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_unknownSF.afp",
+  "size_bytes": 359,
+  "byte_coverage": 0.0000,
+  "used_bytes": 0,
+  "envelope_bytes": 0,
+  "ignored_bytes": 0,
+  "unknown_bytes": 359,
+  "partial_bytes": 0,
+  "pages": 0,
+  "sf_records": 1,
+  "opaque_sfs": 1,
+  "ptx_blocks": 0,
+  "embedded_objects": 0
+}
+

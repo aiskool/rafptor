@@ -160,3 +160,41 @@ java -cp "$CP" com.rafptor.converter.E2EConvertTest \
      /tmp/afpworld-blind-test/01_Health_Coverage.afp \
      /tmp/afpworld-blind-test/01_Health_Coverage.pdf
 ```
+
+## Sécurités AFP — byte accounting & audit CLI (iter 9)
+
+Suite à trois incidents où la conclusion "pas dans l'AFP" s'était révélée fausse (logo JPEG dans `D3 EE 92`, DIR/DBR swappés en SBI/SCFL-alt, baseline AMB vs top-of-glyph), une série de sécurités est posée pour garantir que **chaque byte** de chaque AFP est comptabilisé par le parser.
+
+### Registres exhaustifs
+- `SfRegistry` : plus de 60 SFs MO:DCA/IOCA/GOCA/BCOCA/FOCA avec mnemonics, descriptions et flag `implemented`.
+- `PtocaOpcodeRegistry` : opcodes PTOCA catégorisés (POSITIONING, FONT, COLOR, RULE, TEXT, SPACING, CONTROL).
+
+### Byte accounting
+- Chaque SF parsé est enregistré par `ByteAccountant` avec offset, longueur, statut (`PARSED_USED`, `ENVELOPE_ONLY`, `PARSED_IGNORED`, `UNKNOWN`, `PARTIAL`).
+- Idem pour les opcodes PTOCA via `PtocaByteAccountant`.
+- Un SF inconnu est préservé comme `OpaqueSf` (body tronqué à 64 KB, pas perdu).
+- Le log émet un WARNING dès qu'un SF > 100 bytes est non-implémenté.
+
+### Audit CLI standalone
+
+```bash
+java -cp src/parser/target/classes:deps com.rafptor.parser.audit.AuditCli file.afp [--json] [--verbose]
+```
+
+Rapport produit :
+- Couverture byte (100 % = rien n'est silencieusement ignoré)
+- Inventaire SF par statut et mnemonic
+- Couverture PTOCA par opcode
+- Pages, runs, rules, images, graphiques, objets embarqués
+
+### Résultats du corpus (34 AFPs)
+
+Voir `docs/audit-results/SUMMARY.md`. Coverage AFPWorld = **100 %**. 19 fichiers sur 34 en dessous de 95 % — carte des lacunes prioritaires du parser (top 10 SFs non-implémentés agrégés).
+
+### Métadonnées PDF
+
+Chaque PDF de sortie porte désormais des clés custom :
+- `RafptorByteCoverage` (ex: `100.00%`)
+- `RafptorUsedBytes`, `RafptorIgnoredBytes`, `RafptorUnknownBytes`
+- `RafptorSfCount`
+- `RafptorWarnings` (si coverage < 100%)

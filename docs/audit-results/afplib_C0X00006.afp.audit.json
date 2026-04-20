@@ -1,0 +1,38 @@
+{"ts":"2026-04-20T09:48:06.779+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=0 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.781+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AE89 len=113 offset=300 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.781+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AC89 len=97 offset=413 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.782+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AB89 len=4499 offset=42434 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.782+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3AB89 len=2930 offset=46933 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.782+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=12001 offset=49863 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.782+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=12001 offset=61864 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.783+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=12001 offset=73865 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.783+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=12001 offset=85866 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.783+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=12001 offset=97867 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.783+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=12001 offset=109868 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.783+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=12001 offset=121869 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.783+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=12001 offset=133870 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.783+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3EE89 len=6040 offset=145871 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.783+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=151911 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:06.788+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=23 bytes=151928 pages=0 coverage=0,08%"}
+{"ts":"2026-04-20T09:48:06.788+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 0,08% — 151808 unknown bytes across 16 SF(s)"}
+{"ts":"2026-04-20T09:48:06.789+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AE89 (UNKNOWN) offset=300 len=113"}
+{"ts":"2026-04-20T09:48:06.789+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=510 len=10481"}
+{"ts":"2026-04-20T09:48:06.789+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=10991 len=10481"}
+{"ts":"2026-04-20T09:48:06.789+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=21472 len=10481"}
+{"ts":"2026-04-20T09:48:06.789+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=31953 len=10481"}
+{
+  "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_C0X00006.afp",
+  "size_bytes": 151928,
+  "byte_coverage": 0.0790,
+  "used_bytes": 120,
+  "envelope_bytes": 0,
+  "ignored_bytes": 42064,
+  "unknown_bytes": 109744,
+  "partial_bytes": 0,
+  "pages": 0,
+  "sf_records": 23,
+  "opaque_sfs": 21,
+  "ptx_blocks": 0,
+  "embedded_objects": 0
+}
+

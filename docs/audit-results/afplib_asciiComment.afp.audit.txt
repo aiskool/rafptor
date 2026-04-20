@@ -1,0 +1,18 @@
+{"ts":"2026-04-20T09:48:05.901+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=2 bytes=50 pages=0 coverage=100,00%"}
+========================================
+  RAFPTOR AFP AUDIT  afplib_asciiComment.afp
+========================================
+File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_asciiComment.afp
+Size:           50 bytes
+Byte coverage:  100,00%  (used=0 env=50 ignored=0 unknown=0 partial=0)
+Pages:          0
+Records:        2
+
+Structured fields:
+  BRG (D3A8C6) [ENVELOPE_ONLY]                       count=   1  bytes=        41
+  ERG (D3A9C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+
+Pages:
+
+Verdict:
+  100% byte coverage — all source bytes accounted for.

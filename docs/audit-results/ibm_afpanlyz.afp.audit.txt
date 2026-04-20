@@ -1,0 +1,125 @@
+{"ts":"2026-04-20T09:48:16.563+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=69 offset=117 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.565+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=209 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.565+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=228 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.568+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=125 offset=631 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.568+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=779 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.568+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=798 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.569+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=209 offset=1105 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.569+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=1337 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.569+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=1356 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.570+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=125 offset=2843 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.570+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=2991 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.571+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=3010 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.571+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=237 offset=3315 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.572+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=3575 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.572+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=3594 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.572+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=125 offset=4845 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.573+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=4993 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.573+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=5012 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.573+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=265 offset=5316 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.573+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=5604 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.573+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=5623 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.574+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=265 offset=9516 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.575+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=9804 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.575+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=9823 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.576+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=181 offset=13675 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.576+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=13879 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.576+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=13898 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.577+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=125 offset=16562 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.577+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=16710 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.577+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=16729 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.577+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=209 offset=17033 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.577+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=17265 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.577+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=17284 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.578+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=125 offset=19910 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.578+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=20058 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.578+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=20077 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.578+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=209 offset=20381 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.579+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=20613 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.579+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=20632 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.579+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=125 offset=21419 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.579+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=21567 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.579+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=21586 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.579+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=265 offset=21892 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.580+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=22180 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.580+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=22199 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.580+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3B18A len=293 offset=25265 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.580+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A79B len=19 offset=25581 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.580+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A69B len=21 offset=25600 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T09:48:16.585+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=190 bytes=28208 pages=16 coverage=87,27%"}
+{"ts":"2026-04-20T09:48:16.585+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 87,27% — 3592 unknown bytes across 15 SF(s)"}
+{"ts":"2026-04-20T09:48:16.586+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (UNKNOWN) offset=631 len=125"}
+{"ts":"2026-04-20T09:48:16.586+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (UNKNOWN) offset=1105 len=209"}
+{"ts":"2026-04-20T09:48:16.586+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (UNKNOWN) offset=2843 len=125"}
+{"ts":"2026-04-20T09:48:16.586+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (UNKNOWN) offset=3315 len=237"}
+{"ts":"2026-04-20T09:48:16.586+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (UNKNOWN) offset=4845 len=125"}
+========================================
+  RAFPTOR AFP AUDIT  ibm_afpanlyz.afp
+========================================
+File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/ibm_afpanlyz.afp
+Size:           28 208 bytes
+Byte coverage:  87,27%  (used=23 399 env=1 217 ignored=0 unknown=3 592 partial=0)
+Pages:          16
+Records:        190
+
+Structured fields:
+  PTX (D3EE9B) [PARSED_USED]                         count=  16  bytes=    21 923
+  UNKNOWN (D3B18A) [UNKNOWN]                         count=  16  bytes=     2 952
+  TLE (D3A090) [PARSED_USED]                         count=  11  bytes=       511
+  PGD (D3A6AF) [PARSED_USED]                         count=  16  bytes=       368
+  BPG (D3A8AF) [ENVELOPE_ONLY]                       count=  16  bytes=       359
+  UNKNOWN (D3A69B) [UNKNOWN]                         count=  16  bytes=       336
+  UNKNOWN (D3A79B) [UNKNOWN]                         count=  16  bytes=       304
+  BPT (D3A89B) [PARSED_USED]                         count=  16  bytes=       272
+  EPG (D3A9AF) [ENVELOPE_ONLY]                       count=  16  bytes=       272
+  EPT (D3A99B) [PARSED_USED]                         count=  16  bytes=       272
+  BAG (D3A8C9) [ENVELOPE_ONLY]                       count=  16  bytes=       272
+  EAG (D3A9C9) [ENVELOPE_ONLY]                       count=  16  bytes=       272
+  NOP (D3EEEE) [PARSED_USED]                         count=   1  bytes=        53
+  BDT (D3A8A8) [ENVELOPE_ONLY]                       count=   1  bytes=        25
+  EDT (D3A9A8) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+
+Opaque (preserved) SFs:
+  D3B18A (UNKNOWN) count=16  bytes=2808
+  D3A69B (UNKNOWN) count=16  bytes=192
+  D3A79B (UNKNOWN) count=16  bytes=160
+  D3A99B (EPT) count=16  bytes=128
+  D3A89B (BPT) count=16  bytes=128
+
+PTOCA opcode coverage:
+  PTX blocks: 16   total bytes: 21 779   coverage: 100,00%
+  used=20 895  ignored=884  unknown=0
+  Opcodes:
+    0xC8 RMI    Relative Move Inline             count=463  impl=yes
+    0xDA TRN    Transparent Data                 count=458  impl=yes
+    0xC6 AMI    Absolute Move Inline             count=354  impl=yes
+    0xD2 AMB    Absolute Move Baseline           count=353  impl=yes
+    0xF0 SCFL   Set Coded Font Local             count=277  impl=yes
+    0xD4 RMB    Relative Move Baseline           count=72  impl=no
+    0xF6 STO    Set Text Orientation             count=64  impl=no
+    0xC4 SIM    Set Inline Margin                count=37  impl=no
+    0xE4 DIR    Draw I-axis Rule                 count=26  impl=yes
+    0xF8 BLN    Begin Line                       count=16  impl=no
+    0xE6 DBR    Draw B-axis Rule                 count=14  impl=yes
+
+Pages:
+  [0] name=i          runs=6 rules=0 images=0 graphics=0
+  [1] name=ii         runs=3 rules=0 images=0 graphics=0
+  [2] name=iii        runs=58 rules=3 images=0 graphics=0
+  [3] name=iv         runs=3 rules=0 images=0 graphics=0
+  [4] name=1          runs=17 rules=2 images=0 graphics=0
+  [5] name=2          runs=3 rules=0 images=0 graphics=0
+  [6] name=3          runs=72 rules=3 images=0 graphics=0
+  [7] name=4          runs=74 rules=24 images=0 graphics=0
+  [8] name=5          runs=38 rules=1 images=0 graphics=0
+  [9] name=6          runs=3 rules=0 images=0 graphics=0
+  [10] name=7          runs=40 rules=1 images=0 graphics=0
+  [11] name=8          runs=3 rules=0 images=0 graphics=0
+  [12] name=9          runs=14 rules=1 images=0 graphics=0
+  [13] name=10         runs=3 rules=0 images=0 graphics=0
+  [14] name=11         runs=57 rules=4 images=0 graphics=0
+  [15] name=12         runs=64 rules=1 images=0 graphics=0
+
+Verdict:
+  ⚠ 87,27% byte coverage — 3 592 bytes unexplained.
+  ⚠ 15 SF(s) > 100 bytes ignored or unknown.

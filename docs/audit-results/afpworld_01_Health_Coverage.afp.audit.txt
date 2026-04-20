@@ -1,0 +1,60 @@
+{"ts":"2026-04-20T09:48:09.831+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=25 bytes=12784 pages=1 coverage=100,00%"}
+========================================
+  RAFPTOR AFP AUDIT  afpworld_01_Health_Coverage.afp
+========================================
+File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afpworld_01_Health_Coverage.afp
+Size:           12 784 bytes
+Byte coverage:  100,00%  (used=7 070 env=5 714 ignored=0 unknown=0 partial=0)
+Pages:          1
+Records:        25
+
+Structured fields:
+  PTX (D3EE9B) [PARSED_USED]                         count=   2  bytes=     6 611
+  OCD (D3EE92) [ENVELOPE_ONLY]                       count=   1  bytes=     5 517
+  MCF_ALT (D3ABC3) [PARSED_USED]                     count=   1  bytes=       226
+  MDR (D3AFC3) [PARSED_USED]                         count=   1  bytes=        80
+  BFN (D3A8CE) [PARSED_USED]                         count=   1  bytes=        53
+  BDG (D3A892) [ENVELOPE_ONLY]                       count=   1  bytes=        41
+  BRS (D3A8A5) [ENVELOPE_ONLY]                       count=   1  bytes=        35
+  BDT (D3A8A8) [ENVELOPE_ONLY]                       count=   1  bytes=        24
+  PGD (D3A6AF) [PARSED_USED]                         count=   1  bytes=        24
+  PTD (D3B19B) [PARSED_USED]                         count=   1  bytes=        21
+  EFN (D3A9CE) [PARSED_USED]                         count=   1  bytes=        19
+  BPT (D3A89B) [PARSED_USED]                         count=   2  bytes=        18
+  EPT (D3A99B) [PARSED_USED]                         count=   2  bytes=        18
+  BAG (D3A8C9) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  BPG (D3A8AF) [ENVELOPE_ONLY]                       count=   1  bytes=        17
+  EPG (D3A9AF) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  ERS (D3A9A5) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  ERG (D3A9C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  EDG (D3A992) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  EDT (D3A9A8) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  BRG (D3A8C6) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+  EAG (D3A9C9) [ENVELOPE_ONLY]                       count=   1  bytes=         9
+
+Opaque (preserved) SFs:
+  D3A99B (EPT) count=2  bytes=0
+  D3A89B (BPT) count=2  bytes=0
+  D3A9A5 (ERS) count=1  bytes=0
+
+PTOCA opcode coverage:
+  PTX blocks: 2   total bytes: 6 593   coverage: 100,00%
+  used=6 577  ignored=16  unknown=0
+  Opcodes:
+    0xC6 AMI    Absolute Move Inline             count=357  impl=yes
+    0xDA TRN    Transparent Data                 count=306  impl=yes
+    0xD2 AMB    Absolute Move Baseline           count=109  impl=yes
+    0xE4 DIR    Draw I-axis Rule                 count=31  impl=yes
+    0xE6 DBR    Draw B-axis Rule                 count=20  impl=yes
+    0x80 SEC    Set Extended Color               count=9  impl=yes
+    0xF0 SCFL   Set Coded Font Local             count=5  impl=yes
+    0xF6 STO    Set Text Orientation             count=2  impl=no
+
+Pages:
+  [0] name=P0000001   runs=306 rules=51 images=0 graphics=0
+
+Embedded objects:
+  I0000001 (JPEG) 5 508 bytes
+
+Verdict:
+  100% byte coverage — all source bytes accounted for.

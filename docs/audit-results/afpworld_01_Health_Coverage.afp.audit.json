@@ -1,0 +1,17 @@
+{"ts":"2026-04-20T09:48:09.982+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=25 bytes=12784 pages=1 coverage=100,00%"}
+{
+  "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afpworld_01_Health_Coverage.afp",
+  "size_bytes": 12784,
+  "byte_coverage": 100.0000,
+  "used_bytes": 7070,
+  "envelope_bytes": 5714,
+  "ignored_bytes": 0,
+  "unknown_bytes": 0,
+  "partial_bytes": 0,
+  "pages": 1,
+  "sf_records": 25,
+  "opaque_sfs": 5,
+  "ptx_blocks": 2,
+  "embedded_objects": 1
+}
+
