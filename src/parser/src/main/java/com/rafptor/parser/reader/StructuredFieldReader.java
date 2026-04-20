@@ -19,6 +19,7 @@ import com.rafptor.parser.modca.EndDocument;
 import com.rafptor.parser.modca.EndObjectEnvironmentGroup;
 import com.rafptor.parser.modca.EndPage;
 import com.rafptor.parser.modca.EndResourceGroup;
+import com.rafptor.parser.modca.FontIndex;
 import com.rafptor.parser.modca.IncludeObject;
 import com.rafptor.parser.modca.IncludePageOverlay;
 import com.rafptor.parser.modca.IncludePageSegment;
@@ -123,7 +124,9 @@ public final class StructuredFieldReader {
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x7B).toInt(), GenericEnvelope::parse), // BII Begin IM Image (legacy)
             Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x7B).toInt(), GenericEnvelope::parse), // EII
             Map.entry(StructuredFieldId.of(0xD3, 0xA8, 0x77).toInt(), GenericEnvelope::parse), // BAA Begin Attribute Area
-            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x77).toInt(), GenericEnvelope::parse)  // EAA
+            Map.entry(StructuredFieldId.of(0xD3, 0xA9, 0x77).toInt(), GenericEnvelope::parse), // EAA
+            // Phase 2: FNI (Font Index) dispatched for its per-character metrics.
+            Map.entry(StructuredFieldId.of(0xD3, 0x8C, 0x89).toInt(), FontIndex::parse)
     );
 
     /** True if the dispatcher has an entry for this SF id — used by tests. */

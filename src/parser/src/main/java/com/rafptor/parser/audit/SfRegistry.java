@@ -107,7 +107,7 @@ public final class SfRegistry {
         m.put("D3A9CE", new SfInfo("EFN", "End Font Object", FONT, true));
         m.put("D3A689", new SfInfo("FND", "Font Descriptor", FONT, false));
         m.put("D3A789", new SfInfo("FNC", "Font Control", FONT, false));
-        m.put("D38C89", new SfInfo("FNI", "Font Index", FONT, false));
+        m.put("D38C89", new SfInfo("FNI", "Font Index", FONT, true));
         m.put("D38E89", new SfInfo("FNP", "Font Patterns", FONT, false));
         m.put("D3EE89", new SfInfo("FNG", "Font Pattern Data (raster glyph body)", FONT, false));
         m.put("D3AB89", new SfInfo("MCF1", "Map Coded Font (Format 1 alt)", FONT, false));

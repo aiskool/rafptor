@@ -35,7 +35,9 @@ public final class GocaDecoder {
 
     /** A primitive the renderer must emit. */
     public sealed interface DrawOrder
-            permits Line, Rect, RoundedRect, SetLineWidth, SetColor, SetLineType {}
+            permits Line, Rect, RoundedRect, FullArc, Arc, Fillet, CubicBezier,
+                    SetLineWidth, SetColor, SetLineType,
+                    SetInteriorColor, SetPattern, SetLineJoin, SetLineCap {}
 
     public record Line(int x1, int y1, int x2, int y2) implements DrawOrder {}
     public record Rect(int x, int y, int width, int height) implements DrawOrder {}
@@ -47,6 +49,21 @@ public final class GocaDecoder {
     /** GOCA line-type patterns. Matches GSLT order code byte. */
     public enum LineType { SOLID, DOTTED, SHORT_DASH, DASH_DOT, LONG_DASH }
     public record SetLineType(LineType pattern) implements DrawOrder {}
+
+    // ---- Phase 2 additions ----
+    /** Full ellipse centred at (cx,cy), radii (rx,ry). */
+    public record FullArc(int cx, int cy, int rx, int ry) implements DrawOrder {}
+    /** Partial arc on an ellipse, with start/end sweep in 1/1440-degree units. */
+    public record Arc(int cx, int cy, int rx, int ry, int startDeg, int sweepDeg) implements DrawOrder {}
+    /** Quadratic fillet / control-point spline. Each 4-byte (x,y) = one knot. */
+    public record Fillet(int[] xs, int[] ys) implements DrawOrder {}
+    /** Cubic Bézier: 3 control points (current → cp1 → cp2 → end). */
+    public record CubicBezier(int cp1x, int cp1y, int cp2x, int cp2y, int endX, int endY)
+            implements DrawOrder {}
+    public record SetInteriorColor(String hexRgb) implements DrawOrder {}
+    public record SetPattern(int patternId) implements DrawOrder {}
+    public record SetLineJoin(int joinStyle) implements DrawOrder {}
+    public record SetLineCap(int capStyle) implements DrawOrder {}
 
     /**
      * Standard GOCA colour table (8-colour subset of {@code PCP} Basic Colour
@@ -167,6 +184,88 @@ public final class GocaDecoder {
                         currentY = y2;
                     }
                 }
+                case 0x87, 0xC7 -> {
+                    // GEARC — full arc/ellipse. 2-byte rx + 2-byte ry.
+                    if (length >= 4) {
+                        int rx = readI16(data, bodyStart);
+                        int ry = readI16(data, bodyStart + 2);
+                        out.add(new FullArc(currentX, currentY, Math.abs(rx), Math.abs(ry)));
+                    }
+                }
+                case 0x86, 0xC8 -> {
+                    // GARC — partial arc. 2-byte rx + 2-byte ry + 2-byte start + 2-byte sweep (in 1/1440°).
+                    if (length >= 8) {
+                        int rx = readI16(data, bodyStart);
+                        int ry = readI16(data, bodyStart + 2);
+                        int start = readI16(data, bodyStart + 4);
+                        int sweep = readI16(data, bodyStart + 6);
+                        out.add(new Arc(currentX, currentY,
+                                Math.abs(rx), Math.abs(ry), start, sweep));
+                    }
+                }
+                case 0x85, 0xC5 -> {
+                    // GFLT — fillet through N knot points (4 bytes each).
+                    int n = length / 4;
+                    if (n >= 1) {
+                        int[] xs = new int[n];
+                        int[] ys = new int[n];
+                        for (int k = 0; k < n; k++) {
+                            xs[k] = readI16(data, bodyStart + k * 4);
+                            ys[k] = readI16(data, bodyStart + k * 4 + 2);
+                        }
+                        out.add(new Fillet(xs, ys));
+                        currentX = xs[n - 1];
+                        currentY = ys[n - 1];
+                    }
+                }
+                case 0xA5, 0xE5 -> {
+                    // GCBEZ — cubic Bézier curve. 12 bytes: cp1(4) + cp2(4) + end(4).
+                    if (length >= 12) {
+                        int cp1x = readI16(data, bodyStart);
+                        int cp1y = readI16(data, bodyStart + 2);
+                        int cp2x = readI16(data, bodyStart + 4);
+                        int cp2y = readI16(data, bodyStart + 6);
+                        int endX = readI16(data, bodyStart + 8);
+                        int endY = readI16(data, bodyStart + 10);
+                        out.add(new CubicBezier(cp1x, cp1y, cp2x, cp2y, endX, endY));
+                        currentX = endX;
+                        currentY = endY;
+                    }
+                }
+                case 0x35 -> {
+                    // GSPT — set pattern (1 byte id: 1..16 for predefined patterns).
+                    if (length >= 1) {
+                        out.add(new SetPattern(data[bodyStart] & 0xFF));
+                    }
+                }
+                case 0x0D -> {
+                    // GSMC — set marker colour (alias of GSCOL for markers).
+                    if (length >= 1) {
+                        int idx = data[bodyStart] & 0xFF;
+                        String rgb = (idx < STANDARD_COLORS.length) ? STANDARD_COLORS[idx] : "#000000";
+                        out.add(new SetColor(rgb));
+                    }
+                }
+                case 0x1A -> {
+                    // GSLJ — set line join (1 byte style: 0=miter, 1=round, 2=bevel).
+                    if (length >= 1) {
+                        out.add(new SetLineJoin(data[bodyStart] & 0xFF));
+                    }
+                }
+                case 0x1B -> {
+                    // GSLC — set line cap (1 byte style: 0=butt, 1=round, 2=square).
+                    if (length >= 1) {
+                        out.add(new SetLineCap(data[bodyStart] & 0xFF));
+                    }
+                }
+                case 0x0B -> {
+                    // GSICOL — set interior (fill) colour by index.
+                    if (length >= 1) {
+                        int idx = data[bodyStart] & 0xFF;
+                        String rgb = (idx < STANDARD_COLORS.length) ? STANDARD_COLORS[idx] : "#000000";
+                        out.add(new SetInteriorColor(rgb));
+                    }
+                }
                 default -> { /* tolerant skip */ }
             }
             pos = bodyEnd;
@@ -183,6 +282,11 @@ public final class GocaDecoder {
             case 0x19 -> 1;   // GSLW
             case 0x18 -> 1;   // GSLT
             case 0x0A -> 1;   // GSCOL
+            case 0x0B -> 1;   // GSICOL
+            case 0x0D -> 1;   // GSMC
+            case 0x1A -> 1;   // GSLJ
+            case 0x1B -> 1;   // GSLC
+            case 0x35 -> 1;   // GSPT
             default -> 0;
         };
     }
