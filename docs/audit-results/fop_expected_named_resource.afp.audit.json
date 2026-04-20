@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T11:08:13.720+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=13 bytes=21494 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T12:00:38.666+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=13 bytes=21494 pages=0 coverage=100,00%"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/fop_expected_named_resource.afp",
   "size_bytes": 21494,

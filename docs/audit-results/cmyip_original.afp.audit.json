@@ -1,28 +1,28 @@
-{"ts":"2026-04-20T11:08:12.577+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A687 len=51 offset=142 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.579+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A787 len=22 offset=193 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.579+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D38C87 len=2189 offset=215 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.580+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=2467 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.581+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=15612 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.581+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=15675 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.583+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=86252 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.583+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=86315 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.584+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=169035 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.584+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=169098 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.586+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=365362 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:12.600+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=212 bytes=624075 pages=4 coverage=99,60%"}
-{"ts":"2026-04-20T11:08:12.600+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 99,60% — 364300 unknown bytes across 49 SF(s)"}
-{"ts":"2026-04-20T11:08:12.601+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C87 (UNKNOWN) offset=215 len=2189"}
-{"ts":"2026-04-20T11:08:12.601+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AE89 (FNN) offset=2881 len=113"}
-{"ts":"2026-04-20T11:08:12.601+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=3091 len=569"}
-{"ts":"2026-04-20T11:08:12.601+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=3660 len=569"}
-{"ts":"2026-04-20T11:08:12.601+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=4229 len=569"}
+{"ts":"2026-04-20T12:00:37.566+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A687 len=51 offset=142 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.567+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A787 len=22 offset=193 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.567+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D38C87 len=2189 offset=215 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.568+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=2467 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.569+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=15612 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.570+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=15675 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.571+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=86252 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.572+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=86315 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.573+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=169035 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.573+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=169098 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.575+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=365362 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:37.589+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=212 bytes=624075 pages=4 coverage=99,60%"}
+{"ts":"2026-04-20T12:00:37.589+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 99,60% — 245436 unknown bytes across 33 SF(s)"}
+{"ts":"2026-04-20T12:00:37.590+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C87 (UNKNOWN) offset=215 len=2189"}
+{"ts":"2026-04-20T12:00:37.590+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AE89 (FNN) offset=2881 len=113"}
+{"ts":"2026-04-20T12:00:37.590+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AB89 (MCF1) offset=5367 len=251"}
+{"ts":"2026-04-20T12:00:37.590+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AB89 (MCF1) offset=5618 len=122"}
+{"ts":"2026-04-20T12:00:37.590+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=5740 len=9872"}
 {
   "file": "/Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/cmyip_original.afp",
   "size_bytes": 624075,
   "byte_coverage": 99.6010,
-  "used_bytes": 259341,
+  "used_bytes": 378205,
   "envelope_bytes": 434,
-  "ignored_bytes": 361810,
+  "ignored_bytes": 242946,
   "unknown_bytes": 2490,
   "partial_bytes": 0,
   "pages": 4,

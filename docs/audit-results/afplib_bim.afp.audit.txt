@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T11:08:06.495+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=21 bytes=260651 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T12:00:31.021+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=21 bytes=260651 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_bim.afp
 ========================================

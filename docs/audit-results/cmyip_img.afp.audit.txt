@@ -1,28 +1,28 @@
-{"ts":"2026-04-20T11:08:11.102+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A687 len=51 offset=142 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:11.103+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A787 len=22 offset=193 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:11.104+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D38C87 len=2089 offset=215 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:11.104+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=17 offset=2367 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:11.106+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=92868 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:11.115+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=73 bytes=167162 pages=2 coverage=98,69%"}
-{"ts":"2026-04-20T11:08:11.115+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 98,69% — 92778 unknown bytes across 7 SF(s)"}
-{"ts":"2026-04-20T11:08:11.116+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C87 (UNKNOWN) offset=215 len=2089"}
-{"ts":"2026-04-20T11:08:11.116+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=2590 len=5749"}
-{"ts":"2026-04-20T11:08:11.116+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AB89 (MCF1) offset=8339 len=2471"}
-{"ts":"2026-04-20T11:08:11.116+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AB89 (MCF1) offset=10810 len=1854"}
-{"ts":"2026-04-20T11:08:11.116+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=12664 len=32751"}
+{"ts":"2026-04-20T12:00:35.987+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A687 len=51 offset=142 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:35.988+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A787 len=22 offset=193 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:35.989+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D38C87 len=2089 offset=215 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:35.989+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=17 offset=2367 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:35.991+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=92868 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:36.000+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=73 bytes=167162 pages=2 coverage=98,69%"}
+{"ts":"2026-04-20T12:00:36.000+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 98,69% — 87029 unknown bytes across 6 SF(s)"}
+{"ts":"2026-04-20T12:00:36.001+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C87 (UNKNOWN) offset=215 len=2089"}
+{"ts":"2026-04-20T12:00:36.001+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AB89 (MCF1) offset=8339 len=2471"}
+{"ts":"2026-04-20T12:00:36.001+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AB89 (MCF1) offset=10810 len=1854"}
+{"ts":"2026-04-20T12:00:36.001+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=12664 len=32751"}
+{"ts":"2026-04-20T12:00:36.001+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=45415 len=32751"}
 ========================================
   RAFPTOR AFP AUDIT  cmyip_img.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/cmyip_img.afp
 Size:           167 162 bytes
-Byte coverage:  98,69%  (used=3 539 env=70 845 ignored=90 582 unknown=2 196 partial=0)
+Byte coverage:  98,69%  (used=9 288 env=70 845 ignored=84 833 unknown=2 196 partial=0)
 Pages:          2
 Records:        73
 
 Structured fields:
   FNG (D3EE89) [PARSED_IGNORED]                      count=   3  bytes=    80 204
   OCD (D3EE92) [ENVELOPE_ONLY]                       count=   3  bytes=    70 511
-  FNI (D38C89) [PARSED_IGNORED]                      count=   1  bytes=     5 749
+  FNI (D38C89) [PARSED_USED]                         count=   1  bytes=     5 749
   MCF1 (D3AB89) [PARSED_IGNORED]                     count=   2  bytes=     4 325
   UNKNOWN (D38C87) [UNKNOWN]                         count=   1  bytes=     2 089
   IRD (D3EEFB) [PARSED_USED]                         count=   6  bytes=     1 907
@@ -69,7 +69,7 @@ Structured fields:
 
 PTOCA opcode coverage:
   PTX blocks: 2   total bytes: 835   coverage: 100,00%
-  used=815  ignored=20  unknown=0
+  used=831  ignored=4  unknown=0
   Opcodes:
     0xD2 AMB    Absolute Move Baseline           count=18  impl=yes
     0xC6 AMI    Absolute Move Inline             count=18  impl=yes
@@ -77,7 +77,7 @@ PTOCA opcode coverage:
     0xE4 DIR    Draw I-axis Rule                 count=3  impl=yes
     0x80 SEC    Set Extended Color               count=2  impl=yes
     0xF0 SCFL   Set Coded Font Local             count=2  impl=yes
-    0xF6 STO    Set Text Orientation             count=2  impl=no
+    0xF6 STO    Set Text Orientation             count=2  impl=yes
     0xF8 BLN    Begin Line                       count=2  impl=no
 
 Pages:
@@ -88,5 +88,5 @@ Embedded objects:
   GR000001 (JPEG) 32 700 bytes
 
 Verdict:
-  ⚠ 98,69% byte coverage — 92 778 bytes unexplained.
-  ⚠ 7 SF(s) > 100 bytes ignored or unknown.
+  ⚠ 98,69% byte coverage — 87 029 bytes unexplained.
+  ⚠ 6 SF(s) > 100 bytes ignored or unknown.

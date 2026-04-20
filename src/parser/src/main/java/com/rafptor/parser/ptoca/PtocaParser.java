@@ -363,17 +363,108 @@ public final class PtocaParser {
      */
     private static String parseExtendedColor(byte[] data, int offset, int end) {
         int len = end - offset;
-        if (len < 13) {
+        if (len < 2) {
             return null;
         }
         int colorSpace = data[offset + 1] & 0xFF;
-        if (colorSpace != 0x01) {
-            return null;
-        }
-        int r = data[offset + 10] & 0xFF;
-        int g = data[offset + 11] & 0xFF;
-        int b = data[offset + 12] & 0xFF;
-        return String.format("#%02X%02X%02X", r, g, b);
+        return switch (colorSpace) {
+            // RGB: 13-byte payload, components at offsets 10..12.
+            case 0x01 -> len >= 13
+                    ? String.format("#%02X%02X%02X",
+                            data[offset + 10] & 0xFF,
+                            data[offset + 11] & 0xFF,
+                            data[offset + 12] & 0xFF)
+                    : null;
+            // CMYK: 14-byte payload, components at offsets 10..13 (% 0..255).
+            case 0x04 -> len >= 14
+                    ? cmykToRgb(data[offset + 10] & 0xFF,
+                                data[offset + 11] & 0xFF,
+                                data[offset + 12] & 0xFF,
+                                data[offset + 13] & 0xFF)
+                    : null;
+            // Highlight color: 2-byte palette index at offset 10..11.
+            case 0x06 -> len >= 12
+                    ? highlightToRgb(((data[offset + 10] & 0xFF) << 8)
+                                     | (data[offset + 11] & 0xFF))
+                    : null;
+            // CIELAB: 3 * 2 bytes big-endian at offsets 10..15 (L* a* b*).
+            case 0x08 -> len >= 16
+                    ? cielabToRgb(
+                            readS16(data, offset + 10),
+                            readS16(data, offset + 12),
+                            readS16(data, offset + 14))
+                    : null;
+            default -> null;
+        };
+    }
+
+    private static int readS16(byte[] data, int p) {
+        int v = ((data[p] & 0xFF) << 8) | (data[p + 1] & 0xFF);
+        return (short) v;
+    }
+
+    /** CMYK → RGB via the straight subtractive formula. */
+    static String cmykToRgb(int c, int m, int y, int k) {
+        double cc = c / 255.0, mm = m / 255.0, yy = y / 255.0, kk = k / 255.0;
+        int r = (int) Math.round(255 * (1 - cc) * (1 - kk));
+        int g = (int) Math.round(255 * (1 - mm) * (1 - kk));
+        int b = (int) Math.round(255 * (1 - yy) * (1 - kk));
+        return String.format("#%02X%02X%02X",
+                Math.min(255, Math.max(0, r)),
+                Math.min(255, Math.max(0, g)),
+                Math.min(255, Math.max(0, b)));
+    }
+
+    /** AFP Highlight Color palette index → sRGB approximation. */
+    static String highlightToRgb(int index) {
+        String[] palette = {
+                "#000000", // 0 default (black)
+                "#2196F3", // 1 blue
+                "#E53935", // 2 red
+                "#E91E63", // 3 magenta / pink
+                "#43A047", // 4 green
+                "#00BCD4", // 5 cyan / turquoise
+                "#FDD835", // 6 yellow
+                "#FFFFFF"  // 7 white (non-print)
+        };
+        if (index >= 0 && index < palette.length) return palette[index];
+        return "#000000";
+    }
+
+    /** CIELAB (L* a* b*) → sRGB via D65 reference white. */
+    static String cielabToRgb(int L, int a, int b) {
+        // Convert to CIE L*a*b* float (L: 0..100, a/b: ~-128..+127).
+        double Lf = L / 100.0 * 100.0;
+        double af = a;
+        double bf = b;
+        // L*a*b* → XYZ
+        double y = (Lf + 16) / 116.0;
+        double x = af / 500.0 + y;
+        double z = y - bf / 200.0;
+        x = refMul(x) * 95.047;
+        y = refMul(y) * 100.000;
+        z = refMul(z) * 108.883;
+        // XYZ → sRGB (D65)
+        double rr =  x *  3.2406 / 100 + y * -1.5372 / 100 + z * -0.4986 / 100;
+        double gg =  x * -0.9689 / 100 + y *  1.8758 / 100 + z *  0.0415 / 100;
+        double bb =  x *  0.0557 / 100 + y * -0.2040 / 100 + z *  1.0570 / 100;
+        return String.format("#%02X%02X%02X",
+                clamp8(linearToSrgb(rr) * 255),
+                clamp8(linearToSrgb(gg) * 255),
+                clamp8(linearToSrgb(bb) * 255));
+    }
+
+    private static double refMul(double t) {
+        double t3 = t * t * t;
+        return t3 > 0.008856 ? t3 : (t - 16.0 / 116.0) / 7.787;
+    }
+
+    private static double linearToSrgb(double v) {
+        return v > 0.0031308 ? 1.055 * Math.pow(v, 1.0 / 2.4) - 0.055 : 12.92 * v;
+    }
+
+    private static int clamp8(double v) {
+        return (int) Math.min(255, Math.max(0, Math.round(v)));
     }
 
     private EbcdicDecoder resolveDecoder(int localFontId,

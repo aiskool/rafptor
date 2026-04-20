@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T11:08:09.740+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=25 bytes=12784 pages=1 coverage=100,00%"}
+{"ts":"2026-04-20T12:00:34.553+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=25 bytes=12784 pages=1 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afpworld_01_Health_Coverage.afp
 ========================================
@@ -34,7 +34,7 @@ Structured fields:
 
 PTOCA opcode coverage:
   PTX blocks: 2   total bytes: 6 593   coverage: 100,00%
-  used=6 577  ignored=16  unknown=0
+  used=6 593  ignored=0  unknown=0
   Opcodes:
     0xC6 AMI    Absolute Move Inline             count=357  impl=yes
     0xDA TRN    Transparent Data                 count=306  impl=yes
@@ -43,7 +43,7 @@ PTOCA opcode coverage:
     0xE6 DBR    Draw B-axis Rule                 count=20  impl=yes
     0x80 SEC    Set Extended Color               count=9  impl=yes
     0xF0 SCFL   Set Coded Font Local             count=5  impl=yes
-    0xF6 STO    Set Text Orientation             count=2  impl=no
+    0xF6 STO    Set Text Orientation             count=2  impl=yes
 
 Pages:
   [0] name=P0000001   runs=306 rules=51 images=0 graphics=0

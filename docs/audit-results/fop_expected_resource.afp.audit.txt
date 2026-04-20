@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T11:08:13.891+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=21511 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T12:00:38.838+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=21511 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  fop_expected_resource.afp
 ========================================

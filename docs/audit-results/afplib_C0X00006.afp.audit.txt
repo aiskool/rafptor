@@ -1,24 +1,24 @@
-{"ts":"2026-04-20T11:08:06.832+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=0 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:06.836+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=151911 — preserved as OpaqueSf"}
-{"ts":"2026-04-20T11:08:06.840+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=23 bytes=151928 pages=0 coverage=99,96%"}
-{"ts":"2026-04-20T11:08:06.840+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 99,96% — 151808 unknown bytes across 16 SF(s)"}
-{"ts":"2026-04-20T11:08:06.841+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AE89 (FNN) offset=300 len=113"}
-{"ts":"2026-04-20T11:08:06.841+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=510 len=10481"}
-{"ts":"2026-04-20T11:08:06.841+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=10991 len=10481"}
-{"ts":"2026-04-20T11:08:06.841+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=21472 len=10481"}
-{"ts":"2026-04-20T11:08:06.841+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D38C89 (FNI) offset=31953 len=10481"}
+{"ts":"2026-04-20T12:00:31.352+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A889 len=40 offset=0 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:31.358+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"unknown SF id=D3A989 len=17 offset=151911 — preserved as OpaqueSf"}
+{"ts":"2026-04-20T12:00:31.362+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=23 bytes=151928 pages=0 coverage=99,96%"}
+{"ts":"2026-04-20T12:00:31.362+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 99,96% — 109884 unknown bytes across 12 SF(s)"}
+{"ts":"2026-04-20T12:00:31.364+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AE89 (FNN) offset=300 len=113"}
+{"ts":"2026-04-20T12:00:31.364+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AB89 (MCF1) offset=42434 len=4499"}
+{"ts":"2026-04-20T12:00:31.364+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3AB89 (MCF1) offset=46933 len=2930"}
+{"ts":"2026-04-20T12:00:31.364+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=49863 len=12001"}
+{"ts":"2026-04-20T12:00:31.364+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3EE89 (FNG) offset=61864 len=12001"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_C0X00006.afp
 ========================================
 File:           /Users/karim/Documents/Projects/rafptor/src/converter/src/test/resources/afp-corpus/afplib_C0X00006.afp
 Size:           151 928 bytes
-Byte coverage:  99,96%  (used=120 env=0 ignored=151 751 unknown=57 partial=0)
+Byte coverage:  99,96%  (used=42 044 env=0 ignored=109 827 unknown=57 partial=0)
 Pages:          0
 Records:        23
 
 Structured fields:
   FNG (D3EE89) [PARSED_IGNORED]                      count=   9  bytes=   102 048
-  FNI (D38C89) [PARSED_IGNORED]                      count=   4  bytes=    41 924
+  FNI (D38C89) [PARSED_USED]                         count=   4  bytes=    41 924
   MCF1 (D3AB89) [PARSED_IGNORED]                     count=   2  bytes=     7 429
   NOP (D3EEEE) [PARSED_USED]                         count=   2  bytes=       120
   FNN (D3AE89) [PARSED_IGNORED]                      count=   1  bytes=       113
@@ -30,7 +30,6 @@ Structured fields:
 
 Opaque (preserved) SFs:
   D3EE89 (FNG) count=9  bytes=101967
-  D38C89 (FNI) count=4  bytes=41888
   D3AB89 (MCF1) count=2  bytes=7411
   D3AE89 (FNN) count=1  bytes=104
   D3AC89 (MFC) count=1  bytes=88
@@ -42,5 +41,5 @@ Opaque (preserved) SFs:
 Pages:
 
 Verdict:
-  ⚠ 99,96% byte coverage — 151 808 bytes unexplained.
-  ⚠ 16 SF(s) > 100 bytes ignored or unknown.
+  ⚠ 99,96% byte coverage — 109 884 bytes unexplained.
+  ⚠ 12 SF(s) > 100 bytes ignored or unknown.

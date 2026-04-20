@@ -1,10 +1,10 @@
-{"ts":"2026-04-20T11:08:15.819+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=190 bytes=28208 pages=16 coverage=100,00%"}
-{"ts":"2026-04-20T11:08:15.821+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 3592 unknown bytes across 15 SF(s)"}
-{"ts":"2026-04-20T11:08:15.821+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=631 len=125"}
-{"ts":"2026-04-20T11:08:15.821+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=1105 len=209"}
-{"ts":"2026-04-20T11:08:15.821+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=2843 len=125"}
-{"ts":"2026-04-20T11:08:15.821+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=3315 len=237"}
-{"ts":"2026-04-20T11:08:15.821+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=4845 len=125"}
+{"ts":"2026-04-20T12:00:41.168+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=190 bytes=28208 pages=16 coverage=100,00%"}
+{"ts":"2026-04-20T12:00:41.170+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"AFP byte coverage 100,00% — 3592 unknown bytes across 15 SF(s)"}
+{"ts":"2026-04-20T12:00:41.171+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=631 len=125"}
+{"ts":"2026-04-20T12:00:41.171+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=1105 len=209"}
+{"ts":"2026-04-20T12:00:41.171+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=2843 len=125"}
+{"ts":"2026-04-20T12:00:41.171+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=3315 len=237"}
+{"ts":"2026-04-20T12:00:41.171+02:00","level":"WARN","logger":"com.rafptor.parser.RafptorParser","msg":"  opaque SF id=D3B18A (CPT) offset=4845 len=125"}
 ========================================
   RAFPTOR AFP AUDIT  ibm_afpanlyz.afp
 ========================================
@@ -38,7 +38,7 @@ Opaque (preserved) SFs:
 
 PTOCA opcode coverage:
   PTX blocks: 16   total bytes: 21 779   coverage: 100,00%
-  used=20 895  ignored=884  unknown=0
+  used=21 311  ignored=468  unknown=0
   Opcodes:
     0xC8 RMI    Relative Move Inline             count=463  impl=yes
     0xDA TRN    Transparent Data                 count=458  impl=yes
@@ -46,7 +46,7 @@ PTOCA opcode coverage:
     0xD2 AMB    Absolute Move Baseline           count=353  impl=yes
     0xF0 SCFL   Set Coded Font Local             count=277  impl=yes
     0xD4 RMB    Relative Move Baseline           count=72  impl=no
-    0xF6 STO    Set Text Orientation             count=64  impl=no
+    0xF6 STO    Set Text Orientation             count=64  impl=yes
     0xC4 SIM    Set Inline Margin                count=37  impl=no
     0xE4 DIR    Draw I-axis Rule                 count=26  impl=yes
     0xF8 BLN    Begin Line                       count=16  impl=no

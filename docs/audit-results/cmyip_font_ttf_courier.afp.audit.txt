@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T11:08:10.436+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=112 bytes=2007245 pages=2 coverage=100,00%"}
+{"ts":"2026-04-20T12:00:35.270+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=112 bytes=2007245 pages=2 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  cmyip_font_ttf_courier.afp
 ========================================
@@ -34,14 +34,14 @@ Structured fields:
 
 PTOCA opcode coverage:
   PTX blocks: 2   total bytes: 1 422   coverage: 100,00%
-  used=1 402  ignored=20  unknown=0
+  used=1 418  ignored=4  unknown=0
   Opcodes:
     0xD2 AMB    Absolute Move Baseline           count=16  impl=yes
     0xC6 AMI    Absolute Move Inline             count=16  impl=yes
     0xDA TRN    Transparent Data                 count=15  impl=yes
     0x80 SEC    Set Extended Color               count=4  impl=yes
     0xF0 SCFL   Set Coded Font Local             count=3  impl=yes
-    0xF6 STO    Set Text Orientation             count=2  impl=no
+    0xF6 STO    Set Text Orientation             count=2  impl=yes
     0xF8 BLN    Begin Line                       count=2  impl=no
     0xE4 DIR    Draw I-axis Rule                 count=1  impl=yes
 

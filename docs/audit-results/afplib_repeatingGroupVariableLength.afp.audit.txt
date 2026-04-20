@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T11:08:08.763+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=12 bytes=369 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T12:00:33.582+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=12 bytes=369 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  afplib_repeatingGroupVariableLength.afp
 ========================================
