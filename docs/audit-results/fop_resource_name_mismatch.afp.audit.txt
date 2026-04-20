@@ -1,4 +1,4 @@
-{"ts":"2026-04-20T12:24:33.840+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=15617 pages=0 coverage=100,00%"}
+{"ts":"2026-04-20T19:48:17.603+02:00","level":"INFO","logger":"com.rafptor.parser.RafptorParser","msg":"parsed records=14 bytes=15617 pages=0 coverage=100,00%"}
 ========================================
   RAFPTOR AFP AUDIT  fop_resource_name_mismatch.afp
 ========================================

@@ -188,6 +188,20 @@ public final class PtocaParser {
                         String text = decodeTrn(data, payloadOffset, textLen, currentDecoder);
                         runs.add(new PtocaTextRun(localFontId, baseline, inline, text,
                                 currentColor, orientationDegrees, underscored));
+                        // PTOCA TRN spec: after a TRN, the inline cursor must
+                        // advance by the sum of character increments so that
+                        // subsequent RMI values operate from the correct
+                        // post-text position. For raster fonts the exact
+                        // increments live in the FNI but Rafptor substitutes
+                        // Liberation — approximate with a conservative
+                        // 12 L-units/char (≈ 10 cpi at 1440 L-units/inch).
+                        // This matters for IBM TOC layouts that emit
+                        // "TRN Title" → "RMI +N" → "TRN PageNumber" on the
+                        // same baseline and expect the number to land AFTER
+                        // the title, not inside it. 14 L-units = ~9 cpi at
+                        // 1440 L-units/inch, close enough to Times/Helvetica
+                        // proportional averages and to 10-cpi Courier alike.
+                        inline += text.length() * 14;
                     }
                 }
                 case PtocaControlCode.SET_TEXT_ORIENTATION -> {

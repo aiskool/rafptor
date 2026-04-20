@@ -1,6 +1,6 @@
 # AFP corpus audit
 
-Generated on 2026-04-20T10:24:24Z.
+Generated on 2026-04-20T17:48:07Z.
 
 | File | Size | Pages | Coverage | Used | Env | Ignored | Unknown | Opaque |
 |------|-----:|------:|---------:|-----:|----:|--------:|--------:|-------:|
