@@ -123,6 +123,8 @@ public final class PtocaParser {
         PtocaByteAccountant opAcc = new PtocaByteAccountant();
         opAcc.setTotalPtxBytes(data.length);
         Set<Integer> warnedOpcodes = new HashSet<>();
+        int orientationDegrees = 0;
+        boolean underscored = false;
         int localFontId = 0;
         int baseline = 0;
         int inline = 0;
@@ -184,8 +186,27 @@ public final class PtocaParser {
                     int textLen = sequenceEnd - payloadOffset;
                     if (textLen > 0) {
                         String text = decodeTrn(data, payloadOffset, textLen, currentDecoder);
-                        runs.add(new PtocaTextRun(localFontId, baseline, inline, text, currentColor));
+                        runs.add(new PtocaTextRun(localFontId, baseline, inline, text,
+                                currentColor, orientationDegrees, underscored));
                     }
+                }
+                case PtocaControlCode.SET_TEXT_ORIENTATION -> {
+                    // STO payload: 4 bytes [I-rot 2B][B-rot 2B] where the
+                    // high byte encodes 90° steps: 0x00=0°, 0x2D=90°, 0x5A=180°,
+                    // 0x87=270°. We only track the I-axis (inline) angle.
+                    int iAxisHi = (payloadOffset + 1 < sequenceEnd)
+                            ? data[payloadOffset] & 0xFF
+                            : 0;
+                    orientationDegrees = switch (iAxisHi) {
+                        case 0x2D -> 90;
+                        case 0x5A -> 180;
+                        case 0x87 -> 270;
+                        default   -> 0;
+                    };
+                }
+                case PtocaControlCode.UNDERSCORE -> {
+                    int flag = (payloadOffset < sequenceEnd) ? data[payloadOffset] & 0xFF : 0;
+                    underscored = (flag != 0);
                 }
                 case PtocaControlCode.SET_EXTENDED_COLOR -> {
                     String parsed = parseExtendedColor(data, payloadOffset, sequenceEnd);

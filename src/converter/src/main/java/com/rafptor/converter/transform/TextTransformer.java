@@ -110,7 +110,9 @@ public final class TextTransformer {
                     trueTypeFont,
                     fontSize,
                     0.0,
-                    color));
+                    color,
+                    run.orientationDegrees(),
+                    run.underscored()));
         }
         return out;
     }

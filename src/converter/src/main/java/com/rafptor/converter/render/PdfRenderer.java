@@ -101,21 +101,27 @@ public final class PdfRenderer {
         cs.beginText();
         cs.setNonStrokingColor(color);
         cs.setFont(font, (float) text.fontSize());
-        // PTOCA AMB sets the *baseline*, so the IR y is already the baseline.
-        // PDFBox's showText places text with its baseline at the newLineAtOffset
-        // coordinate, so we pass pdfY directly (no fontSize subtraction).
-        cs.newLineAtOffset((float) text.x(), (float) pdfY);
+        if (text.orientationDegrees() != 0) {
+            // Phase 3: honour PTOCA Set-Text-Orientation by applying a text
+            // matrix that rotates around (x, pdfY). PDFBox's setTextMatrix
+            // takes a Matrix in user space; we build it from the angle so
+            // PDFBox writes glyphs rotated in place.
+            double theta = Math.toRadians(text.orientationDegrees());
+            float cos = (float) Math.cos(theta);
+            float sin = (float) Math.sin(theta);
+            org.apache.pdfbox.util.Matrix m = new org.apache.pdfbox.util.Matrix(
+                    cos, sin, -sin, cos, (float) text.x(), (float) pdfY);
+            cs.setTextMatrix(m);
+        } else {
+            // PTOCA AMB sets the *baseline*, so the IR y is already the baseline.
+            cs.newLineAtOffset((float) text.x(), (float) pdfY);
+        }
         if (text.charSpacing() != 0) {
             cs.setCharacterSpacing((float) text.charSpacing());
         }
         try {
             cs.showText(rendered);
         } catch (IllegalArgumentException | IllegalStateException ex) {
-            // The current font lacks a glyph for some character — typically
-            // a PDFBox standard-14 fallback meeting a Unicode code point
-            // outside WinAnsiEncoding, or a TrueType font without a mapping
-            // for a control-range char. Retry with an ASCII-only rewrite;
-            // if even that fails we drop the run rather than abort the page.
             try {
                 cs.showText(asciiOnly(rendered));
             } catch (IllegalArgumentException | IllegalStateException ignore) {
@@ -123,6 +129,26 @@ public final class PdfRenderer {
             }
         }
         cs.endText();
+
+        if (text.underscored()) {
+            // Phase 3: draw a thin line at the approximate descender position
+            // of the rendered baseline. The geometry is approximate — the
+            // font API does not always expose the descender reliably across
+            // TTF / Type1 — so we use a sensible default of 0.12 × fontSize.
+            double underlineY = pdfY - text.fontSize() * 0.12;
+            double width = text.fontSize() * rendered.length() * 0.55;
+            if (text.orientationDegrees() != 0) {
+                // Skip the underline in rotated runs — the math would need a
+                // full matrix rotation of the line endpoints to be visually
+                // correct, and the feature is exceedingly rare in practice.
+                return;
+            }
+            cs.setStrokingColor(color);
+            cs.setLineWidth((float) Math.max(0.5, text.fontSize() * 0.04));
+            cs.moveTo((float) text.x(), (float) underlineY);
+            cs.lineTo((float) (text.x() + width), (float) underlineY);
+            cs.stroke();
+        }
     }
 
     private static String sanitize(String text) {

@@ -7,7 +7,8 @@ package com.rafptor.parser.ptoca;
  * millimetres / points is the responsibility of the renderer (Module 5).
  */
 public record PtocaTextRun(int localFontId, int baselinePosition, int inlinePosition,
-                           String text, String colorHex) {
+                           String text, String colorHex,
+                           int orientationDegrees, boolean underscored) {
 
     public PtocaTextRun {
         if ((localFontId & ~0xFF) != 0) {
@@ -19,10 +20,18 @@ public record PtocaTextRun(int localFontId, int baselinePosition, int inlinePosi
         if (colorHex == null) {
             colorHex = "#000000";
         }
+        // Normalise orientation to a canonical {0, 90, 180, 270}.
+        orientationDegrees = ((orientationDegrees % 360) + 360) % 360;
     }
 
-    /** Back-compat constructor for callers that do not carry color. */
+    /** Back-compat constructor — colour defaults to black, orientation to 0, no underscore. */
     public PtocaTextRun(int localFontId, int baselinePosition, int inlinePosition, String text) {
-        this(localFontId, baselinePosition, inlinePosition, text, "#000000");
+        this(localFontId, baselinePosition, inlinePosition, text, "#000000", 0, false);
+    }
+
+    /** Back-compat constructor — orientation defaults to 0, no underscore. */
+    public PtocaTextRun(int localFontId, int baselinePosition, int inlinePosition,
+                        String text, String colorHex) {
+        this(localFontId, baselinePosition, inlinePosition, text, colorHex, 0, false);
     }
 }

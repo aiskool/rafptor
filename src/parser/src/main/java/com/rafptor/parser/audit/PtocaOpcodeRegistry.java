@@ -34,7 +34,7 @@ public final class PtocaOpcodeRegistry {
         m.put(0xD4, new OpcodeInfo("RMB", "Relative Move Baseline", POSITIONING, false));
 
         // Font / orientation
-        m.put(0xF6, new OpcodeInfo("STO", "Set Text Orientation", FONT, false));
+        m.put(0xF6, new OpcodeInfo("STO", "Set Text Orientation", FONT, true));
         m.put(0xF0, new OpcodeInfo("SCFL", "Set Coded Font Local", FONT, true));
 
         // Spacing
@@ -55,7 +55,7 @@ public final class PtocaOpcodeRegistry {
         m.put(0xDA, new OpcodeInfo("TRN", "Transparent Data", TEXT, true));
 
         // Underscoring / control
-        m.put(0x76, new OpcodeInfo("USC", "Underscore Character", CONTROL, false));
+        m.put(0x76, new OpcodeInfo("USC", "Underscore Character", CONTROL, true));
         m.put(0xF2, new OpcodeInfo("BSU", "Begin Suppression", CONTROL, false));
         m.put(0xF4, new OpcodeInfo("ESU", "End Suppression", CONTROL, false));
         m.put(0xF8, new OpcodeInfo("BLN", "Begin Line", CONTROL, false));

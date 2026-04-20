@@ -7,10 +7,19 @@ public final class IrTextBlock extends IrElement {
     private final double fontSize;
     private final double charSpacing;
     private final String color;
+    private final int orientationDegrees;
+    private final boolean underscored;
 
     public IrTextBlock(double x, double y, int zOrder,
                        String text, String fontName, double fontSize,
                        double charSpacing, String color) {
+        this(x, y, zOrder, text, fontName, fontSize, charSpacing, color, 0, false);
+    }
+
+    public IrTextBlock(double x, double y, int zOrder,
+                       String text, String fontName, double fontSize,
+                       double charSpacing, String color,
+                       int orientationDegrees, boolean underscored) {
         super(x, y, zOrder);
         if (text == null) {
             throw new IllegalArgumentException("text must not be null");
@@ -26,6 +35,8 @@ public final class IrTextBlock extends IrElement {
         this.fontSize = fontSize;
         this.charSpacing = charSpacing;
         this.color = color == null ? "#000000" : color;
+        this.orientationDegrees = ((orientationDegrees % 360) + 360) % 360;
+        this.underscored = underscored;
     }
 
     public String text() { return text; }
@@ -33,4 +44,6 @@ public final class IrTextBlock extends IrElement {
     public double fontSize() { return fontSize; }
     public double charSpacing() { return charSpacing; }
     public String color() { return color; }
+    public int orientationDegrees() { return orientationDegrees; }
+    public boolean underscored() { return underscored; }
 }

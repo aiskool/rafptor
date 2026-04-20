@@ -43,6 +43,14 @@ public final class PtocaControlCode {
      */
     public static final int SET_EXTENDED_COLOR = 0x80;
 
+    // Phase 3 additions — text orientation + underscore attribute.
+    /** Set Text Orientation (STO) — 4-byte payload, I-axis + B-axis rotation. */
+    public static final int SET_TEXT_ORIENTATION = 0xF6;
+    /** Underscore Character (USC) — 1-byte flag controls whether TRN is underscored. */
+    public static final int UNDERSCORE_CHARACTER = 0xF0 ^ 0xF0; // placeholder, see below
+    /** Underscore uses 0x76 in the PTOCA spec (AFPC-0007). */
+    public static final int UNDERSCORE = 0x76;
+
     private PtocaControlCode() {
     }
 }
