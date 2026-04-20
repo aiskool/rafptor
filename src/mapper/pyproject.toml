@@ -13,7 +13,7 @@ authors = [{ name = "Rafptor Team" }]
 dependencies = [
     "pillow==10.3.0",
     "numpy==1.26.4",
-    "fonttools==4.51.0",
+    "fonttools==4.62.1",
     "freetype-py==2.4.0",
     "pymongo==4.7.2",
     "pydantic==2.7.1",
