@@ -1,5 +1,8 @@
 package com.rafptor.parser.model;
 
+import com.rafptor.parser.audit.ByteAccountingReport;
+import com.rafptor.parser.audit.PtocaOpcodeReport;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +21,9 @@ public final class AfpDocument {
     private final List<AfpStructuredField> structuredFields;
     private final Map<String, byte[]> embeddedObjects;
     private final Map<String, String> embeddedObjectKinds;
+    private final List<OpaqueSf> opaqueSfs;
+    private final List<PtocaOpcodeReport> ptocaReports;
+    private ByteAccountingReport byteAccountingReport;
 
     public AfpDocument(String name) {
         this.name = name;
@@ -27,6 +33,8 @@ public final class AfpDocument {
         this.structuredFields = new ArrayList<>();
         this.embeddedObjects = new HashMap<>();
         this.embeddedObjectKinds = new HashMap<>();
+        this.opaqueSfs = new ArrayList<>();
+        this.ptocaReports = new ArrayList<>();
     }
 
     public String name() {
@@ -106,5 +114,31 @@ public final class AfpDocument {
             copy.put(e.getKey(), e.getValue().clone());
         }
         return Collections.unmodifiableMap(copy);
+    }
+
+    public void addOpaqueSf(OpaqueSf opaque) {
+        if (opaque == null) return;
+        opaqueSfs.add(opaque);
+    }
+
+    public List<OpaqueSf> opaqueSfs() {
+        return Collections.unmodifiableList(opaqueSfs);
+    }
+
+    public void addPtocaReport(PtocaOpcodeReport report) {
+        if (report == null) return;
+        ptocaReports.add(report);
+    }
+
+    public List<PtocaOpcodeReport> ptocaReports() {
+        return Collections.unmodifiableList(ptocaReports);
+    }
+
+    public void setByteAccountingReport(ByteAccountingReport report) {
+        this.byteAccountingReport = report;
+    }
+
+    public ByteAccountingReport byteAccountingReport() {
+        return byteAccountingReport;
     }
 }

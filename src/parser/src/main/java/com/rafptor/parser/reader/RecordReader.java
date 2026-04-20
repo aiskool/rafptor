@@ -42,6 +42,11 @@ public final class RecordReader implements Iterator<RawStructuredField> {
     private long recordsRead;
     private RawStructuredField nextField;
     private boolean exhausted;
+    // Offset (in the raw stream) of the 0x5A carriage control that starts
+    // the last RawStructuredField returned by next(). Exposed for the byte
+    // accountant so every SF can be registered with its absolute position.
+    private long lastRecordOffset = -1;
+    private int lastRecordTotalLength;
 
     public RecordReader(InputStream input, ParserLimits limits) {
         if (input == null) {
@@ -92,7 +97,18 @@ public final class RecordReader implements Iterator<RawStructuredField> {
         return bytesConsumed;
     }
 
+    /** Offset (from the start of the input stream) of the last SF returned. */
+    public long lastRecordOffset() {
+        return lastRecordOffset;
+    }
+
+    /** Total length on the wire (1-byte CC prefix + declared length) of the last SF. */
+    public int lastRecordTotalLength() {
+        return lastRecordTotalLength;
+    }
+
     private RawStructuredField readNext() throws IOException {
+        long recordStartOffset = bytesConsumed;
         int cc = input.read();
         if (cc == -1) {
             return null;
@@ -138,6 +154,10 @@ public final class RecordReader implements Iterator<RawStructuredField> {
         bytesConsumed += (long) declaredLength;
         incrementDocumentSize(declaredLength);
         recordsRead++;
+        lastRecordOffset = recordStartOffset;
+        // On-wire length = 1 byte CC + declared length (which already covers
+        // length-field + id + flags + reserved + data).
+        lastRecordTotalLength = 1 + declaredLength;
 
         StructuredFieldId id = new StructuredFieldId(idClass, idType, idCategory);
         if (LOG.isDebugEnabled()) {

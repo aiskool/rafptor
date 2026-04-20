@@ -1,10 +1,16 @@
 package com.rafptor.parser;
 
+import com.rafptor.parser.audit.ByteAccountant;
+import com.rafptor.parser.audit.ByteAccountant.SfStatus;
+import com.rafptor.parser.audit.ByteAccountingReport;
+import com.rafptor.parser.audit.SfInfo;
+import com.rafptor.parser.audit.SfRegistry;
 import com.rafptor.parser.exception.AfpParseException;
 import com.rafptor.parser.model.AfpDocument;
 import com.rafptor.parser.model.AfpPage;
 import com.rafptor.parser.model.AfpResource;
 import com.rafptor.parser.model.AfpStructuredField;
+import com.rafptor.parser.model.OpaqueSf;
 import com.rafptor.parser.model.RawStructuredField;
 import com.rafptor.parser.modca.BeginDocument;
 import com.rafptor.parser.modca.BeginPage;
@@ -28,6 +34,7 @@ import com.rafptor.parser.modca.PageDescriptor;
 import com.rafptor.parser.modca.PresentationTextData;
 import com.rafptor.parser.modca.PresentationTextDescriptor;
 import com.rafptor.parser.modca.TagLogicalElement;
+import com.rafptor.parser.modca.UnknownStructuredField;
 import com.rafptor.parser.model.AfpImageObject;
 import com.rafptor.parser.model.PageGeometry;
 import com.rafptor.parser.ptoca.PtocaParser;
@@ -97,6 +104,7 @@ public final class RafptorParser {
 
     private AfpDocument parseInternal(InputStream input) {
         RecordReader reader = new RecordReader(input, limits);
+        ByteAccountant accountant = new ByteAccountant();
         AfpDocument document = new AfpDocument("UNNAMED");
         AfpPage currentPage = null;
         int depth = 0;
@@ -112,7 +120,24 @@ public final class RafptorParser {
 
         while (reader.hasNext()) {
             RawStructuredField raw = reader.next();
+            long sfOffset = reader.lastRecordOffset();
+            int sfTotalLength = reader.lastRecordTotalLength();
+            String sfIdHex = String.format("%02X%02X%02X",
+                    raw.id().classByte(), raw.id().typeByte(), raw.id().categoryByte());
+            SfInfo info = SfRegistry.lookup(sfIdHex).orElse(SfInfo.UNKNOWN);
+            SfStatus initialStatus = classifyStatus(sfIdHex, info);
+            int pageIndex = document.pages().size();
+            accountant.register(sfOffset, sfTotalLength, sfIdHex, info.mnemonic(),
+                    initialStatus, pageIndex);
             AfpStructuredField sf = StructuredFieldReader.dispatch(raw);
+            if (sf instanceof UnknownStructuredField) {
+                // Preserve the raw body so an operator can inspect it later.
+                document.addOpaqueSf(new OpaqueSf(sfOffset, sfIdHex, pageIndex, raw.data()));
+                if (!SfRegistry.lookup(sfIdHex).isPresent()) {
+                    LOG.warn("unknown SF id={} len={} offset={} — preserved as OpaqueSf",
+                            sfIdHex, sfTotalLength, sfOffset);
+                }
+            }
 
             if (isBegin(sf)) {
                 depth++;
@@ -208,6 +233,9 @@ public final class RafptorParser {
                             ptocaParser.parseWithRules(ptx, currentPage.codePageAssignments());
                     result.runs().forEach(currentPage::addTextRun);
                     result.rules().forEach(currentPage::addRule);
+                    if (result.opcodeReport() != null) {
+                        document.addPtocaReport(result.opcodeReport());
+                    }
                 }
             } else if (sf instanceof PageDescriptor pgd) {
                 if (currentPage != null) {
@@ -261,9 +289,44 @@ public final class RafptorParser {
                 document.addStructuredField(sf);
             }
         }
-        LOG.info("parsed records={} bytes={} pages={}",
-                reader.recordsRead(), reader.bytesConsumed(), document.pages().size());
+        accountant.setTotalFileBytes(reader.bytesConsumed());
+        ByteAccountingReport report = accountant.generateReport();
+        document.setByteAccountingReport(report);
+        LOG.info("parsed records={} bytes={} pages={} coverage={}%",
+                reader.recordsRead(), reader.bytesConsumed(),
+                document.pages().size(),
+                String.format("%.2f", report.coverage()));
+        if (report.coverage() < 100.0 || !report.bigIgnored().isEmpty()) {
+            LOG.warn("AFP byte coverage {}% — {} unknown bytes across {} SF(s)",
+                    String.format("%.2f", report.coverage()),
+                    report.unknownBytes() + report.ignoredBytes(),
+                    report.bigIgnored().size());
+            for (var r : report.bigIgnored().stream().limit(5).toList()) {
+                LOG.warn("  opaque SF id={} ({}) offset={} len={}",
+                        r.idHex(), r.mnemonic(), r.offset(), r.length());
+            }
+        }
         return document;
+    }
+
+    /**
+     * Pick a conservative initial {@link SfStatus} based on the SF category
+     * in the registry. The parser may upgrade this later (ex: an envelope
+     * that ended up carrying payload, or a PARSED_USED SF we know produced
+     * IR elements). Unknown IDs stay UNKNOWN until proven otherwise.
+     */
+    private static SfStatus classifyStatus(String idHex, SfInfo info) {
+        if (info == SfInfo.UNKNOWN) {
+            return SfStatus.UNKNOWN;
+        }
+        return switch (info.category()) {
+            case DOCUMENT, PAGE, PAGE_GROUP, OBJECT_ENV, RESOURCE, CONTAINER ->
+                    SfStatus.ENVELOPE_ONLY;
+            case TEXT, IMAGE, GRAPHIC, BARCODE, FONT, INCLUDE, INDEX, MAP, DESCRIPTOR ->
+                    info.implemented() ? SfStatus.PARSED_USED : SfStatus.PARSED_IGNORED;
+            case OVERLAY, PAGE_SEGMENT, ENV_CONTROL, MISC ->
+                    info.implemented() ? SfStatus.PARSED_USED : SfStatus.PARSED_IGNORED;
+        };
     }
 
     private static boolean isBegin(AfpStructuredField sf) {

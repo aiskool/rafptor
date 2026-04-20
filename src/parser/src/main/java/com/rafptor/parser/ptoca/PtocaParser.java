@@ -1,13 +1,19 @@
 package com.rafptor.parser.ptoca;
 
+import com.rafptor.parser.audit.OpcodeInfo;
+import com.rafptor.parser.audit.PtocaByteAccountant;
+import com.rafptor.parser.audit.PtocaOpcodeRegistry;
+import com.rafptor.parser.audit.PtocaOpcodeReport;
 import com.rafptor.parser.modca.PresentationTextData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Parses a PTOCA control-sequence stream.
@@ -57,10 +63,15 @@ public final class PtocaParser {
      * drawn rules share the same PTOCA stream but consumer code typically
      * handles them through different IR elements.
      */
-    public record Result(List<PtocaTextRun> runs, List<PtocaRule> rules) {
+    public record Result(List<PtocaTextRun> runs, List<PtocaRule> rules,
+                         PtocaOpcodeReport opcodeReport) {
         public Result {
             runs = List.copyOf(runs);
             rules = List.copyOf(rules);
+        }
+        // Backward-compatible 2-arg constructor — report defaults to null.
+        public Result(List<PtocaTextRun> runs, List<PtocaRule> rules) {
+            this(runs, rules, null);
         }
     }
 
@@ -109,6 +120,9 @@ public final class PtocaParser {
         Map<Integer, EbcdicDecoder> decoderCache = new HashMap<>();
         List<PtocaTextRun> runs = new ArrayList<>();
         List<PtocaRule> rules = new ArrayList<>();
+        PtocaByteAccountant opAcc = new PtocaByteAccountant();
+        opAcc.setTotalPtxBytes(data.length);
+        Set<Integer> warnedOpcodes = new HashSet<>();
         int localFontId = 0;
         int baseline = 0;
         int inline = 0;
@@ -193,6 +207,20 @@ public final class PtocaParser {
                     // tolerant skip
                 }
             }
+            // Accounting: track every CS regardless of whether we acted on it.
+            OpcodeInfo opInfo = PtocaOpcodeRegistry.lookup(opcode).orElse(OpcodeInfo.UNKNOWN);
+            PtocaByteAccountant.OpStatus status = opInfo == OpcodeInfo.UNKNOWN
+                    ? PtocaByteAccountant.OpStatus.UNKNOWN
+                    : (opInfo.implemented()
+                            ? PtocaByteAccountant.OpStatus.USED
+                            : PtocaByteAccountant.OpStatus.IGNORED);
+            opAcc.register(sequenceStart, sequenceEnd - sequenceStart,
+                    opcode, opInfo.mnemonic(), status);
+            if (status == PtocaByteAccountant.OpStatus.UNKNOWN
+                    && warnedOpcodes.add(opcode)) {
+                LOG.warn("unknown PTOCA opcode 0x{} at offset {} — skipped tolerantly",
+                        String.format("%02X", opcode), sequenceStart);
+            }
             sequenceCount++;
             if (sequenceEnd <= sequenceStart) {
                 // Defensive against zero-advance loops on malformed input.
@@ -203,7 +231,7 @@ public final class PtocaParser {
         if (LOG.isDebugEnabled()) {
             LOG.debug("ptoca sequences={} runs={} rules={}", sequenceCount, runs.size(), rules.size());
         }
-        return new Result(runs, rules);
+        return new Result(runs, rules, opAcc.generateReport());
     }
 
     /**
