@@ -309,17 +309,61 @@ public final class PtocaParser {
     }
 
     /**
-     * Decode a TRN payload. Recent MO:DCA/P5 producers emit Unicode code points
-     * (UTF-16BE) inside the TRN bytes when the coded font is a TrueType/OpenType
-     * resource. We auto-detect that case by looking at the payload shape — an
-     * even length with a strong zero-high-byte signal is a reliable tell.
-     * Fallback: the EBCDIC decoder configured from the MCF code page.
+     * Decode a TRN payload. We run three heuristics in order:
+     *
+     * <ol>
+     *   <li><b>UTF-16BE</b> — MO:DCA-P5 producers that embed TrueType fonts
+     *       via MDR emit Unicode code points directly. Even length plus a
+     *       strong zero-high-byte signal commits.</li>
+     *   <li><b>ASCII</b> — many modern producers (xafp, Infoprint Designer,
+     *       some Ricoh output) route plain ASCII text through PTOCA even
+     *       when the MCF declares a raster font. If &gt;= 80% of the bytes
+     *       fall in the printable-ASCII range {@code 0x20..0x7E} we decode
+     *       as ISO-8859-1 (US-ASCII superset) — that yields correct Latin-1
+     *       text for accented glyphs too.</li>
+     *   <li><b>EBCDIC</b> — the traditional mainframe path, driven by the
+     *       MCF code-page triplet and the {@link AfpCodePageMapper}.</li>
+     * </ol>
+     *
+     * This ordering makes the "fallback CP500" path only apply to documents
+     * that actually speak EBCDIC, so a 99%-ASCII producer no longer renders
+     * every glyph as "?".
      */
     private static String decodeTrn(byte[] data, int offset, int length, EbcdicDecoder ebcdic) {
         if (length >= 2 && (length % 2) == 0 && looksLikeUtf16BE(data, offset, length)) {
             return new String(data, offset, length, java.nio.charset.StandardCharsets.UTF_16BE);
         }
+        if (looksLikeAscii(data, offset, length)) {
+            return new String(data, offset, length, java.nio.charset.StandardCharsets.ISO_8859_1);
+        }
         return ebcdic.decode(data, offset, length);
+    }
+
+    /**
+     * Commit to ASCII / ISO-8859-1 when at least 80% of the bytes fall in the
+     * printable-ASCII band [0x20..0x7E] with the usual whitespace escapes.
+     * A single-byte TRN of 'A'..'z' also qualifies. Intentionally stricter
+     * than a raw "all bytes &lt; 0x80" test — EBCDIC punctuation bytes like
+     * 0x40 (space) must still prefer the EBCDIC path when the surrounding
+     * content is EBCDIC-shaped.
+     */
+    private static boolean looksLikeAscii(byte[] data, int offset, int length) {
+        if (length <= 0) return false;
+        int printable = 0;
+        int high = 0;
+        for (int i = 0; i < length; i++) {
+            int b = data[offset + i] & 0xFF;
+            if (b >= 0x20 && b < 0x7F) {
+                printable++;
+            } else if (b == 0x09 || b == 0x0A || b == 0x0D) {
+                printable++;
+            } else if (b >= 0x80) {
+                high++;
+            }
+        }
+        // Hard guard: no bytes above 0x7F + at least 80% printable ASCII.
+        if (high > 0) return false;
+        return printable * 5 >= length * 4;
     }
 
     /**
