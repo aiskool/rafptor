@@ -91,7 +91,7 @@
       <!-- Forced override: 4.10.2 (transitive default) lacks ARM64 macOS support. -->
       <groupId>de.flapdoodle.embed</groupId>
       <artifactId>de.flapdoodle.embed.mongo.packageresolver</artifactId>
-      <version>4.11.1</version>
+      <version>4.23.1</version>
       <scope>test</scope>
     </dependency>
 
